@@ -1,0 +1,15 @@
+/edit/serverManagement.js
+
+Session found.
+{ id: '1b313a9a47c20e777552e7e456961febf95301a888dd0d4c3f364e51d3475fced058c23e4d938d472516c5996f01d1ad' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /edit/
+Tunnel not found at /home/bensigal/server/www/edit/tunnel.node.js
+At default tunnel
+Searching for /edit/serverManagement.js
+Sending /edit/serverManagement.js with options {}
+<Buffer 66 75 6e 63 74 69 6f 6e 20 64 65 6c 65 74 65 46 69 6c 65 28 73 29 7b 0a 20 20 20 20 24 2e 70 6f 73 74 28 22 2f 73 65 72 76 65 72 2f 73 75 62 6d 69 74 ... >

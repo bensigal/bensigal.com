@@ -1,0 +1,18 @@
+/server/siteMap
+
+Session found.
+{ id: 'bf3d059fd2d3e9afd4745537f91329191e1f5f61e117f1609179909385b15d424462dfb9adc618b36450249002cb642e',
+  on: true,
+  un: 'Ben',
+  pwd: '44MeepsGiven' }
+
+POST, not multipart. Assuming querystring. Actual: application/x-www-form-urlencoded; charset=UTF-8
+Waiting for body before sending through tunnel...
+dir=%2Fhome%2Fbensigal%2Fserver%2Fwww%2Fjqui%2Fimages%2F
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /server/
+Generating sitemap for /home/bensigal/server/www/jqui/images/
+COMPLETE _Thumbs.db,ui-bg_diagonals-thick_18_b81900_40x40.png,ui-bg_diagonals-thick_20_666666_40x40.png,ui-bg_flat_10_000000_40x100.png,ui-bg_glass_100_f6f6f6_1x400.png,ui-bg_glass_100_fdf5ce_1x400.png,ui-bg_glass_65_ffffff_1x400.png,ui-bg_gloss-wave_35_f6a828_500x100.png,ui-bg_highlight-soft_100_eeeeee_1x100.png
+Sending string data.

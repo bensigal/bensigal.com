@@ -1,0 +1,15 @@
+/edit/ugly.css
+
+Session found.
+{ id: '459d8abca329c323078aa73c563377b529f706d02abf16708dd4f6512b82cdcf037241c205eeff9f39b61b288f198dec',
+  on: true,
+  un: 'Ben',
+  pwd: '44MeepsGiven' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /edit/
+Sending /edit/ugly.css with options {}
+<Buffer 23 6d 65 73 73 61 67 65 73 20 7b 0a 09 70 61 64 64 69 6e 67 3a 20 31 30 70 78 3b 0a 09 66 6f 6e 74 2d 73 69 7a 65 3a 20 31 38 70 78 3b 0a 09 70 61 64 ... >

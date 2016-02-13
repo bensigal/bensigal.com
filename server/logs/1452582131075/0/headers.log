@@ -1,0 +1,6 @@
+{ host: 'bensigal.com:8000',
+  'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:18.0) Gecko/20100101 Firefox/18.0',
+  'x-forwarded-for': '194.150.168.95',
+  'x-forwarded-host': 'www.bensigal.com',
+  'x-forwarded-server': 'bensigal.com',
+  connection: 'close' }

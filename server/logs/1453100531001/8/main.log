@@ -1,0 +1,12 @@
+/mail
+
+Session found.
+{ id: '28ee1004ea5e2ba2120d2f8b2d087acc8b4435ed15e5cff9e47e3a1cbcc9bc61e4b45b12fce287f242206f3042b84a47' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Searching for /mail
+Found directory
+Sending through tunnel /mail/

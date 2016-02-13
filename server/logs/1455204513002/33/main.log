@@ -1,0 +1,15 @@
+/edit
+
+Session found.
+{ id: '5b0219cc76c6ce3f03cf4aa895981d7dcec00449e51c21283846192beb6e948eafdef2c02f070223c8b38d7d8a75036d' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Searching for /edit
+Found directory
+Sending through tunnel /edit/
+Not logged in. Sending login page.
+Sending /home/bensigal/server/login.html with options { statusCode: 403, pathNotFromWww: true }
+<Buffer 3c 68 74 6d 6c 3e 3c 68 65 61 64 3e 3c 6d 65 74 61 20 68 74 74 70 2d 65 71 75 69 76 3d 22 43 6f 6e 74 65 6e 74 2d 54 79 70 65 22 20 63 6f 6e 74 65 6e ... >

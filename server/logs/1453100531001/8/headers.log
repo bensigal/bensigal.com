@@ -1,0 +1,10 @@
+{ host: 'bensigal.com:8000',
+  'user-agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:43.0) Gecko/20100101 Firefox/43.0',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'accept-language': 'en-US,en;q=0.5',
+  'accept-encoding': 'gzip, deflate',
+  cookie: 'sessid=28ee1004ea5e2ba2120d2f8b2d087acc8b4435ed15e5cff9e47e3a1cbcc9bc61e4b45b12fce287f242206f3042b84a47',
+  'x-forwarded-for': '75.208.101.28',
+  'x-forwarded-host': 'bensigal.com',
+  'x-forwarded-server': 'bensigal.com',
+  connection: 'close' }

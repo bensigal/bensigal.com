@@ -1,0 +1,20 @@
+/server/javac
+
+Session found.
+{ id: '0ccc16cbba4e4411a022cbd20de8f41490123b0aaeb84d757848b9324572ef1b6a2f6499adcbc0a2bfe53d30141115a4',
+  on: true,
+  un: 'Ben',
+  pwd: '44MeepsGiven' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /server/
+Error in tunnel execution.
+TypeError: Cannot read property 'args' of undefined
+    at module.exports (/home/bensigal/server/www/server/tunnel.node.js:120:28)
+    at sendThroughTunnel (/home/bensigal/server/server.js:277:24)
+    at /home/bensigal/server/server.js:140:4
+    at FSReqWrap.oncomplete (fs.js:82:15)
+Showing error 500

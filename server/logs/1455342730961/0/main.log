@@ -1,0 +1,44 @@
+/edit
+
+No session found. Sending cookie header.
+
+GET
+Sending through tunnel /
+Error: Cannot find module '/home/bensigal/www/tunnel.node.js'
+    at Function.Module._resolveFilename (module.js:338:15)
+    at Function.Module._load (module.js:289:25)
+    at Module.require (module.js:366:17)
+    at require (module.js:385:17)
+    at sendThroughTunnel (/home/bensigal/server/server.js:254:20)
+    at serverRespond (/home/bensigal/server/server.js:112:3)
+    at /home/bensigal/server/server.js:47:4
+    at FSReqWrap.oncomplete (fs.js:82:15)
+Tunnel not found at /home/bensigal/www/tunnel.node.js
+At default tunnel
+Searching for /edit
+Found directory
+Sending through tunnel /edit/
+function (req,res,server){
+	if(!req.session.on){
+		req.log("Not logged in. Sending login page.");
+		server.getFile(server.root+"login.html",req,res,{
+			statusCode: 403,
+			pathNotFromWww:true
+		});
+	}else if(/(ugly|contextMenu)\.css/.test(req.path)){
+		server.getFile(req.path,req,res);
+	}else if(/(editor|serverManagement|userManagement|contextMenu)\.js$/.test(req.path)){
+		server.getFile(req.path,req,res);
+	}else if(/\/edit\/?$/.test(req.path)){
+		server.getFile("edit/index.html",req,res);
+	}else{
+		req.log("File not found.");
+		server.showErrorPage(404,req,res);
+	}
+}
+Not logged in. Sending login page.
+Sending /home/bensigal/login.html with options { statusCode: 403, pathNotFromWww: true }
+undefined
+File not found.
+Showing 404 page.
+Showing error 404

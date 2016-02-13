@@ -1,0 +1,8 @@
+{ contents: 
+   [ { fieldName: 'contents',
+       originalFilename: 'temp.txt',
+       path: '/tmp/kjF0zNqLj9Itbt3X6BGQcO4M.txt',
+       headers: 
+        { 'content-disposition': 'form-data; name="contents"; filename="temp.txt"',
+          'content-type': 'application/octet-stream' },
+       size: 52277 } ] }

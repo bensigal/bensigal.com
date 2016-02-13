@@ -1,0 +1,10 @@
+{ host: 'bensigal.com:8000',
+  'cache-control': 'no-cache',
+  pragma: 'no-cache',
+  accept: '*/*',
+  'accept-encoding': 'gzip, deflate',
+  'user-agent': 'Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)',
+  'x-forwarded-for': '157.55.39.47',
+  'x-forwarded-host': 'bensigal.com',
+  'x-forwarded-server': 'bensigal.com',
+  connection: 'close' }

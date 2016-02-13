@@ -1,0 +1,17 @@
+/server/siteMap
+
+Session found.
+{ id: '1b313a9a47c20e777552e7e456961febf95301a888dd0d4c3f364e51d3475fced058c23e4d938d472516c5996f01d1ad' }
+
+POST, not multipart. Assuming querystring. Actual: application/x-www-form-urlencoded; charset=UTF-8
+Waiting for body before sending through tunnel...
+dir=%2Fhome%2Fbensigal%2Fserver%2Fwww%2F
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /server/
+Sending [object global]login.html with options { statusCode: 401, pathNotFromWww: true }
+undefined
+File not found.
+Showing 404 page.
+Showing error 404

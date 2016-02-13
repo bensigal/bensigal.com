@@ -1,0 +1,8 @@
+{ host: 'bensigal.com:8000',
+  'user-agent': 'Wget/1.16.3 (linux-gnu)',
+  accept: '*/*',
+  'accept-encoding': 'identity',
+  'x-forwarded-for': '75.208.245.101',
+  'x-forwarded-host': 'bensigal.com',
+  'x-forwarded-server': 'bensigal.com',
+  connection: 'close' }

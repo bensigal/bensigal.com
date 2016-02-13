@@ -1,0 +1,12 @@
+/style.css
+
+Session found.
+{ id: 'f2d0a001f66ee4a38d5fca0a0ca17e6e8fe1f2a4fd763f9a55992901e92b48c32d8679b06c8fac060987cc6b2b443356' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Searching for /style.css
+Sending /style.css with options {}
+<Buffer 40 69 6d 70 6f 72 74 20 22 66 6f 6f 74 65 72 2e 63 73 73 22 3b 0d 0a 0d 0a 62 6f 64 79 7b 0d 0a 20 20 20 20 62 61 63 6b 67 72 6f 75 6e 64 2d 63 6f 6c ... >

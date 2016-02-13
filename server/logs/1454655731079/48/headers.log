@@ -1,0 +1,13 @@
+{ host: 'bensigal.com:8000',
+  accept: '*/*',
+  'accept-encoding': 'gzip',
+  'accept-charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
+  'accept-language': 'en-us,en;q=0.5',
+  'user-agent': 'Chilkat/1.0.0 (+http://www.chilkatsoft.com/ChilkatHttpUA.asp)',
+  cookie: 'sessid=141d2a078d3da544c30c18dfe461c68357190b23df81b0c39e4a6bfd71e52334e0d7b53d3b435310db841f7c918a9951',
+  via: '1.1 (frontal)zentyal.zentyal-domain.lan (squid/3.3.8), 1.1 (external)zentyal.zentyal-domain.lan (squid/3.3.8)',
+  'x-forwarded-for': '172.168.10.2, 127.0.0.1, 180.150.19.243',
+  'cache-control': 'max-age=259200',
+  'x-forwarded-host': 'bensigal.com',
+  'x-forwarded-server': 'bensigal.com',
+  connection: 'close' }

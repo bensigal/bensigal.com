@@ -1,0 +1,15 @@
+/cheatSheet/data.txt
+
+Session found.
+{ id: '1dc53e7700c8b6c0da727a63e5d3c711a7d684d1616bdabb781d6d00ee934a3fc4a8286c13987b93fa2fe060ff50eecd' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /cheatSheet/
+Tunnel not found at /home/bensigal/server/www/cheatSheet/tunnel.node.js
+At default tunnel
+Searching for /cheatSheet/data.txt
+Sending /cheatSheet/data.txt with options {}
+<Buffer 31 63 6c 62 20 3a 20 31 33 2d 32 31 20 70 6f 69 6e 74 73 2c 20 61 74 20 6c 65 61 73 74 20 33 63 6c 62 73 3c 62 72 3e 55 73 65 20 74 68 69 73 20 69 66 ... >

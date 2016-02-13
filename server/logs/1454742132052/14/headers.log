@@ -1,0 +1,11 @@
+{ host: 'bensigal.com:8000',
+  accept: '*/*',
+  'accept-encoding': 'gzip',
+  'accept-charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
+  'accept-language': 'en-us,en;q=0.5',
+  'user-agent': 'Chilkat/1.0.0 (+http://www.chilkatsoft.com/ChilkatHttpUA.asp)',
+  cookie: 'sessid=3f7f8a59906941cb745ba7931fd5d4568fe5d7c89005c49813d63c25963e905af88b21e417a5fd21ed1253bdea3ea730',
+  'x-forwarded-for': '85.201.37.89',
+  'x-forwarded-host': 'bensigal.com',
+  'x-forwarded-server': 'bensigal.com',
+  connection: 'close' }

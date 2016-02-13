@@ -1,0 +1,12 @@
+/footer.css
+
+Session found.
+{ id: '36192a0282176881834cbcea87a35c303f17d41d7de21a46bc4a33f2af7e3049cf6bfc55d5d9a0c19f60e252fbd54ec0' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Searching for /footer.css
+Sending /footer.css with options {}
+<Buffer 66 6f 6f 74 65 72 7b 0d 0a 20 20 20 20 70 6f 73 69 74 69 6f 6e 3a 20 61 62 73 6f 6c 75 74 65 3b 0d 0a 09 63 6f 6c 6f 72 3a 20 77 68 69 74 65 3b 0d 0a ... >

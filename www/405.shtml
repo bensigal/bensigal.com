@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>405 Method Not Allowed</title>
+        <link rel="stylesheet" type="text/css" href="/style.css">
+    </head>
+    <body>
+        <header id="error">
+            <h1>Error 405 - Method Not Allowed</h1>
+        </header>
+        <nav>
+            <a href="/index.html"><div>Home</div></a>
+        </nav>
+    </body>
+</html>

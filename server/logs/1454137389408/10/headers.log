@@ -1,0 +1,10 @@
+{ host: 'bensigal.com:8000',
+  referer: 'http://BENSIGAL.COM/index.php/admin/',
+  'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/31.0.1650.57 Safari/537.36',
+  accept: 'image/gif, image/x-xbitmap, image/jpeg,image/pjpeg, application/x-shockwave-flash,application/vnd.ms-excel,application/vnd.ms-powerpoint,application/msword',
+  'accept-language': 'ru',
+  'content-type': 'application/x-www-form-urlencoded',
+  'x-forwarded-for': '62.109.7.46',
+  'x-forwarded-host': 'bensigal.com',
+  'x-forwarded-server': 'bensigal.com',
+  connection: 'close' }

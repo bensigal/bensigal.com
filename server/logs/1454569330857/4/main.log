@@ -1,0 +1,10 @@
+/robots.txt
+
+No session found. Sending cookie header.
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Searching for /robots.txt
+Showing error 404

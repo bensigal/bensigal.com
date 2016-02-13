@@ -1,0 +1,47 @@
+/server/save
+
+Session found.
+{ id: 'a8695ab48d0b1e8164cc110a50167f7bef4985a4251c6c8296b50fd2170763c8e077d097e8e7565d885ef2a840cd4709',
+  on: true,
+  un: 'Ben',
+  pwd: '44MeepsGiven' }
+
+POST, not multipart. Assuming querystring. Actual: application/octet-stream
+Waiting for body before sending through tunnel...
+-----------------------------129143245312168297241951674952
+Content-Disposition: form-data; name="file"
+
+/home/bensigal/server/www/404.shtml
+-----------------------------129143245312168297241951674952
+Content-Disposition: form-data; name="contents"; filename="temp.txt"
+Content-Type: application/octet-stream
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>404 File Not Found</title>
+        <link rel="stylesheet" type="text/css" href="/style.css">
+    </head>
+    <body>
+        <header id="error">
+            <h1>Error 404 - File Not Found</h1> 
+        </header>
+        <nav>
+            <a href="/index.html"><div>Home</div></a>
+        </nav>
+    </body>
+</html>
+-----------------------------129143245312168297241951674952--
+
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /server/
+Saving to file undefined <undefined>
+Error in tunnel execution.
+TypeError: Cannot read property 'contents' of undefined
+    at module.exports (/home/bensigal/server/www/server/tunnel.node.js:104:41)
+    at sendThroughTunnel (/home/bensigal/server/server.js:265:24)
+    at /home/bensigal/server/server.js:131:4
+    at FSReqWrap.oncomplete (fs.js:82:15)
+Showing error 500

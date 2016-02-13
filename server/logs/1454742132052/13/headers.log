@@ -1,0 +1,10 @@
+{ host: 'bensigal.com:8000',
+  accept: '*/*',
+  'accept-encoding': 'gzip',
+  'accept-charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
+  'accept-language': 'en-us,en;q=0.5',
+  'user-agent': 'Chilkat/1.0.0 (+http://www.chilkatsoft.com/ChilkatHttpUA.asp)',
+  'x-forwarded-for': '85.201.37.89',
+  'x-forwarded-host': 'bensigal.com',
+  'x-forwarded-server': 'bensigal.com',
+  connection: 'close' }

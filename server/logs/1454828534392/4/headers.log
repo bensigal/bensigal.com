@@ -1,0 +1,10 @@
+{ host: 'bensigal.com:8000',
+  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  from: 'googlebot(at)googlebot.com',
+  'accept-encoding': 'gzip,deflate',
+  'user-agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+  'if-modified-since': 'Thu, 04 Feb 2016 17:38:51 UTC',
+  'x-forwarded-for': '66.249.69.115',
+  'x-forwarded-host': 'bensigal.com',
+  'x-forwarded-server': 'bensigal.com',
+  connection: 'close' }

@@ -1,0 +1,15 @@
+/edit/editor.js
+
+Session found.
+{ id: '71cc55d831b3fe6ed1d7558f5cfad9f9b48bca0d622fd6c928716090268b39503113e1c23cd98dab10b339db7654f166',
+  on: true,
+  un: 'Ben',
+  pwd: '44MeepsGiven' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /edit/
+Sending /edit/editor.js with options {}
+<Buffer 76 61 72 20 63 75 72 72 65 6e 74 45 64 69 74 6f 72 3d 31 3b 0a 76 61 72 20 65 64 69 74 6f 72 73 3d 5b 5d 3b 0a 76 61 72 20 6e 6f 45 64 69 74 6f 72 73 ... >

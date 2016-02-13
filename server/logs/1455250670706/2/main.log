@@ -1,0 +1,20 @@
+/server/login
+
+Session found.
+{ id: '5adf9a05d33b8f490c8a6e140e568e79353f1d8a01ce659a20e124544de3da7f8104b107f16e7cb2c28a33a99f03b06e' }
+
+POST, not multipart. Assuming querystring. Actual: application/x-www-form-urlencoded; charset=UTF-8
+Waiting for body before sending through tunnel...
+un=Ben&pwd=44MeepsGiven
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /server/
+Login attempt
+Error in tunnel execution.
+ReferenceError: passwords is not defined
+    at module.exports (/home/bensigal/server/www/server/tunnel.node.js:14:28)
+    at sendThroughTunnel (/home/bensigal/server/server.js:277:24)
+    at /home/bensigal/server/server.js:140:4
+    at FSReqWrap.oncomplete (fs.js:82:15)
+Showing error 500

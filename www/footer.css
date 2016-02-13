@@ -1,0 +1,16 @@
+footer{
+    position: absolute;
+	color: white;
+    bottom: 10px;
+	left: 10px;
+    width: 200px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #08F;
+    text-align: center;
+    transition: 0.25s;
+}
+
+footer:hover{
+	background-color: #06A;
+}

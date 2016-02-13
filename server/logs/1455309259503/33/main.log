@@ -1,0 +1,155 @@
+/server/getFileContents
+
+Session found.
+{ id: 'a14d2dd42347bf27a1b567167fab1f9a782d6094ec4857818fe8103d1cd8b42f958a5fd29d4dad3edcd441371e276e0d',
+  on: true,
+  un: 'Ben',
+  pwd: '65LLMPQrevres' }
+
+POST, not multipart. Assuming querystring. Actual: application/x-www-form-urlencoded; charset=UTF-8
+Waiting for body before sending through tunnel...
+edit=%2Fhome%2Fbensigal%2Fserver%2Fwww%2Fmonochrome.css
+Sending through tunnel /
+Error: Cannot find module '/home/bensigal/server/www/tunnel.node.js'
+    at Function.Module._resolveFilename (module.js:338:15)
+    at Function.Module._load (module.js:289:25)
+    at Module.require (module.js:366:17)
+    at require (module.js:385:17)
+    at sendThroughTunnel (/home/bensigal/server/server.js:262:20)
+    at IncomingMessage.<anonymous> (/home/bensigal/server/server.js:106:4)
+    at emitNone (events.js:67:13)
+    at IncomingMessage.emit (events.js:166:7)
+    at endReadableNT (_stream_readable.js:905:12)
+    at doNTCallback2 (node.js:441:9)
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /server/
+function (req,res,server){
+	if(/login\/?/.test(req.path)){
+		if(req.method=="POST"){
+			req.log("Login attempt");
+			var unIndex=users.indexOf(req.post.un);
+			if(unIndex>-1&&unIndex==passwords.indexOf(new Buffer(req.post.pwd).toString("base64"))){
+				req.session.on=true;
+				req.session.un=req.post.un;
+				req.session.pwd=req.post.pwd;
+			}
+		}
+		return req.session.on?"true":"false";
+	}else if(/throwError.*/.test(req.path)){
+		server.showErrorPage(Number(req.path.substring(req.path.lastIndexOf("/")+1)),req,res);
+	//Below are functions that require login. Catch unauthorized users here.	
+	}else if(!req.session.on){
+		server.getFile(root+"login.html",req,res,{
+			statusCode: 401,
+			pathNotFromWww:true
+		});
+	}else if(/logout\/?/.test(req.path)){
+		req.log("Logging out.");
+		req.session.on=false;
+		return "false";
+	}else if(/siteMap\/?/.test(req.path)){ 
+		if(!req.post || !req.post.dir)
+			server.sendString("No sitemap location sent.",req,res);
+		//Not allowed to go up a directory. The server doesn't like that.
+		if(req.post.dir.includes(".."))
+			server.sendString("Invalid request: String .. in filepath dangerous.",req,res);
+		//Looking into non-home-directory folders is dangerous. Best to shut out non-admins.
+		if(!req.post.dir.startsWith("/home/bensigal")&&req.session.un!="Ben")
+			server.sendString("Non-admins are not allowed to navigate out of home directory.",req,res);
+		req.log("Generating sitemap for "+req.post.dir);
+		fs.readdir(req.post.dir,function(err,items){
+			if(err){
+				if(err.code=="ENOENT")
+					server.sendString("Folder not found.",req,res);
+				else{
+					server.sendString("Unknown error.",req,res);
+					req.log(err.stack);
+				}
+				return;
+			}
+			var dirs = [];
+			var files= [];
+			var responsesLeft = items.length;
+			items.forEach(function(file){
+				//This is some weird code, but necessary for a good async paradigm.
+				//Each execution of the callback to stat needs the file name,
+				//Because stat objects don't contain the file name. So, we have a 
+				//closure to retain the fariable file, which is a string from items.
+				//Because they will not necessarily finish in order, each has the capacity
+				//to send off the completed list. Closures for the win.
+				fs.stat(req.post.dir+file,function(file){
+					return function(err, stats){
+						responsesLeft--;
+						if(err){
+							req.err(err.stack);
+							files.push(file+"<br>INACCESSIBLE");
+						}else if(stats.isDirectory()){
+							dirs.push(file);
+						}else{
+							files.push(file);
+						}
+						if(responsesLeft===0){
+							req.log("COMPLETE "+dirs+files);
+							server.sendString(dirs.join(";")+"\n"+files.join(";"),req,res);
+						}
+					}
+				}(file));
+			});
+		});
+	//BELOW ARE ADMIN-ONLY FUNCTIONS. Catch normal users here.
+	}else if(req.session.un!="Ben"){
+		server.showErrorPage(403,req,res);
+	}else if(/exit\/?/.test(req.path)){
+		server.process.exit();
+		return;
+	}else if(/ssh\/?/.test(req.path)){ 
+		exec(["C:\\Program Files (x86)\\freeSSHd\\FreeSSHDService.exe"],function(err,out,code){
+			if(err instanceof Error){
+				req.err(err.stack);
+			}
+			process.stdout.write(out);
+		});
+		return "Attempted successfully.";
+	}else if(/getFileContents\/?/.test(req.path)){
+		req.log("Reading file contents for "+req.post.edit);
+		server.getFile(req.post.edit,req,res,{
+			pathNotFromWww:true,
+			notFoundCallback:function(){
+				server.sendString("Error: File not found.",req,res);
+			},
+			encoding:"binary"
+		});
+	}else if(/save\/?/.test(req.path)){
+		req.log("Saving to file "+req.post.file);
+		var is = fs.createReadStream(req.files.contents[0].path);
+		var os = fs.createWriteStream(String(req.post.file));
+		is.pipe(os);
+		is.on('end',function(err){
+			if(err)throw err;
+			fs.unlink(req.files.contents[0].path,function(err){
+				if(err)throw err;
+				server.sendString("Success!",req,res);
+			});
+		});
+	}else if (/delete\/?/.test(req.path)){
+	    req.log("Deleting "+req.post.file);
+	    return "";
+	}else if (/javac\/?/.test(req.path)){
+	    exec("javac "+req.post.args+" "+req.post.file, function(error, stdout, stderr){
+            if(error){
+                server.sendString(error.stack,req,res);
+            }else{
+                server.sendString(stdout.toString()+stderr.toString(),req,res);
+            }
+	    });
+	}
+	else{
+		server.showErrorPage(404,req,res);
+	}
+}
+Reading file contents for /home/bensigal/server/www/monochrome.css
+Sending /home/bensigal/server/www/monochrome.css with options { pathNotFromWww: true,
+  notFoundCallback: [Function],
+  encoding: 'binary' }
+'/** initial setup **/\n.nano {\n  position : relative;\n  width    : 100%;\n  height   : 100%;\n  overflow : hidden;\n}\n.nano > .nano-content {\n  position      : absolute;\n  overflow      : scroll;\n  overflow-x    : hidden; \n  top           : 0;\n  right         : 0;\n  bottom        : 0;\n  left          : 0;\n}\n.nano > .nano-content:focus {\n  outline: thin dotted;\n}\n.nano > .nano-content::-webkit-scrollbar {\n  display: none;\n}\n.has-scrollbar > .nano-content::-webkit-scrollbar {\n  display: block;\n}\n.nano > .nano-pane {\n  background : rgba(0,0,0,.25);\n  position   : absolute;\n  width      : 10px;\n  right      : 0;\n  top        : 0;\n  bottom     : 0;\n  visibility : hidden\\9; /* Target only IE7 and IE8 with this hack */\n  opacity    : .01;\n  -webkit-transition    : .2s;\n  -moz-transition       : .2s;\n  -o-transition         : .2s;\n  transition            : .2s;\n  -moz-border-radius    : 5px;\n  -webkit-border-radius : 5px;\n  border-radius         : 5px;\n}\n.nano > .nano-pane > .nano-slider {\n  background: #444;\n  background: rgba(0,0,0,.5);\n  position              : relative;\n  margin                : 0 1px;\n  -moz-border-radius    : 3px;\n  -webkit-border-radius : 3px;\n  border-radius         : 3px;\n}\n.nano:hover > .nano-pane, .nano-pane.active, .nano-pane.flashed {\n  visibility : visible\\9; /* Target only IE7 and IE8 with this hack */\n  opacity    : 0.99;\n}\n#allNMore{\n    height: calc(100vh - 121px);\n}\ntd{\n    border: 1px solid black;\n}\ninput{\n    font-size: 30px;\n    width: 351px;\n}\n#un{\n    margin: 70px 50px 5px 50px;\n}\n#pwd{\n    margin: 5px 50px 70px 50px;\n}\nhtml{\n    background: url("meep.png");\n    background-color: #012;\n    background-size: 140px 90px;\n    background-repeat: repeat;\n}\nbody{\n    margin: 0;\n    height: 100%;\n    overflow-y: hidden;\n}\n#all{\n    background-color: rgb(0,90,171);\n    background-color: rgba(0,100,181,0.9);\n    margin: 0 auto 0 auto;\n    height: 100vh;\n    overflow-y: auto;\n    width: 851px;\n}\n#content{\n    height: calc(100vh - 121px);\n    border-bottom: 1px solid #444;\n    text-align: center;\n    font-family: Georgia, sans-serif;\n    overflow-y: scroll;\n}\n.details{\n    font-style: italic;\n    font-size: 12px;\n}\n#shell{\n    padding: 100px 0 0 0;\n    font-family: Georgia, sans-serif;\n}\n.button{\n    background-color: #DDD;\n    border-radius: 2px;\n    font-family: Georgia, serif;\n    color: #222;\n    text-align: center;\n    float: left;\n    cursor: pointer;\n    transition: 0.25s;\n}\nhr{\n    border: none;\n    border-bottom: 1px solid #333;\n}\n.button:hover{\n    background-color: #EEE;\n    color: black;\n}\n.choice{\n    text-decoration: none;\n    font-family: Georgia, serif;\n    font-size: 16pt;\n    text-align: center;\n    cursor: pointer;\n    transition: 0.25s;\n    width: 391px;\t\n    color: white;\n    background-color: #036;\n    float: none;\n    padding: 20px 0;\n    margin: 0 30px 0 30px;\n}\n.choice:first-child{\n\tborder-top-left-radius: 2px;\n\tborder-top-right-radius: 2px;\n}\n.choice:last-child{\n\tborder-bottom-left-radius: 2px;\n\tborder-bottom-right-radius: 2px;\n}\n.choice:hover{\n    background-color: #012;\n}\nfooter{\n    height: 100px;\n    padding: 10px 0;\n    background-color: #5D5D5D;\n}\n#send{\n    width: 50px;\n    border-radius: 2px;\n    margin: 10px;\n    padding: 30.5px 20px;\n}\n#logOut{\n    width: 70px;\n    margin: 10px 0 8px 0;\n    padding: 8px 15px;\n}\n#back{\n    width: 70px;\n    border-radius: 2px;\n    margin: 0;\n    padding: 8px 15px;\n}\n#message{\n    float: left;\n    width: 600px;\n    margin: 10px;\n    height: 80px;\n    font-size: 20px;\n}\n#holder{\n    width: 451px;\n    padding: 40px 20px;\n    margin: 0 auto;\n    background-color: white;\n}\n.entireMessage{\n    width: 701px;\n    margin: 15px 50px;\n    height: auto;\n    color: black;\n    background-color: #F6F6F6;\n    border-radius: 10px;\n    padding: 10px 20px;\n}\n.messagePortion{\n    display: inline-block;\n    text-align: justify;\n    margin: 2px 0 2px 5%;\n    width: 75%;\n}\n.messageUsername{\n    font-size: 14px;\n    font-style: initial;\n}\n.details{\n    margin-top: 0;\n    float: left;\n    width: 20%;\n}\n.messageTime{\n    font-size: 10px;\n}\nh1{\n\ttext-align: center;\n}\n#headerTitle{\n\tfont-size: 30pt;\n\tmargin-top: -20px;\n\tmargin-bottom: 30px;\n}\t'

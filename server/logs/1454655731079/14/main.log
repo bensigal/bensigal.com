@@ -1,0 +1,17 @@
+/edit
+
+Session found.
+{ id: '1b313a9a47c20e777552e7e456961febf95301a888dd0d4c3f364e51d3475fced058c23e4d938d472516c5996f01d1ad' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Searching for /edit
+Found directory
+Sending through tunnel /edit/
+Tunnel not found at /home/bensigal/server/www/edit/tunnel.node.js
+At default tunnel
+Current location is request. Sending index file.
+Sending /edit/index.html with options [Function]
+<Buffer 3c 21 44 4f 43 54 59 50 45 20 68 74 6d 6c 3e 0d 0a 3c 68 74 6d 6c 3e 0d 0a 3c 68 65 61 64 3e 0d 0a 20 20 20 20 3c 74 69 74 6c 65 3e 42 65 6e 27 73 20 ... >

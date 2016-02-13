@@ -1,0 +1,24 @@
+/testIndex.html
+
+Session found.
+{ id: 'ce407d87f344b0957cbdf53dcd09acaadb68f33142ab88d90704d45b9559f6dd1158e94ff4c6fd775c36227d18de7124',
+  on: true,
+  un: 'Ben',
+  pwd: '65LLMPQrevres' }
+
+GET
+Sending through tunnel /
+Error: Cannot find module '/home/bensigal/server/www/tunnel.node.js'
+    at Function.Module._resolveFilename (module.js:338:15)
+    at Function.Module._load (module.js:289:25)
+    at Module.require (module.js:366:17)
+    at require (module.js:385:17)
+    at sendThroughTunnel (/home/bensigal/server/server.js:262:20)
+    at serverRespond (/home/bensigal/server/server.js:112:3)
+    at /home/bensigal/server/server.js:47:4
+    at FSReqWrap.oncomplete (fs.js:82:15)
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Searching for /testIndex.html
+Sending /testIndex.html with options {}
+<Buffer 3c 21 44 4f 43 54 59 50 45 20 68 74 6d 6c 3e 0a 3c 68 74 6d 6c 20 6c 61 6e 67 3d 22 65 6e 22 3e 0a 3c 68 65 61 64 3e 0a 09 3c 6c 69 6e 6b 20 72 65 6c ... >

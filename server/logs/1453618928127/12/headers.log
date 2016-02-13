@@ -1,0 +1,8 @@
+{ host: 'bensigal.com:8000',
+  'accept-encoding': 'gzip',
+  'user-agent': 'Mozilla/5.0 (compatible; meanpathbot/1.0; +http://www.meanpath.com/meanpathbot.html)',
+  accept: '*/*',
+  'x-forwarded-for': '192.99.107.218',
+  'x-forwarded-host': 'bensigal.com',
+  'x-forwarded-server': 'bensigal.com',
+  connection: 'close' }

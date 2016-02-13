@@ -1,0 +1,21 @@
+/monochrome.css
+
+Session found.
+{ id: 'ba9eb8d0e540ce6662834f08e0962135d8be4170a3c44229ababf0350716f2ed9f3995cae0f01638637827aaadff2c59' }
+
+GET
+Sending through tunnel /
+Error: Cannot find module '/home/bensigal/server/www/tunnel.node.js'
+    at Function.Module._resolveFilename (module.js:338:15)
+    at Function.Module._load (module.js:289:25)
+    at Module.require (module.js:366:17)
+    at require (module.js:385:17)
+    at sendThroughTunnel (/home/bensigal/server/server.js:262:20)
+    at serverRespond (/home/bensigal/server/server.js:112:3)
+    at /home/bensigal/server/server.js:47:4
+    at FSReqWrap.oncomplete (fs.js:82:15)
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Searching for /monochrome.css
+Sending /monochrome.css with options {}
+<Buffer 23 73 68 65 6c 6c 7b 0a 20 20 20 20 6d 61 72 67 69 6e 2d 74 6f 70 3a 20 31 30 30 70 78 3b 0a 20 20 20 20 77 69 64 74 68 3a 20 35 30 30 70 78 3b 0a 20 ... >

@@ -1,0 +1,21 @@
+/footer.css
+
+Session found.
+{ id: '314dbd8ff97d9b5cc8e001b754e3dbebba71e421709ae1516086df1a3fdea233d91206c417df7bffee728a707f6dc853' }
+
+GET
+Sending through tunnel /
+Error: Cannot find module '/home/bensigal/www/tunnel.node.js'
+    at Function.Module._resolveFilename (module.js:338:15)
+    at Function.Module._load (module.js:289:25)
+    at Module.require (module.js:366:17)
+    at require (module.js:385:17)
+    at sendThroughTunnel (/home/bensigal/server/server.js:254:20)
+    at serverRespond (/home/bensigal/server/server.js:112:3)
+    at /home/bensigal/server/server.js:47:4
+    at FSReqWrap.oncomplete (fs.js:82:15)
+Tunnel not found at /home/bensigal/www/tunnel.node.js
+At default tunnel
+Searching for /footer.css
+Sending /footer.css with options {}
+<Buffer 66 6f 6f 74 65 72 7b 0d 0a 20 20 20 20 70 6f 73 69 74 69 6f 6e 3a 20 61 62 73 6f 6c 75 74 65 3b 0d 0a 09 63 6f 6c 6f 72 3a 20 77 68 69 74 65 3b 0d 0a ... >

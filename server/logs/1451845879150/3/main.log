@@ -1,0 +1,12 @@
+/edit/
+
+Session found.
+{ id: '981a58d7690e7a08916d58de21dd47918cc9e6b076ef1e299a82f13b70e6b503d7c5732771d575ce4eac653fdfb06b02' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /edit/
+Not logged in. Sending login page.
+Sending /home/bensigal/server/login.html

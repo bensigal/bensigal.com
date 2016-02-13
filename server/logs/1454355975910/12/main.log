@@ -1,0 +1,15 @@
+/edit/contextMenu.js
+
+Session found.
+{ id: '0ccc16cbba4e4411a022cbd20de8f41490123b0aaeb84d757848b9324572ef1b6a2f6499adcbc0a2bfe53d30141115a4',
+  on: true,
+  un: 'Ben',
+  pwd: '44MeepsGiven' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /edit/
+Sending /edit/contextMenu.js with options {}
+<Buffer 2f 2a 21 0d 0a 20 2a 20 6a 51 75 65 72 79 20 63 6f 6e 74 65 78 74 4d 65 6e 75 20 76 40 56 45 52 53 49 4f 4e 20 2d 20 50 6c 75 67 69 6e 20 66 6f 72 20 ... >

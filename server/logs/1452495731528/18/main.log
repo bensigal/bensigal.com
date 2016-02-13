@@ -1,0 +1,20 @@
+/server/getFileContents
+
+Session found.
+{ id: '857e2721ce7e5f8067bd026db604131d71373767ac9f25ade7f8e7b22eba188e40dba51d2f21ee27bb982ebc35ef842a',
+  on: true,
+  un: 'Ben',
+  pwd: '44MeepsGiven' }
+
+POST, not multipart. Assuming querystring. Actual: application/x-www-form-urlencoded; charset=UTF-8
+Waiting for body before sending through tunnel...
+edit=%2Fhome%2Fbensigal%2Fserver%2Fwww%2Findex.html
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /server/
+Reading file contents for /home/bensigal/server/www/index.html
+Sending /home/bensigal/server/www/index.html with options { pathNotFromWww: true,
+  notFoundCallback: [Function],
+  encoding: 'binary' }
+'<!DOCTYPE html>\r\n<html lang="en">\r\n    <head>\r\n        <link rel="stylesheet" type="text/css" href="style.css">\r\n        <link rel="icon" type="image/ico" href="favicon.ico">\r\n        <title>Ben\'s Great Website</title>\r\n    </head>\r\n    <header><h1>Ben\'s Great Website</h1></header>\r\n    <nav>\r\n        <a href="edit/"><div>Edit</div></a>\r\n        <a href="rand/"><div>Random</div></a>\r\n        <a href="groups/"><div>Groups</div></a>\r\n        <a href="cheatSheet/"><div>Cheat Sheet</div></a>\r\n        <a href="java/"><div>Java</div></a>\r\n    </nav>\r\n</html>'

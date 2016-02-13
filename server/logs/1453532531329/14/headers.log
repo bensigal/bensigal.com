@@ -1,0 +1,7 @@
+{ host: 'bensigal.com:8000',
+  'user-agent': 'PagesInventory (robot http://www.pagesinventory.com)',
+  accept: 'text/plain',
+  'x-forwarded-for': '130.185.104.81',
+  'x-forwarded-host': 'www.bensigal.com',
+  'x-forwarded-server': 'bensigal.com',
+  connection: 'close' }

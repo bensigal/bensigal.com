@@ -1,0 +1,6 @@
+{ host: 'bensigal.com:8000',
+  accept: '*/*',
+  'x-forwarded-for': '58.248.197.31',
+  'x-forwarded-host': 'bensigal.com',
+  'x-forwarded-server': 'bensigal.com',
+  connection: 'close' }

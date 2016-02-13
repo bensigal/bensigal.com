@@ -1,0 +1,15 @@
+/rand/script.js
+
+Session found.
+{ id: '0e57b73aa256e60cf37224a917f90966ba6eb2a9eb1e7c987f62922611cdb355e10c46537c834788ee8ba33256b1bb99' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /rand/
+Tunnel not found at /home/bensigal/server/www/rand/tunnel.node.js
+At default tunnel
+Searching for /rand/script.js
+Sending /rand/script.js with options {}
+<Buffer 77 69 6e 64 6f 77 2e 6f 6e 6c 6f 61 64 3d 66 75 6e 63 74 69 6f 6e 28 29 7b 0a 09 24 28 22 23 67 6f 22 29 2e 63 6c 69 63 6b 28 73 75 62 6d 69 74 29 3b ... >

@@ -1,0 +1,14 @@
+/400.shtml
+
+Session found.
+{ id: 'ae0507d33f9c23929f2a1c84e2bd054fb16b27ed9c28e00eb779594270f0d568df6904748198115891f83941f25d682e',
+  on: true,
+  un: 'Ben',
+  pwd: '44MeepsGiven' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Searching for /400.shtml
+Showing error 404

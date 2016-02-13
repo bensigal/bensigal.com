@@ -1,0 +1,10 @@
+{ host: 'bensigal.com:8000',
+  'user-agent': 'Mozilla/5.0 (Windows NT 5.2; WOW64) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.63 Safari/535.7',
+  'accept-encoding': 'gzip',
+  'accept-charset': 'utf-8,windows-1251;q=0.7,*;q=0.7',
+  'accept-language': 'en-us,en;q=0.8',
+  accept: 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.3',
+  'x-forwarded-for': '80.15.47.209',
+  'x-forwarded-host': 'BENSIGAL.COM',
+  'x-forwarded-server': 'bensigal.com',
+  connection: 'close' }

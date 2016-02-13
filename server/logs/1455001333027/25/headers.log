@@ -1,0 +1,8 @@
+{ host: 'bensigal.com:8000',
+  accept: 'image/*',
+  'accept-encoding': 'gzip,deflate',
+  'x-forwarded-for': '207.163.165.37, 66.249.84.141',
+  'user-agent': 'Mozilla/5.0 (Windows NT 6.1; rv:6.0) Gecko/20110814 Firefox/6.0 Google Favicon',
+  'x-forwarded-host': 'bensigal.com',
+  'x-forwarded-server': 'bensigal.com',
+  connection: 'close' }

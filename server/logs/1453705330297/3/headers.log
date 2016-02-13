@@ -1,0 +1,11 @@
+{ host: 'bensigal.com:8000',
+  'content-type': 'application/x-www-form-urlencoded',
+  'user-agent': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.2; WOW64; Trident/6.0; .NET4.0E; .NET4.0C; .NET CLR 3.5.30729; .NET CLR 3.0.30729; .NET CLR 2.0.50727)',
+  'cache-control': 'no-cache',
+  'x-p2p-peerdist': 'Version=1.1',
+  'x-p2p-peerdistex': 'MinContentInformation=1.0, MaxContentInformation=2.0',
+  'accept-encoding': 'peerdist',
+  'x-forwarded-for': '41.196.79.244',
+  'x-forwarded-host': 'BENSIGAL.COM',
+  'x-forwarded-server': 'bensigal.com',
+  connection: 'close' }

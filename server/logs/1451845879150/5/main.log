@@ -1,0 +1,13 @@
+/server/login
+
+Session found.
+{ id: '981a58d7690e7a08916d58de21dd47918cc9e6b076ef1e299a82f13b70e6b503d7c5732771d575ce4eac653fdfb06b02' }
+
+POST multipart/form-data
+Waiting for body before sending through tunnel...
+Error: unsupported content-type
+    at Form.parse (/home/bensigal/server/node_modules/multiparty/index.js:160:21)
+    at serverRespond (/home/bensigal/server/server.js:75:25)
+    at /home/bensigal/server/server.js:47:4
+    at FSReqWrap.oncomplete (fs.js:82:15)
+Showing error 400

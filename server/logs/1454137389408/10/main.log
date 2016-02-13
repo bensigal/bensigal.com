@@ -1,0 +1,13 @@
+/index.php/admin/
+
+No session found. Sending cookie header.
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /index.php/
+Tunnel not found at /home/bensigal/server/www/index.php/tunnel.node.js
+At default tunnel
+Location of current tunnel not found.
+Showing error 404

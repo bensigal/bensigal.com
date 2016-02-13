@@ -1,0 +1,15 @@
+/server/login
+
+Session found.
+{ id: 'f1917623c4e0a13f7f8659c35c0a468c00a7336de19defb2d6eff6668f64d89a1cfdaa476a5e2452cb2e97269795b204' }
+
+POST, not multipart. Assuming querystring. Actual: application/x-www-form-urlencoded; charset=UTF-8
+Waiting for body before sending through tunnel...
+un=Ben&pwd=44MeepsGiven
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /server/
+Login attempt
+Detected output from tunnel; sending as plain text.
+Sending string data.

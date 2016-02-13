@@ -1,0 +1,7 @@
+{ host: 'bensigal.com:8000',
+  'accept-encoding': 'identity',
+  'user-agent': 'Python-urllib/2.7',
+  'x-forwarded-for': '74.125.122.33',
+  'x-forwarded-host': 'bensigal.com',
+  'x-forwarded-server': 'bensigal.com',
+  connection: 'close' }

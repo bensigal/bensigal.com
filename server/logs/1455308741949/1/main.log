@@ -1,0 +1,21 @@
+/jquery.min.js
+
+Session found.
+{ id: 'ad4861fca1c501a0bef0218eadcbf2f4cf0cf7b41a66ccc02b977932b87fdd9b6e1244ddf10e58452aed7189da520171' }
+
+GET
+Sending through tunnel /
+Error: Cannot find module '/home/bensigal/server/www/tunnel.node.js'
+    at Function.Module._resolveFilename (module.js:338:15)
+    at Function.Module._load (module.js:289:25)
+    at Module.require (module.js:366:17)
+    at require (module.js:385:17)
+    at sendThroughTunnel (/home/bensigal/server/server.js:262:20)
+    at serverRespond (/home/bensigal/server/server.js:112:3)
+    at /home/bensigal/server/server.js:47:4
+    at FSReqWrap.oncomplete (fs.js:82:15)
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Searching for /jquery.min.js
+Sending /jquery.min.js with options {}
+<Buffer 2f 2a 21 20 6a 51 75 65 72 79 20 76 32 2e 31 2e 34 20 7c 20 28 63 29 20 32 30 30 35 2c 20 32 30 31 35 20 6a 51 75 65 72 79 20 46 6f 75 6e 64 61 74 69 ... >

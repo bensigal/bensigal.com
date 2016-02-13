@@ -1,0 +1,15 @@
+/cheatSheet/
+
+Session found.
+{ id: '849332df2e087c2d7fc94b9f0a03daa494aacfb1d6c7f13a84e0c5817263967f0605a7c4ac47fea28fe717b0b55e15f4' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /cheatSheet/
+Tunnel not found at /home/bensigal/server/www/cheatSheet/tunnel.node.js
+At default tunnel
+Current location is request. Sending index file.
+Sending /cheatSheet/index.html with options [Function]
+<Buffer 3c 21 44 4f 43 54 59 50 45 20 68 74 6d 6c 3e 0a 3c 68 74 6d 6c 20 6c 61 6e 67 3d 22 65 6e 22 3e 0a 20 20 20 20 3c 68 65 61 64 3e 0a 20 20 20 20 20 20 ... >

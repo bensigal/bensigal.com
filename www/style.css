@@ -1,0 +1,74 @@
+@import "footer.css";
+
+body{
+    background-color: #CCC;
+    background-repeat: no-repeat;
+    text-decoration: none; 
+    font-family: Helvetica;
+}
+html{
+    height: 100%;
+    margin:0;
+    padding: 0;
+}
+hr{color: black;}
+
+header{
+	border-radius: 5px;
+	background-color: #08F;
+	color: white;
+	width: 50%;
+	margin: 10px auto;
+	text-align: center;
+	font-size: 24px;
+	padding: 10px 10px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}
+
+nav{
+	background-color: #08F;
+	border: 1px solid #08F;
+	border-radius: 10px;
+	width: 25%;
+	margin: 20px 37.5% 0 37.5%;
+}
+
+a div{
+	background-color: #08F;
+	cursor: pointer;
+	padding: 20px 10px;
+	color: white;
+	font-size: 20px;
+	text-align: center;
+	text-decoration: none;
+	border-bottom: 1px solid #10206B;
+    transition: 0.25s;
+}a:last-child div{
+    border:none;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+}a:first-child div{
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+a:hover div{
+	background-color: #06A;
+	text-decoration: none;
+}
+
+a{text-decoration: none;}
+
+#error{
+	background-color: #A00;
+}
+
+table{
+    border-collapse: collapse;
+}
+td{
+    border: 1px solid black;
+    padding: 10px;
+    font-size: 24px;
+}

@@ -1,0 +1,3 @@
+Files for bensigal.com. Includes files to run server as well as 
+resources. Does not include files to "get to" the server, such as 
+.htaccess and the apache server itself.

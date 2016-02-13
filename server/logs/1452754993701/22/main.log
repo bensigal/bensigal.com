@@ -1,0 +1,18 @@
+/server/siteMap
+
+Session found.
+{ id: '71cc55d831b3fe6ed1d7558f5cfad9f9b48bca0d622fd6c928716090268b39503113e1c23cd98dab10b339db7654f166',
+  on: true,
+  un: 'Ben',
+  pwd: '44MeepsGiven' }
+
+POST, not multipart. Assuming querystring. Actual: application/x-www-form-urlencoded; charset=UTF-8
+Waiting for body before sending through tunnel...
+dir=%2Fhome%2Fbensigal%2Fserver%2F
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /server/
+Generating sitemap for /home/bensigal/server/
+COMPLETE logs,node_modules,wwwerr.log,login.html,root.cfg,server.js,server.log
+Sending string data.

@@ -1,0 +1,20 @@
+/server/getFileContents
+
+Session found.
+{ id: '6ad0a7468d0de1cb9ba5ed9ab3653e109f3023faa37d62fb9b6531ed8426938d9434bac63eee8bff15aec9aa1716373c',
+  on: true,
+  un: 'Ben',
+  pwd: '44MeepsGiven' }
+
+POST, not multipart. Assuming querystring. Actual: application/x-www-form-urlencoded; charset=UTF-8
+Waiting for body before sending through tunnel...
+edit=%2Fhome%2Fbensigal%2Fserver%2Fwww%2Fbuddhism.html
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /server/
+Reading file contents for /home/bensigal/server/www/buddhism.html
+Sending /home/bensigal/server/www/buddhism.html with options { pathNotFromWww: true,
+  notFoundCallback: [Function],
+  encoding: 'binary' }
+''

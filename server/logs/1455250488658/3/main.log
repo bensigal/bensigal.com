@@ -1,0 +1,12 @@
+/jquery.min.js
+
+Session found.
+{ id: '2db9351616cb521cdfaf98aab04225c9cab36f94a5cf86a86038af6a97d98ce07fe4ae9c03671473f0a37fae91fe41ae' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Searching for /jquery.min.js
+Sending /jquery.min.js with options {}
+<Buffer 2f 2a 21 20 6a 51 75 65 72 79 20 76 32 2e 31 2e 34 20 7c 20 28 63 29 20 32 30 30 35 2c 20 32 30 31 35 20 6a 51 75 65 72 79 20 46 6f 75 6e 64 61 74 69 ... >

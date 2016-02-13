@@ -1,0 +1,12 @@
+/favicon.ico
+
+Session found.
+{ id: '1e1709338f76d5e34eeb183c3ff531a9e72e6005b2856562d323e2fa1dfa4c24714cdc17fced3fad6361b9534386284b' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Searching for /favicon.ico
+Sending /favicon.ico with options {}
+<Buffer 00 00 01 00 01 00 10 10 10 00 01 00 04 00 28 01 00 00 16 00 00 00 28 00 00 00 10 00 00 00 20 00 00 00 01 00 04 00 00 00 00 00 80 00 00 00 00 00 00 00 ... >

@@ -1,0 +1,15 @@
+/cheatSheet/script.js
+
+Session found.
+{ id: '672947a0f3a05a8d8b61f2dedabbf9107053b54633981672183c1a821d44355591cd9401c600fbc4aac7797b423a9f75' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /cheatSheet/
+Tunnel not found at /home/bensigal/server/www/cheatSheet/tunnel.node.js
+At default tunnel
+Searching for /cheatSheet/script.js
+Sending /cheatSheet/script.js with options {}
+<Buffer 76 61 72 20 61 6c 6c 44 61 74 61 2c 20 63 75 72 72 65 6e 74 73 3b 0a 24 28 66 75 6e 63 74 69 6f 6e 28 29 7b 0a 20 20 20 20 24 2e 67 65 74 28 22 64 61 ... >

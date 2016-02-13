@@ -1,0 +1,18 @@
+/jqui/jquery-ui.js
+
+Session found.
+{ id: 'bf3d059fd2d3e9afd4745537f91329191e1f5f61e117f1609179909385b15d424462dfb9adc618b36450249002cb642e',
+  on: true,
+  un: 'Ben',
+  pwd: '44MeepsGiven' }
+
+GET
+Sending through tunnel /
+Tunnel not found at /home/bensigal/server/www/tunnel.node.js
+At default tunnel
+Sending through tunnel /jqui/
+Tunnel not found at /home/bensigal/server/www/jqui/tunnel.node.js
+At default tunnel
+Searching for /jqui/jquery-ui.js
+Sending /jqui/jquery-ui.js with options {}
+<Buffer 2f 2a 21 20 6a 51 75 65 72 79 20 55 49 20 2d 20 76 31 2e 31 31 2e 34 20 2d 20 32 30 31 35 2d 30 33 2d 31 31 0a 2a 20 68 74 74 70 3a 2f 2f 6a 71 75 65 ... >
