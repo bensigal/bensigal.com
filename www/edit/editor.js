@@ -4,7 +4,7 @@ var noEditors=0;
 var tabs;
 var selectedFile="";
 var selectedDir="";
-var currentDir="/home/bensigal/server/www";
+var currentDir="/home/bensigal/www";
 var readers  = [];
 var vals	 = [];
 var fileNames= [];
@@ -137,6 +137,9 @@ function changeFiles(s, e){
 		//dir1;dir2;dir3<newline>
 		//file1;file2;file3
 		data=data.split("\n");
+		if(data.length!=2){
+		    return alert(data);
+		}
 		var dirs=data[0];
 		var files=data[1];
 		if(dirs)dirs=dirs.split(";");
