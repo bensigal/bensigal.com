@@ -1,14 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <link rel="stylesheet" type="text/css" href="style.css">
-        <link rel="icon" type="image/ico" href="favicon.ico">
-        <title>Benjamin Sigal&#39;s Website</title>
-    </head>
-    <header><h1>Benjamin Sigal&#39;s Website</h1></header>
-    <nav>
-        <a href="edit/"><div>Edit</div></a>
-        <a href="https://github.com/ben720"><div>My GitHub</div></a>
-        <a href="mail"><div>Mail</div></a>
-    </nav>
-</html>
+<head>
+	<style>
+		body{
+			background-color: white;
+			margin: 0;
+			font-family: "Georgia", "Arial", serif;
+		}
+		#all{
+		    width: 300px;
+			width: calc(50% - 100px);
+			min-width: 200px;
+			margin: 100px auto 0 auto;
+			padding: 10px 20px 30px 25px;
+			text-align: center;
+			border: 1px solid #F5F5F5;
+			background-color: #FDFDFD;
+			box-shadow: 5px 5px 20px #888888;
+		}
+		h1{
+		    font-size: 36pt;
+		    margin-bottom: 20px;
+		}
+		.choice{
+		    font-size: 18pt;
+		    padding: 12px;
+		    border-bottom: 1px solid #999;
+		    cursor: pointer;
+		}
+		.choice:last-child{
+		    border-bottom: 0px solid black;
+		}
+		.choice:hover{
+		    background-color: #E8E8E8;
+		    transition: 0.2s;
+		}
+	</style>
+	<title>Test Index</title>
+</head>
+<body>
+	<div id="all">
+		<h1 id="headerTitle">Benjamin Sigal</h1>
+		<div onclick="location.href='/cheatSheet/'" class="choice">Cheat Sheet</div>
+		<div onclick="location.href='/cheatSheet/'" class="choice">Random</div>
+		<div onclick="location.href='/cheatSheet/'" class="choice">Edit</div>
+	</div>
+</body>
