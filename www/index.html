@@ -8,11 +8,11 @@
 			font-family: "Georgia", "Arial", serif;
 		}
 		#all{
-		    width: 300px;
-			width: calc(50% - 100px);
+			width: 300px;
+			width: calc(50% - 200px);
 			min-width: 200px;
 			margin: 100px auto 0 auto;
-			padding: 10px 20px 30px 25px;
+			padding: 10px 100px 30px 100px;
 			text-align: center;
 			border: 1px solid #F5F5F5;
 			background-color: #FDFDFD;
@@ -20,7 +20,7 @@
 		}
 		h1{
 		    font-size: 36pt;
-		    margin-bottom: 20px;
+		    margin-bottom: 50px;
 		}
 		.choice{
 		    font-size: 18pt;
@@ -36,13 +36,13 @@
 		    transition: 0.2s;
 		}
 	</style>
-	<title>Test Index</title>
+	<title>Benjamin Sigal</title>
 </head>
 <body>
 	<div id="all">
-		<h1 id="headerTitle">Benjamin Sigal</h1>
+		<h1 id="headerTitle">Benjamin Sigal<br></h1>
+		<div onclick="location.href='/edit/'" class="choice">Edit</div>
 		<div onclick="location.href='/cheatSheet/'" class="choice">Cheat Sheet</div>
-		<div onclick="location.href='/cheatSheet/'" class="choice">Random</div>
-		<div onclick="location.href='/cheatSheet/'" class="choice">Edit</div>
+		<div onclick="location.href='/rand/'" class="choice">Random</div>
 	</div>
 </body>
