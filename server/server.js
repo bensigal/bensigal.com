@@ -1,11 +1,17 @@
+//Required modules
 var http 	= require('http');
+var https	= require('https');
 var fs   	= require('fs');
 var url  	= require('url');
 var qs 	 	= require('querystring');
 var mime 	= require('mime');
 var multiparty 	= require('multiparty');
 var util      	= require('util');
-
+//https options
+var options = {
+	key: fs.readFileSync('key.pem'),
+	cert: fs.readFileSync('cert.pem')
+};
 //To make it easier to read console output.
 var numberOfRequests = 0;
 //Pseudorandom hex strings. 48 bytes of value, but more in string form.
@@ -304,27 +310,6 @@ var Session = function(id){
 	sessionIds.push(this.id);
 	sessions.push(this);
 }
-function exportRefs(){
-	for(var i = 0; i < arguments.length; i+=2){
-		serverInfo[arguments[i]]=arguments[i+1];
-	}
-}
-exportRefs(
-	"showErrorPage",    showErrorPage,
-	"defaultTunnel",    defaultTunnel,
-	"getFile",    getFile,
-	"process",    process,
-	"sendString",    sendString,
-	"root",    root,
-	"supportedErrorCodes",    supportedErrorCodes,
-	"messages",    messages,
-	"parseCookies",    parseCookies,
-	"countSlashes",    countSlashes,
-	"sessions",    sessions,
-	"sessionIds",    sessionIds,
-	"Session", Session,
-	"startTime",startTime
-);
 
 var supportedErrorCodes = [401,403,404,405,500];
 var messages = [
@@ -334,13 +319,34 @@ var messages = [
 	"Method Not Allowed",
 	"Internal Server Error"
 ];
-//Log folder
+//Log folder, actually start server.
 fs.mkdir("server/logs/"+startTime,function(err){
 	if(err) throw err;
-	http.createServer(prepareLogs).listen(8000, function(){
+	https.createServer(options,prepareLogs).listen(8000, function(){
 		console.log("Server listening on localhost:8000! Let's serve some files!");
 	});
 });
 function benSpect(obj){
 	return util.inspect(obj,{depth:null});
 }
+function exportRefs(){
+	for(var i = 0; i < arguments.length; i+=2){
+		serverInfo[arguments[i]]=arguments[i+1];
+	}
+}
+exportRefs(
+	"showErrorPage",	showErrorPage,
+	"defaultTunnel",	defaultTunnel,
+	"getFile",		getFile,
+	"process",		process,
+	"sendString",		sendString,
+	"root",			root,
+	"supportedErrorCodes",	supportedErrorCodes,
+	"messages",		messages,
+	"parseCookies",		parseCookies,
+	"countSlashes",		countSlashes,
+	"sessions",		sessions,
+	"sessionIds",		sessionIds,
+	"Session",		Session,
+	"startTime",		startTime
+);
