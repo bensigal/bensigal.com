@@ -5,42 +5,53 @@
 		body{
 			background-color: white;
 			margin: 0;
-			font-family: "Georgia", "Arial", serif;
+			"Lucida Sans Unicode", "Lucida Grande", sans-serif
 		}
 		#all{
 			width: 300px;
-			width: calc(50% - 200px);
+			width: calc(50% - 150px);
 			min-width: 200px;
-			margin: 100px auto 0 auto;
-			padding: 10px 100px 30px 100px;
+			margin: 0 auto 0 auto;
 			text-align: center;
-			border: 1px solid #F5F5F5;
-			background-color: #FDFDFD;
-			box-shadow: 5px 5px 20px #888888;
+			border: 2px solid #E5E5E5;
+			background-color: #FEFEFE;
+			box-shadow: 2px 3px 5px #888;
+			/*
+			padding: 0px 50px 0px 50px;
+			*/
 		}
 		h1{
-		    font-size: 36pt;
-		    margin-bottom: 50px;
+		    margin: 70px 0 30px 0;
+		    color: #030303;
+		    font-size: 42pt;
+		    font-weight: 400;
+		    text-align: center;
 		}
 		.choice{
 		    font-size: 18pt;
-		    padding: 12px;
+		    padding: 16px;
 		    border-bottom: 1px solid #999;
 		    cursor: pointer;
 		}
 		.choice:last-child{
 		    border-bottom: 0px solid black;
+		    padding-bottom: 20px;
 		}
+		.choice:first-child{
+		    padding-top: 20px;
+		}
+		/*
 		.choice:hover{
-		    background-color: #E8E8E8;
+		    background-color: #FAFAFA;
 		    transition: 0.2s;
 		}
+		*/
 	</style>
 	<title>Benjamin Sigal</title>
 </head>
 <body>
+	<h1 id="headerTitle">Benjamin Sigal</h1>
 	<div id="all">
-		<h1 id="headerTitle">Benjamin Sigal<br></h1>
 		<div onclick="location.href='/edit/'" class="choice">Edit</div>
 		<div onclick="location.href='/mail/'" class="choice">Mail</div>
 		<div onclick="location.href='/cheatSheet/'" class="choice">Cheat Sheet</div>
