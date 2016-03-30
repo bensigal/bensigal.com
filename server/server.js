@@ -1,17 +1,12 @@
 //Required modules
 var http 	= require('http');
-var https	= require('https');
 var fs   	= require('fs');
 var url  	= require('url');
 var qs 	 	= require('querystring');
 var mime 	= require('mime');
 var multiparty 	= require('multiparty');
 var util      	= require('util');
-//https options
-var options = {
-	key: fs.readFileSync('key.pem'),
-	cert: fs.readFileSync('cert.pem')
-};
+
 //To make it easier to read console output.
 var numberOfRequests = 0;
 //Pseudorandom hex strings. 48 bytes of value, but more in string form.
@@ -24,6 +19,7 @@ var serverInfo = {};
 var root = process.argv[2];
 //Time of start of execution
 var startTime = new Date().getTime();
+
 //Respond to a request.
 function prepareLogs(req, res){
 	req.serverOrder = numberOfRequests++;
@@ -322,7 +318,7 @@ var messages = [
 //Log folder, actually start server.
 fs.mkdir("server/logs/"+startTime,function(err){
 	if(err) throw err;
-	https.createServer(options,prepareLogs).listen(8000, function(){
+	http.createServer(prepareLogs).listen(8000, function(){
 		console.log("Server listening on localhost:8000! Let's serve some files!");
 	});
 });
