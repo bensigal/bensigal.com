@@ -1,10 +1,8 @@
-var fs  	= require("fs");
-var exec    = require("child_process").exec;
-var passwords = require("../../passwords.js");
+var fs       	= require("fs");
+var exec     	= require("child_process").exec;
+var passwords	= require("../../passwords.js");
+
 //NOTE: THIS FILE CONTAINS ALL OF THE INTENTIONALLY DANGEROUS FUNCTIONS OF THE SERVER. 
-//BE VEWWY CAREFUL.
-//Yup. All the good stuff, in one file. Even the editor sends requests for secret
-//information here.
 
 module.exports=function(req,res,server){
 	if(/login\/?/.test(req.path)){
@@ -22,9 +20,13 @@ module.exports=function(req,res,server){
 		server.showErrorPage(Number(req.path.substring(req.path.lastIndexOf("/")+1)),req,res);
 	}else if(/login\.html/.test(req.path)){
 		server.getFile("server/login.html",req,res);
+		
+	}else if (/post/.test(req.path)){
+		server.getFile("server/post.html",req,res);
+		
 	//Below are functions that require login. Catch unauthorized users here.	
 	}else if(!req.session.on){
-		server.getFile(root+"login.html",req,res,{
+		server.getFile("server/login.html",req,res,{
 			statusCode: 401,
 			pathNotFromWww:true
 		});
@@ -128,11 +130,24 @@ module.exports=function(req,res,server){
             }
 	    });
 	}
+	else if (/exec\/?/.test(req.path)){
+		var process = exec(req.post.command, function(err){
+			if(err) throw err;
+			res.end();
+		});
+		res.setHeader("Content-Type", "text/plain")
+		var respondToData = function(data){
+			res.write(data);
+		};
+		process.stdout.on("data",respondToData)
+		process.stderr.on("data",respondToData)
+	}
 	else{
 		server.showErrorPage(404,req,res);
 	}
 };
 
+//Should be all lowercase.
 var users=[
 	"ben"
 ];

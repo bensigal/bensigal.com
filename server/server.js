@@ -71,45 +71,53 @@ function serverRespond(req, res){
 		res.setHeader('Set-Cookie','sessid='+req.session.id);
 	}
 	req.log();
-	if(req.method=="POST" && req.headers["content-type"].startsWith("multipart/form-data")){
-		req.log("POST multipart/form-data")
-		req.log("Waiting for body before sending through tunnel...")
-		new multiparty.Form().parse(req,function(err,fields,files){
-			if(err){
-				req.err(err.stack);
-				showErrorPage(500, req, res);
-				return;
-			}
-			req.files=files;
-			fs.writeFile(req.logLocation+"files.log",benSpect(files),function(err){
-				if(err) throw err;
+	if(req.method=="POST"){
+		//If there is no data...
+		if(!req.headers["content-type"] || !(Number(req.headers["content-length"]))){
+			req.method = "GET";
+		}
+		//If there is data, and it's multipart
+		else if(req.headers["content-type"].startsWith("multipart/form-data")){
+			req.log("POST multipart/form-data")
+			req.log("Waiting for body before sending through tunnel...")
+			new multiparty.Form().parse(req,function(err,fields,files){
+				if(err){
+					req.err(err.stack);
+					showErrorPage(500, req, res);
+					return;
+				}
+				req.files=files;
+				fs.writeFile(req.logLocation+"files.log",benSpect(files),function(err){
+					if(err) throw err;
+				});
+				req.post=fields;
+				fs.writeFile(req.logLocation+"fields.log",benSpect(fields),function(err){
+					if(err) throw err;
+				});
+				req.log(req.post);
+				sendThroughTunnel(req,res,"/");
 			});
-			req.post=fields;
-			fs.writeFile(req.logLocation+"fields.log",benSpect(fields),function(err){
-				if(err) throw err;
+		}else{
+			var body = "";
+			req.on('data', function(data){
+				body+=data;
+				if(body.length > 1e6){
+					showErrorPage(413, req, res);
+				}
 			});
-			req.log(req.post);
-			sendThroughTunnel(req,res,"/");
-		});
-	}else if(req.method=="POST"){
-		var body = "";
-		req.on('data', function(data){
-			body+=data;
-			if(body.length > 1e6){
-				showErrorPage(413, req, res);
-			}
-		});
-		req.on('end',function(){
-			fs.writeFile(req.logLocation+"body.log",function(err){
-				if(err) throw err;
+			req.on('end',function(){
+				fs.writeFile(req.logLocation+"body.log",function(err){
+					if(err) throw err;
+				});
+				req.log(body);
+				req.post=qs.parse(body);
+				sendThroughTunnel(req,res,"/")
 			});
-			req.log(body);
-			req.post=qs.parse(body);
-			sendThroughTunnel(req,res,"/")
-		});
-		req.log("POST, not multipart. Assuming querystring. Actual: "+req.headers["content-type"])
-		req.log("Waiting for body before sending through tunnel...")
-	}else{
+			req.log("POST, not multipart. Assuming querystring. Actual: "+req.headers["content-type"])
+			req.log("Waiting for body before sending through tunnel...")
+		}
+	}
+	if(req.method!="POST"){
 		req.log(req.method);
 		sendThroughTunnel(req,res,"/")
 	}
