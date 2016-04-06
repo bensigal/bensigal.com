@@ -142,6 +142,9 @@
 					$.post("/server/login", { un:$("#un").val(), pwd:$("#pwd").val()}, function(data){
 						if(data=="true"){
 							console.log("loggedIn");
+							if(location.href.indexOf("?")>-1){
+							    location.href=location.href.substring("?");
+							}
 							location.reload(true);
 						}else if(data=="false"){
 							$("body").html(loggedOutHTML);

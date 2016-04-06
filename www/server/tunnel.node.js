@@ -24,7 +24,19 @@ var adminRequired = [
 module.exports=function(req,res,server){
     if(new RegExp(openFunctions.join("|")).test(req.path)){
         
-        if(/login\/?/.test(req.path)){
+        if (/post/.test(req.path)){
+            
+            server.getFile("server/post.html",req,res);
+            
+        }else if(/throwError.*/.test(req.path)){
+            
+        	server.showErrorPage(Number(req.path.substring(req.path.lastIndexOf("/")+1)),req,res);
+        	
+        }else if(/login\/?/.test(req.path)){
+            
+            server.getFile("server/login.html",req,res);
+            
+        }else if(/loginTextbased\/?/.test(req.path)){
             
             if(req.method=="POST"){
                 req.log("Login attempt");
@@ -37,22 +49,10 @@ module.exports=function(req,res,server){
             }
             return req.session.on?"true":"false";
             
-        }else if(/throwError.*/.test(req.path)){
-            
-        	server.showErrorPage(Number(req.path.substring(req.path.lastIndexOf("/")+1)),req,res);
-        	
-        }else if(/login\.html/.test(req.path)){
-            
-            server.getFile("server/login.html",req,res);
-            
-        }else if (/post/.test(req.path)){
-            
-            server.getFile("server/post.html",req,res);
-            
         }
         
     }
-    if(new RegExp(authorizationRequired.join("|")).test(req.path)){
+    else if(new RegExp(authorizationRequired.join("|")).test(req.path)){
         if(!req.session.on){
             server.getFile("server/login.html",req,res,{
                 statusCode: 401,
@@ -114,9 +114,16 @@ module.exports=function(req,res,server){
             });
         }
     }
-    if(new RegExp(authorizationRequired.join("|")).test(req.path)){
-        if(req.session.un.toLowerCase() != "ben"){
-            server.showErrorPage(403,req,res);
+    else if(new RegExp(adminRequired.join("|")).test(req.path)){
+    	if(!req.session.on){
+    	
+    		server.sendString("Not logged on", req, res);
+    		
+    	}
+        else if(req.session.un.toLowerCase() != "ben"){
+        
+        	server.sendString("Admin permissions required", req,res);
+        	
         }else if(/exit\/?/.test(req.path)){
     		server.process.exit();
     		return;
