@@ -34,10 +34,6 @@ module.exports=function(req,res,server){
         	
         }else if(/login\/?/.test(req.path)){
             
-            server.getFile("server/login.html",req,res);
-            
-        }else if(/loginTextbased\/?/.test(req.path)){
-            
             if(req.method=="POST"){
                 req.log("Login attempt");
                 var unIndex=users.indexOf(req.post.un.toLowerCase());

@@ -258,6 +258,14 @@ function sendString(output, req, res,options){
 	res.statusCode=options.statusCode||200;
 	res.end(output);
 }
+function redirect(path, req, res, options){
+	if(typeof options == "number")options = {statusCode: options};
+	options = options || {};
+	options.statusCode = options.statusCode || 302;
+	
+	res.writeHead(options.statusCode, {Location: path});
+	res.end();
+}
 function sendThroughTunnel(req, res, path){
 	req.log("Sending through tunnel "+path);
 	try{
@@ -352,5 +360,6 @@ exportRefs(
 	"sessions",		sessions,
 	"sessionIds",		sessionIds,
 	"Session",		Session,
-	"startTime",		startTime
+	"startTime",		startTime,
+	"redirect",		redirect
 );
