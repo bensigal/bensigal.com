@@ -1,0 +1,168 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+		<style>
+			#allNMore{
+				height: calc(100vh - 121px);
+			}
+			td{
+				border: 1px solid black;
+			}
+			input{
+				font-size: 25px;
+				width: 201px;
+			}
+			#un{
+				margin: 70px 50px 5px 50px;
+			}
+			#pwd{
+				margin: 5px 50px 70px 50px;
+			}
+			html{
+				background-color: #353535;
+			}
+			body{
+				margin: 0;
+				height: 100%;
+				overflow-y: hidden;
+			}
+			#all{
+				background-color: #6B6B6B;
+				margin: 0 auto 0 auto;
+				height: 100%;
+				overflow-y: auto;
+				width: 601px;
+			}
+			#content{
+				height: calc(100vh - 121px);
+				border-bottom: 1px solid #444;
+				text-align: center;
+				font-family: Georgia, sans-serif;
+				overflow-y: scroll;
+			}
+			.details{
+				font-style: italic;
+				font-size: 12px;
+			}
+			#shell{
+				padding: 100px 0 0 0;
+				font-family: Georgia, sans-serif;
+			}
+			.button{
+				background-color: #DDD;
+				border-radius: 2px;
+				font-family: Georgia, serif;
+				color: #222;
+				text-align: center;
+				float: left;
+				cursor: pointer;
+				transition: 0.25s;
+			}
+			hr{
+				border: none;
+				border-bottom: 1px solid #333;
+			}
+			.button:hover{
+				background-color: #EEE;
+				color: black;
+			}
+			.groupButton{
+				width: 391px;
+				background-color: #6AA;
+				float: none;
+				padding: 20px 0;
+				margin: 20px 30px 0 30px;
+			}
+			footer{
+				height: 100px;
+				padding: 10px 0;
+				background-color: #5D5D5D;
+			}
+			#send{
+				width: 50px;
+				border-radius: 2px;
+				margin: 10px;
+				padding: 30.5px 20px;
+			}
+			#logOut{
+				width: 70px;
+				margin: 10px 0 8px 0;
+				padding: 8px 15px;
+			}
+			#back{
+				width: 70px;
+				border-radius: 2px;
+				margin: 0;
+				padding: 8px 15px;
+			}
+			#message{
+				float: left;
+				width: 600px;
+				margin: 10px;
+				height: 80px;
+				font-size: 20px;
+			}
+			#loginHolder{
+				width: 301px;
+				padding: 20px;
+				margin: 0 auto;
+				background-color: white;
+			}
+			.entireMessage{
+				width: 701px;
+				margin: 15px 50px;
+				height: auto;
+				color: black;
+				background-color: #F6F6F6;
+				border-radius: 10px;
+				padding: 10px 20px;
+			}
+			.messagePortion{
+				display: inline-block;
+				text-align: justify;
+				margin: 2px 0 2px 5%;
+				width: 75%;
+			}
+			.messageUsername{
+				font-size: 14px;
+				font-style: initial;
+			}
+			.details{
+				margin-top: 0;
+				float: left;
+				width: 20%;
+			}
+			.messageTime{
+				font-size: 10px;
+			}
+		</style>
+		<script src="/jquery.min.js"></script>
+		<script>
+			function ajaxLogin(e){
+				if(e.keyCode==13){
+					$.post("/server/login", { un:$("#un").val(), pwd:$("#pwd").val()}, function(data){
+						if(data=="true"){
+							console.log("loggedIn");
+							if(location.href.indexOf("?")>-1){
+							    location.href="/" + location.href.substring(location.href.indexOf("?")+1)
+							}
+						}else if(data=="false"){
+							$("body").html(loggedOutHTML);
+						}else{
+							alert(data);
+						}
+					});
+				}
+			}
+		</script>
+		<title>Log In</title>
+	</head>
+	<body>
+		<div id="all">
+			<div id="shell">
+				<div id="loginHolder">
+					<input autofocus="" type="text" id="un" name="un" placeholder="Username" onkeydown="ajaxLogin(event)">
+					<input type="password" id="pwd" name="pwd" placeholder="Password" onkeydown="ajaxLogin(event)">
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
