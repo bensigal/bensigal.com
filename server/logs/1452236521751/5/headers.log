@@ -1,7 +1,0 @@
-{ host: 'bensigal.com:8000',
-  accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-  'user-agent': 'Mozilla/5.0 (Windows NT 5.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.86 Safari/537.36',
-  'x-forwarded-for': '37.59.77.2',
-  'x-forwarded-host': 'bensigal.com',
-  'x-forwarded-server': 'bensigal.com',
-  connection: 'close' }

@@ -1,8 +1,0 @@
-{ host: 'bensigal.com:8000',
-  'user-agent': 'AdnormCrawler www.adnorm.com/crawler',
-  cookie: '',
-  accept: 'text/html, image/gif, image/jpeg, *; q=.2, */*; q=.2',
-  'x-forwarded-for': '65.181.126.166',
-  'x-forwarded-host': 'www.bensigal.com',
-  'x-forwarded-server': 'bensigal.com',
-  connection: 'close' }

@@ -1,9 +1,0 @@
-{ host: 'bensigal.com:8000',
-  accept: '*/*',
-  'accept-encoding': 'gzip, deflate',
-  cookie: 'sessid=54ebe79e7383bbfefb2c35aa0f6a42767e131773c931d55f87b3477a8e4ecffea1925541f8d4a041fc651adec7c014aa',
-  'user-agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; Trident/7.0; rv:11.0) like Gecko',
-  'x-forwarded-for': '64.233.172.252',
-  'x-forwarded-host': 'bensigal.com',
-  'x-forwarded-server': 'bensigal.com',
-  connection: 'close' }

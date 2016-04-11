@@ -1,6 +1,0 @@
-{ host: 'bensigal.com:8000',
-  'user-agent': 'Mozilla/5.0 (compatible; WoTBoT; +https://www.wslta.com/WoTBoT.html)',
-  'x-forwarded-for': '72.167.190.20',
-  'x-forwarded-host': 'BENSIGAL.COM',
-  'x-forwarded-server': 'bensigal.com',
-  connection: 'close' }
