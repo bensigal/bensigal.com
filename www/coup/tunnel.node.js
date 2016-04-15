@@ -1,5 +1,4 @@
 var coup = require("./coup");
-var defs = require("./defs");
 
 var activePlayers       = [];
 var playerGameIndexes   = [];
@@ -16,20 +15,29 @@ module.exports = function(req, res, server){
 	
 	//Main Page
 	if(/coup\/?$/.test(req.path)){
+
 		server.getFile("coup/index.html",req,res);
+
 	}else if(/newGame\/?$/.test(req.path)){
+
         if(!req.post.cards || !req.post.players)
             return "Post variables not set.";
+
         var cards = req.post.cards.split(";");
         var players=req.post.players.split(";");
-        games.push(new CoupGame(cards, players, nextGameIndex++));
+
+        games.push(new coup.Game(cards, players, nextGameIndex++));
+
 	}else if(/respond\/?$/.test(req.path)){
+
         if(!req.post.response)
             return "Post variables not set.";
+
         player.resolveState(response);
+
     }
 }
 
-module.exports.sampleGame = new CoupGame(
+module.exports.sampleGame = new coup.Game(
     ["ben","otherPlayer"],
     ["FakeCard1","FakeCard2"],0);

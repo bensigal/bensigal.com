@@ -1,11 +1,11 @@
-module.exports.templateNames       = [
+module.exports.names       = [
     "Capitalist",
     "Reporter",
     "Judge",
     "Communist",
     "Missionary"
 ];
-module.exports.templateAbilities   = [
+module.exports.abilities   = [
     function(player){
         player.money+=4;
         player.game.othersRespond("Capitalist",player);
@@ -19,19 +19,21 @@ module.exports.templateAbilities   = [
         player.game.otherRespond("Judge",target,player);
     }
 ];
-module.exports.templateFollowups   = [
+module.exports.followups   = [
     false,
     function(player){
         player.setState("chooseCards",[player.game.deck.deal()])
     },
     
 ];
-module.exports.templateOptions     = [
+module.exports.options     = [
     {},
     {},
-    {target:true, playable:
-        (player) => player.money>=3;
+    {target:true, isPlayable:
+        (player) => player.money>=3
     },
     {target:true},
-    {notPlayable:true}
+    { isPlayable:
+        ()=>true
+    }
 ];
