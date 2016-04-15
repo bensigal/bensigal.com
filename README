@@ -1,5 +1,6 @@
 Files for bensigal.com. Includes files to run server as well as
 resources. Server listens on port 8000 as an https server. Key and
-certificate should be at /key.pem and /cert.pem. Another necessary
-but not included file is /passwords.js, which was not included
+certificate should be at /key.pem and /cert.pem. Also create directory
+/server/logs, which is ignored by .gitignore. Another necessary
+but not included file is /passwords.js, which is not present
 for obvious reasons.
