@@ -141,6 +141,29 @@ var CoupGame = function(names, cards, gameIndex){
         this.players[this.whoseTurn].setState("yourTurn");
         
     }
+    this.otherRespond = function(name,target,player){
+        switch(name){
+        case "Judge":
+            target.setState("targetedJudge");
+            break;
+        case "Capitalist":
+            target.setState("targetedCapitalist");
+        }
+    }
+    this.othersRespond = function(name, player){
+        this.othersRespondRecursive(name,player,this.whoseTurn+1);
+    }
+    this.othersRespondRecursive = function(name, player, i){
+        
+        var recursiveCallback = function(){};
+        
+        this.otherRespond(name,player,this.players[i]);
+        i++;
+        i %= players.length;
+        if(i != this.whoseTurn){
+            this.othersRespondRecursive(name,player,i)
+        }
+    }
 }
 function createCoupCardTemplate(name, ability, options){
     templateNames.push(name);
