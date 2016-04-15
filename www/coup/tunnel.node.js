@@ -58,7 +58,11 @@ module.exports = function(req, res, server){
         var cards = req.post.cards.split(";");
         var players=req.post.players.split(";");
         games.push(new CoupGame(cards, players, nextGameIndex++));
-	}
+	}else if(/respond\/?$/.test(req.path)){
+        if(!req.post.response)
+            return "Post variables not set.";
+        player.resolveState(response);
+    }
 }
 var CoupPlayer = function(name, game){
     this.money = 2;
@@ -73,7 +77,7 @@ var CoupPlayer = function(name, game){
         switch(state){
         case "yourTurn":
             if(!this.liveCards){
-                this..game.nextTurn();
+                this.game.nextTurn();
             }
             break;
         }
@@ -82,6 +86,7 @@ var CoupPlayer = function(name, game){
 //NOT A REAL CONSTRUCTOR
 //Returns this
 //Use CoupDeck.create; CoupDeck extends Array, arrays are handled specially.
+//Suggested: CoupDeck.call([], cards) or CoupDeck.call([cards],[])
 var CoupDeck = function(cards){
     cards.forEach(function(element){
         for(var i = 0; i < 3; i++){
@@ -142,13 +147,7 @@ var CoupGame = function(names, cards, gameIndex){
         
     }
     this.otherRespond = function(name,target,player){
-        switch(name){
-        case "Judge":
-            target.setState("targetedJudge");
-            break;
-        case "Capitalist":
-            target.setState("targetedCapitalist");
-        }
+        target.setState("targeted"+name);
     }
     this.othersRespond = function(name, player){
         this.othersRespondRecursive(name,player,this.whoseTurn+1);
@@ -177,4 +176,6 @@ var CoupCard = function(templateName){
     this.options = templateOptions[this.templateIndex];
     this.dead = false;
 }
-module.exports.sampleGame = new CoupGame(["ben","otherPlayer"],["Ambassador","FakeCard"],0);
+module.exports.sampleGame = new CoupGame(
+    ["ben","otherPlayer"],
+    ["FakeCard1","FakeCard2"],0);
