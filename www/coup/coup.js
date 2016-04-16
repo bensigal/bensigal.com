@@ -14,8 +14,8 @@ coup.Game = function(names, cards, gameIndex){
     names.forEach(function(element, index){
         this.players.push(new coup.Player(element, this, index));
     },this);
-    //TODO: copy not real.
-    this.activePlayers = this.players//.copy();
+    
+    this.activePlayers = this.players.slice();
 
     this.players.forEach(function(element){
         activePlayers.push(element.name);
@@ -56,7 +56,8 @@ coup.Game = function(names, cards, gameIndex){
             this.othersRespondRecursive(name,player,i)
         }
     };
-    this.challengeOpportunity = function(player){
+    this.challengeOpportunity = function(player, cardName){
+        this.challengeableCard = cardName;
         for(var i = 0; i < this.activePlayers.length; i++){
             if(i==player.index){
                 player.setState("waiting");
@@ -67,6 +68,18 @@ coup.Game = function(names, cards, gameIndex){
         this.allowsLeft = activePlayers.length - 1;
         this.challengedPlayerIndex = player.index;
     };
+    this.noChallengeHere = function(player){
+        this.allowsLeft--;
+        if(!this.allowsLeft){
+            for(var i = 0; i < this.activePlayers.length; i++){
+                if(i == this.challengedPlayerIndex){
+                    activePlayers[i].setState("notChallenged"+this.challengeableCard);
+                }else{
+                    activePlayers[i].setState("waiting");
+                }
+            }
+        }
+    }
     this.challengeFrom = function(target,player){
         this.activePlayers.forEach((element, index) => {
             if(index == this.challengedPlayerIndex){
@@ -99,6 +112,22 @@ coup.Player = function(name, game, index){
     };
     this.resolveState = function(response){
         switch(this.state){
+        case "yourTurn":
+            if(response == "income"){
+                this.money++;
+                this.finishTurn();
+            }else if(response.startsWith("coup")){
+                //response should be coup;index
+                this.money -= 7;
+                var index = response.substring(5);
+                activePlayers[index].setState("loseCard");
+            }
+            for(var i = 0; i < 5; i++){
+                if(this.game.cards[i] == response){
+                    this.game.challengeOpportunity()
+                }
+            }
+            break;
         case "targetedJudge":
             if(response=="block"){
                 this.game.challengeOpportunity(this);
@@ -106,6 +135,9 @@ coup.Player = function(name, game, index){
                 this.setState("loseCard");
             }
         }
+    }
+    this.finishTurn = function(){
+        this.game.nextTurn();
     }
 }
 //NOT A REAL CONSTRUCTOR

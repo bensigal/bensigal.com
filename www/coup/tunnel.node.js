@@ -18,7 +18,13 @@ module.exports = function(req, res, server){
 
 		server.getFile("coup/index.html",req,res);
 
-	}else if(/newGame\/?$/.test(req.path)){
+	}else if(/debugStates\/?$/.test(req.path)){
+	    
+	    server.getFile("coup/debugStates.html",req,res);
+	    
+	}
+	
+	else if(/newGame\/?$/.test(req.path)){
 
         if(!req.post.cards || !req.post.players)
             return "Post variables not set.";
