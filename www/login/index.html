@@ -145,13 +145,22 @@
 							    location.href="/" + location.href.substring(location.href.indexOf("?")+1)
 							}
 						}else if(data=="false"){
-							$("body").html(loggedOutHTML);
+							$("pwd").val("");
 						}else{
 							alert(data);
 						}
 					});
 				}
 			}
+			function amILoggedIn(){
+			    $.get("/server/login", function(data){
+			        if(data == "true"){
+			            location.href="/" + location.href.substring(location.href.indexOf("?")+1)
+			        }
+			    });
+			}
+			amILoggedIn();
+			setInterval(amILoggedIn, 500);
 		</script>
 		<title>Log In</title>
 	</head>

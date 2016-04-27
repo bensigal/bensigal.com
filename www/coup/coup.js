@@ -1,143 +1,161 @@
 var coup = module.exports;
 var defs = require("./defs");
+coup.Player = require("./coupPlayer");
 
-coup.Game = function(names, cards, gameIndex){
+coup.Game = function(names, cards){
     
-    this.gameIndex  = gameIndex;
+    this.currentLog = "";
+    this.inDepthLog = "";
     this.cards      = cards;
     this.players    = [];
     this.cardFlags  = new Array(cards.length);
     this.deck       = coup.Deck.create(cards);
+    this.playersByName = {};
+    
+    this.log=function(s){
+        this.deepLog(s);
+        s=";"+s
+        this.currentLog = s + this.currentLog;
+    }
+    this.deepLog = function(s){
+        s=";"+s
+        this.inDepthLog = s + this.inDepthLog;
+    }
     
     this.deck.shuffle();
     
+    this.deepLog("Creating players...");
+    
     names.forEach(function(element, index){
         this.players.push(new coup.Player(element, this, index));
+        this.playersByName[element] = this.players[this.players.length - 1];
     },this);
-    
-    this.activePlayers = this.players.slice();
 
     this.players.forEach(function(element){
-        activePlayers.push(element.name);
-        playerGameIndexes.push(this.gameIndex);
         //Deal Cards
         element.cards.push(this.deck.deal());
         element.cards.push(this.deck.deal());
+        this.deepLog(element.name + " has "+element.cards);
+        
     },this);
     
     this.whoseTurn = 0;
     
-    this.players[0].setState("yourTurn");
+    this.log(this.players[0].name + "'s turn");
+    this.players[0].setState("choosing an action");
     
     this.nextTurn = function(){
         
-        this.players[this.whoseTurn].setState("waiting");
+        this.players[this.whoseTurn].setState("waiting for someone to choose an action");
         
         this.whoseTurn++;
         this.whoseTurn%=this.players.length;
         
-        this.players[this.whoseTurn].setState("yourTurn");
+        this.log(this.players[this.whoseTurn].name + "'s turn");
+        this.players[this.whoseTurn].setState("choosing an action");
         
     }
     this.otherRespond = function(name,target,player){
+        this.log(player.name + " has targeted " + target.name +" with a "+name+"!")
         target.setState("targeted"+name);
     };
     this.othersRespond = function(name, player){
+        this.deepLog("Going through all other players to respond...")
         this.othersRespondRecursive(name,player,this.whoseTurn+1);
     };
     this.othersRespondRecursive = function(name, player, i){
         
         var recursiveCallback = function(){};
         
-        this.otherRespond(name,player,this.activePlayers[i]);
+        this.otherRespond(name,player,this.players[i]);
         i++;
-        i %= this.activePlayers.length;
+        i %= this.players.length;
         if(i != this.whoseTurn){
             this.othersRespondRecursive(name,player,i)
         }
     };
-    this.challengeOpportunity = function(player, cardName){
-        this.challengeableCard = cardName;
-        for(var i = 0; i < this.activePlayers.length; i++){
+    this.challengeOpportunity = function(player, cardName, target){
+        
+        this.log(player.name + " can now be challenged.")
+        
+        this.target                 = target || undefined;
+        this.challengedCard         = cardName;
+        this.challengedPlayerIndex  = player.index;
+        this.challengedPlayer       = player;
+        
+        for(var i = 0; i < this.players.length; i++){
             if(i==player.index){
-                player.setState("waiting");
+                this.players[i].setState("waiting to see if someone challenges");
             }else{
-                player.setState("canChallenge");
+                this.players[i].setState("deciding whether to challenge");
             }
         }
-        this.allowsLeft = activePlayers.length - 1;
-        this.challengedPlayerIndex = player.index;
+        this.allowsLeft = this.players.length - 1;
     };
     this.noChallengeHere = function(player){
+        this.log(player.name + " is not challenging.")
         this.allowsLeft--;
+        console.error(this.allowsLeft);
         if(!this.allowsLeft){
-            for(var i = 0; i < this.activePlayers.length; i++){
-                if(i == this.challengedPlayerIndex){
-                    activePlayers[i].setState("notChallenged"+this.challengeableCard);
+            this.log(this.challengedPlayer.name + " is not being challenged.");
+            for(var i = 0; i < this.players.length; i++){
+                if(i == this.challengedPlayer.index){
+                    this.players[i].setState("playing "+this.challengedCard);
                 }else{
-                    activePlayers[i].setState("waiting");
+                    this.players[i].setState("waiting");
                 }
             }
         }
     }
-    this.challengeFrom = function(target,player){
-        this.activePlayers.forEach((element, index) => {
+    this.challengeFrom = function(player){
+        this.challenger= player;
+        this.log(this.challengedPlayer.name + " is being challenged by "+this.challenger.name+"!");
+        this.players.forEach((element, index) => {
             if(index == this.challengedPlayerIndex){
-                element.setState("respondToChallenge",target);
+                element.setState("responding to a challenge");
+            }else if(index == player.index){
+                element.setState("challenging");
             }else{
-                element.setState("waiting");
+                element.setState("waiting for a response to a challenge");
             }
         });
     }
-}
-
-coup.Player = function(name, game, index){
-    this.index=index;
-    this.money = 2;
-    this.liveCards = 2;
-    this.tokens= [];
-    this.cards = [];
-    this.state = "waiting"
-    this.game  = game;
-    this.setState = function(state){
-        this.state=state;
-        
-        switch(state){
-        case "yourTurn":
-            if(!this.liveCards){
-                this.game.nextTurn();
-            }
-            break;
-        }
-    };
-    this.resolveState = function(response){
-        switch(this.state){
-        case "yourTurn":
-            if(response == "income"){
-                this.money++;
-                this.finishTurn();
-            }else if(response.startsWith("coup")){
-                //response should be coup;index
-                this.money -= 7;
-                var index = response.substring(5);
-                activePlayers[index].setState("loseCard");
-            }
-            for(var i = 0; i < 5; i++){
-                if(this.game.cards[i] == response){
-                    this.game.challengeOpportunity()
-                }
-            }
-            break;
-        case "targetedJudge":
-            if(response=="block"){
-                this.game.challengeOpportunity(this);
-            }else{
-                this.setState("loseCard");
-            }
-        }
+    this.kill = function(index){
+        this.log(this.players[index].name + " has been eliminated!")
+        delete this.playersByName[this.players[index].name];
+        this.players.splice(index, 1);
+        this.players.forEach(function(element,index){
+            element.index=index
+        });
     }
-    this.finishTurn = function(){
-        this.game.nextTurn();
+    this.loseCard = function(target, callback){
+        this.deepLog(target.name + " is choosing a card to lose.");
+        this.players.forEach(function(element, index){
+            if(target.index == index){
+                element.setState("choosing a card to lose", callback);
+            }else{
+                element.setState("waiting");
+            }
+        })
+    }
+    this.initCardChoice = function(player, cardsFromDeck){
+        
+        this.deepLog("Preparing a card choice...")
+        
+        var cardOptions = [];
+        
+        for(var i = 0; i < player.cards.length; i++){
+            if(!player.cards[i].dead){
+                cardOptions.push(player.cards.splice(i,1)[0]);
+                i--;
+            }
+        }
+        
+        for(var i = 0; i < cardsFromDeck; i++){
+            cardOptions.push(this.deck.deal());
+        }
+        
+        player.finalizeCards(player.recieveCardCallback(cardOptions));
     }
 }
 //NOT A REAL CONSTRUCTOR
@@ -179,4 +197,7 @@ coup.Card = function(templateName){
     this.ability = defs.abilities[this.templateIndex];
     this.options = defs.options[this.templateIndex];
     this.dead = false;
+    this.toString = function(){
+        return this.name;
+    }
 }

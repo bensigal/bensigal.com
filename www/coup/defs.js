@@ -1,5 +1,5 @@
 module.exports.names       = [
-    "Capitalist",
+    "Banker",
     "Reporter",
     "Judge",
     "Communist",
@@ -7,16 +7,40 @@ module.exports.names       = [
 ];
 module.exports.abilities   = [
     function(player){
-        player.money+=4;
-        player.game.othersRespond("Capitalist",player);
+        player.game.log(player.name + " uses banker.")
+        player.money+=3;
+        return true;
     },
     function(player){
+        player.game.log(player.name + " reports on the latest story.")
         player.money++;
+        player.recieveCardCallback = reporterCardCallback;
+        player.game.initCardChoice(player, 1);
+        return false;
     },
     function(player, target){
+        if(player.money < 3){
+            return "incapable";
+        }
+        player.game.log(player.name + " judges " + target.name + "!")
         player.money -= 3;
         target.money += 3;
         player.game.otherRespond("Judge",target,player);
+        return false;
+    }
+];
+module.exports.responses    = [
+    false,
+    false,
+    function(response, player){
+        if(response == "block"){
+            player.game.challengeOpportunity(player, "Judge", player.game.players[player.game.whoseTurn]);
+        }else if(response == "0" || response == "1"){
+            if(!player.cards[response].dead){
+                player.loseCard(Number(Response));
+                player.game.nextTurn();
+            }
+        }
     }
 ];
 module.exports.followups   = [
@@ -27,13 +51,14 @@ module.exports.followups   = [
     
 ];
 module.exports.options     = [
-    {},
-    {},
+    {isPlayable: ()=>true},
+    {isPlayable: ()=>true},
     {target:true, isPlayable:
-        (player) => player.money>=3
+        player => player.money>=3
     },
-    {target:true},
-    { isPlayable:
-        ()=>true
-    }
+    {isPlayable: ()=>true, target:true},
+    {isPlayable: ()=>true, target: "all"}
 ];
+function reporterCardCallback(cardOptions){
+    return cardOptions;
+}

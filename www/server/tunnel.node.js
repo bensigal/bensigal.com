@@ -183,7 +183,8 @@ module.exports=function(req,res,server){
 
 //Should be all lowercase.
 var users=[
-	"ben"
+	"ben",
+	"jakob"
 ];
 
 module.exports.initialized=0;
