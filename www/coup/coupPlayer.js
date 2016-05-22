@@ -62,7 +62,9 @@ module.exports = function(name, game, index){
                 if(new RegExp(this.game.cards[i]+"(;\\w+)?").test(response)){
                     this.game.deepLog("Card recognized.")
                     //If not playable, return
-                    if(!defs.options[defs.names.indexOf(this.game.cards[i])].isPlayable(this)){
+                    var canPlayResponse = defs.options[defs.names.indexOf(this.game.cards[i])].isPlayable(this);
+                    if(canPlayResponse !== true){
+                        this.game.deepLog("Unable to play "+this.game.cards[i]+": "+canPlayResponse);
                         return;
                     }
                     //If no specified target...
@@ -72,11 +74,16 @@ module.exports = function(name, game, index){
                     }else{
                         //If specified target...
                         var whichCard = response.substring(0,response.indexOf(";"));
+                        var attemptTarget = response.substring(response.indexOf(";")+1);
+                        
+                        this.game.deepLog("searching for target "+attemptTarget)
                         
                         var target = this.game.playersByName[
-                            response.substring(response.indexOf(";")+1)
+                            attemptTarget
                         ];
-                        console.error("target"+target.name)
+                        
+                        this.game.deepLog("found "+target)
+                        
                         if(!target)return;
                         
                         this.game.log(this.name + " plays a "+whichCard+" against "+target.name+"!");

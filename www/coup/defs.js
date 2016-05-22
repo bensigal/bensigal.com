@@ -1,3 +1,4 @@
+var stack = require("stack");
 module.exports.names       = [
     "Banker",
     "Reporter",
@@ -7,9 +8,11 @@ module.exports.names       = [
 ];
 module.exports.abilities   = [
     function(player){
-        player.game.log(player.name + " uses banker.")
-        player.money+=3;
-        return true;
+        return new stack.Item().Challengeable(player, function(){
+            player.money += 3;
+            this.stack.pop();
+            this.stack.nextAction();
+        });
     },
     function(player){
         player.game.log(player.name + " reports on the latest story.")

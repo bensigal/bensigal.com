@@ -27,7 +27,7 @@ module.exports = function(req, res, server){
         
 	}else if(/deepLog\/?$/.test(req.path)){
         
-        return game.inDepthLog;
+        return game.inDepthLog.replace(/;/g, "\n");
         
 	}else if(/newGame\/?$/.test(req.path)){
         if(!req.post.players)
@@ -46,7 +46,7 @@ module.exports = function(req, res, server){
         if(!req.post.response)
             return "Post variables not set.";
             
-        player.resolveState(req.post.response);
+        game.stack.nextAction(player, req.post.response);
         return "Success!";
         
     }else if(/respondAs\/?$/.test(req.path)){

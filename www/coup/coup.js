@@ -1,5 +1,7 @@
 var coup = module.exports;
 var defs = require("./defs");
+var Stack= require("./stack");
+
 coup.Player = require("./coupPlayer");
 
 coup.Game = function(names, cards){
@@ -11,6 +13,7 @@ coup.Game = function(names, cards){
     this.cardFlags  = new Array(cards.length);
     this.deck       = coup.Deck.create(cards);
     this.playersByName = {};
+    this.stack = Stack.createStack(this);
     
     this.log=function(s){
         this.deepLog(s);
@@ -42,7 +45,7 @@ coup.Game = function(names, cards){
     this.whoseTurn = 0;
     
     this.log(this.players[0].name + "'s turn");
-    this.players[0].setState("choosing an action");
+    this.stack.push(new Stack.)
     
     this.nextTurn = function(){
         
