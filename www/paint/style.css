@@ -1,0 +1,26 @@
+#canvas{
+    width: 800px;
+    height: 600px;
+    background-color: black;
+}
+body{
+    margin: 0;
+}
+#canvasHolder{
+    margin: 20px auto;
+    border: 1px solid black;
+    width: 800px;
+}
+img{
+    display: none;
+}
+#instructions{
+    text-align: center;
+}
+#instructionsHolder{
+    margin: 20px auto;
+    width: 800px;
+}
+#instructionsHolder *{
+    
+}

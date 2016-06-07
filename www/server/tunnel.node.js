@@ -15,6 +15,7 @@ var authorizationRequired = [
 ];
 var adminRequired = [
     "exit",
+    "delete",
     "ssh",
     "getFileContents",
     "javac",
@@ -121,9 +122,20 @@ module.exports=function(req,res,server){
         	server.sendString("Admin permissions required", req,res);
         	
         }else if(/exit\/?/.test(req.path)){
-    		server.process.exit();
-    		return;
-    	}else if(/ssh\/?/.test(req.path)){ 
+            server.process.exit();
+            return;
+        }else if(/delete\/?/.test(req.path)){
+            req.log("Attempting to delete file "+req.post.path);
+            fs.unlink(req.post.path, function(err){
+                if(err){
+                    req.err(err.stack);
+                    server.showErrorPage("Failure",req,res);
+                }else{
+                    server.sendString("Success!",req,res);
+                }
+            });
+        }
+    	else if(/ssh\/?/.test(req.path)){ 
     		exec(["C:\\Program Files (x86)\\freeSSHd\\FreeSSHDService.exe"],function(err,out,code){
     			if(err instanceof Error){
     				req.err(err.stack);

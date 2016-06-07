@@ -1,5 +1,5 @@
 function deleteFile(s){
-    $.post("/server/submit", {op:"delete", edit:"../"+currentDir+s}, function(data){
+    $.post("/server/delete", {path:currentDir+s}, function(data){
         if(data!==""){
             viewText(data).replace(/<[^>]+?>/g, "");
         }else{

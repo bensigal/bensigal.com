@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Admin at bensigal.com</title>
+        <style>
+            body{
+                margin: 0;
+                background-color: white;
+            }
+            #all{
+                margin: 20px auto;
+                width: 760px;
+            }
+            .item{
+                background-color: white;
+                height: 300px;
+                cursor: pointer;
+                transition: 0.4s;
+                padding: 30px;
+            }
+            .item:hover{
+                background-color: #EEE;
+            }
+            .middlePicture{
+                float: left;
+                width: 400px;
+                height: 300px;
+            }
+            .itemDescription{
+                float: left;
+                width: 240px;
+                margin: 0 30px;
+                text-align: justify;
+                font-family: "Ubuntu", Arial, sans-serif;
+            }
+            .itemHeader{
+                font-size: 26px;
+                text-align: center;
+            }
+            a *:hover{
+                font-size: 16px;
+            }
+        </style>
+        <script src="/jquery.min.js"></script>
+        <script>
+            $(function(){
+                $("#editItem").click(function(){
+                    location.href="/edit/";
+                });
+                $("#mailItem").click(function(){
+                    location.href="/mail/";
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div id="all">
+            <div class="item" id="editItem">
+                <img src="/portal/edit.png" class="middlePicture">
+                <div class="itemDescription">
+                    <p class="itemHeader">
+                        Edit
+                    </p>
+                    <p class="itemFinerDescription">
+                        Use this tool to edit the website and other files on the server. Most operations require elevated privileges. Contact Ben for instructions and privilege elevation.
+                    </p>
+                </div>
+            </div>
+            <div class="item" id="mailItem">
+                <div class="itemDescription">
+                    <p class="itemHeader">
+                        Mail
+                    </p>
+                    <p class="itemFinerDescription">
+                        This leads to the @bensigal.com domain RoundCube mail viewer.
+                    </p>
+                </div>
+                <img src="/portal/mail.png" class="middlePicture">
+            </div>
+        </div>
+    </body>
+</html>

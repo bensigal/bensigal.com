@@ -1,59 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<style>
-		body{
-			background-color: white;
-			margin: 0;
-			"Lucida Sans Unicode", "Lucida Grande", sans-serif
-		}
-		#all{
-			width: 300px;
-			width: calc(50% - 150px);
-			min-width: 200px;
-			margin: 0 auto 0 auto;
-			text-align: center;
-			border: 2px solid #E5E5E5;
-			background-color: #FEFEFE;
-			box-shadow: 2px 3px 5px #888;
-			/*
-			padding: 0px 50px 0px 50px;
-			*/
-		}
-		h1{
-		    margin: 70px 0 30px 0;
-		    color: #030303;
-		    font-size: 42pt;
-		    font-weight: 400;
-		    text-align: center;
-		}
-		.choice{
-		    font-size: 18pt;
-		    padding: 16px;
-		    border-bottom: 1px solid #999;
-		    cursor: pointer;
-		}
-		.choice:last-child{
-		    border-bottom: 0px solid black;
-		    padding-bottom: 20px;
-		}
-		.choice:first-child{
-		    padding-top: 20px;
-		}
-		/*
-		.choice:hover{
-		    background-color: #FAFAFA;
-		    transition: 0.2s;
-		}
-		*/
-	</style>
-	<title>Benjamin Sigal</title>
-</head>
-<body>
-	<h1 id="headerTitle">Benjamin Sigal</h1>
-	<div id="all">
-		<div onclick="location.href='/game/'" class="choice">Game</div>
-		<div onclick="location.href='/edit/'" class="choice">Edit</div>
-		<div onclick="location.href='/mail/'" class="choice">Mail</div>
-	</div>
-</body>
+    <head>
+        <title>Games at bensigal.com</title>
+        <style>
+            body{
+                margin: 0;
+                background-color: white;
+            }
+            #all{
+                margin: 20px auto;
+                width: 760px;
+            }
+            .item{
+                background-color: white;
+                height: 300px;
+                cursor: pointer;
+                transition: 0.4s;
+                padding: 30px;
+            }
+            .item:hover{
+                background-color: #EEE;
+            }
+            .middlePicture{
+                float: left;
+                width: 400px;
+                height: 300px;
+            }
+            .itemDescription{
+                float: left;
+                width: 240px;
+                margin: 0 30px;
+                text-align: justify;
+                font-family: "Ubuntu", Arial, sans-serif;
+            }
+            .itemHeader{
+                font-size: 26px;
+                text-align: center;
+            }
+            a *:hover{
+                font-size: 16px;
+            }
+        </style>
+        <script src="/jquery.min.js"></script>
+        <script>
+            $(function(){
+                $("#snakeItem").click(function(){
+                    location.href="/snake/";
+                });
+                $("#paintItem").click(function(){
+                    location.href="/paint/";
+                });
+                $("#gameItem").click(function(){
+                    location.href="/game/";
+                });
+                $("#adminItem").click(function(){
+                    location.href="/portal/";
+                });
+            });
+        </script>
+    </head>
+    <body>
+        <div id="all">
+            <div class="item" id="snakeItem">
+                <img src="/snake.png" class="middlePicture">
+                <div class="itemDescription">
+                    <p class="itemHeader">
+                        Snake
+                    </p>
+                    <p class="itemFinerDescription">
+                        Eat the blue squares to grow longer. Use the arrow keys to move while avoiding running into the walls or yourself.<br><br>The current verified high score is 590.
+                    </p>
+                </div>
+            </div>
+            <div class="item" id="paintItem">
+                <div class="itemDescription">
+                    <p class="itemHeader">
+                        Paint
+                    </p>
+                    <p class="itemFinerDescription">
+                        A game based off of capture the flag. Instructions are included.
+                    </p>
+                </div>
+                <img src="/paint.png" class="middlePicture">
+            </div>
+            <div class="item" id="gameItem">
+                <img src="/game.png" class="middlePicture">
+                <div class="itemDescription">
+                    <p class="itemHeader">
+                        Game
+                    </p>
+                    <p class="itemFinerDescription">
+                        Using the arrow keys to move, avoid the red rectangles, using the green powerups to help you on your way. A second player can use WASD to have an invincible blue rectangle slowly chase after player 1.
+                    </p>
+                </div>
+            </div>
+            <div class="item" id="adminItem">
+                <div class="itemDescription">
+                    <p class="itemHeader">
+                        Admin Tools
+                    </p>
+                    <p class="itemFinerDescription">
+                        These pages require an account on the site.
+                    </p>
+                </div>
+                <img src="/beaker.jpg" class="middlePicture">
+            </div>
+        </div>
+    </body>
+</html>
