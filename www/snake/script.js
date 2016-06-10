@@ -119,7 +119,7 @@ function mainLoop(){
     if(growing){growing--};
     ctx.font="30px Georgia"
     ctx.fillStyle="#0A0"
-    ctx.fillText(snakeSquares.length,750,30)
+    ctx.fillText(snakeSquares.length,700,30)
 }
 $(document).keydown(function(e){
     e.preventDefault();
