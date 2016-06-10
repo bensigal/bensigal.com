@@ -21,7 +21,7 @@ function delDir(s){
 }
 function newDir(s){
     if(s){
-        $.post("/server/submit", {op:"mkdir", edit:"../"+currentDir+s}, function(data){
+        $.post("/server/mkdir", {path:currentDir+s}, function(data){
             if(data!==""){
                 viewText(data.replace(/<[^>]+?>/g, ""));
             }else{

@@ -20,7 +20,8 @@ var adminRequired = [
     "getFileContents",
     "javac",
     "save",
-    "exec"
+    "exec",
+    "mkdir",
 ];
 module.exports=function(req,res,server){
     if(new RegExp(openFunctions.join("|")).test(req.path)){
@@ -87,7 +88,7 @@ module.exports=function(req,res,server){
             		//This is some weird code, but necessary for a good async paradigm.
             		//Each execution of the callback to stat needs the file name,
             		//Because stat objects don't contain the file name. So, we have a 
-            		//closure to retain the fariable file, which is a string from items.
+            		//closure to retain the variable file, which is a string from items.
             		//Because they will not necessarily finish in order, each has the capacity
             		//to send off the completed list. Closures for the win.
             		fs.stat(req.post.dir+file,function(file){
@@ -188,6 +189,17 @@ module.exports=function(req,res,server){
     		process.stdout.on("data",respondToData)
     		process.stderr.on("data",respondToData)
     	}
+        else if(/mkdir\/?/.test(req.path)){
+            req.log("Attempting to make directory at "+req.post.path);
+            fs.mkdir(req.post.path, function(err){
+                if(err){
+                    req.err(err.stack);
+                    server.showErrorPage("Failure",req,res);
+                }else{
+                    server.sendString("Success!",req,res);
+                }
+            });
+        }
     }else{
 		server.showErrorPage(404,req,res);
 	}
