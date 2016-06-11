@@ -1,11 +1,25 @@
 var geometry = new THREE.BoxGeometry( 1, 1, 1 );
 var cubeSpeed = 0.1
 var material = new THREE.MeshLambertMaterial({color: "#FFFF00"})
+var textureLoader = new THREE.TextureLoader();
+
+var tntTop = new THREE.MeshBasicMaterial({map:textureLoader.load("/3d/images/tntTop.png")});
+var tntBottom = new THREE.MeshBasicMaterial({map:textureLoader.load("/3d/images/tntBottom.png")});
+var tntSide = new THREE.MeshBasicMaterial({map:textureLoader.load("/3d/images/tntSide.png")});
+var tntMaterials = [
+    tntSide,
+    tntSide,
+    tntTop,
+    tntBottom,
+    tntSide,
+    tntSide,
+]
+
+var updatedMaterial = new THREE.MeshFaceMaterial(tntMaterials);
 
 function createCube(x){
     
-    var cube = new THREE.Mesh(geometry, material);
-    console.log(x);
+    var cube = new THREE.Mesh(geometry, updatedMaterial);
     
     cube.position.set(x, 0.5, -20)
     cube.rotation.y = Math.random();
@@ -41,7 +55,6 @@ function cubeTick(){
     }
     
     if(this.position.z > 3){
-        console.log("resetting");
         this.position.z = -20;
         this.position.x = Math.sqrt(2) * (Math.floor(Math.random()*10) - 5)
         this.position.y = 15;
