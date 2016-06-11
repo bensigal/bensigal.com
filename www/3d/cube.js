@@ -74,7 +74,8 @@ function cubeTick(){
                 }
                 cube.position.add(cube.velocity);
             })
-            player.getWrecked = (new THREE.Vector3(0,0,0)).subVectors(player.position, this.position).normalize();
+            if(!player.getWrecked)
+            player.getWrecked = new THREE.Vector3().subVectors(player.position, this.position).setLength(1/4);
         }
         return;
     }
