@@ -81,6 +81,11 @@ module.exports=function(req,res,server){
             		}
             		return;
             	}
+            	if(items.length===0){
+            	    req.log("Empty.")
+            	    server.sendString("\n",req,res);
+            	    return;
+            	}
             	var dirs = [];
             	var files= [];
             	var responsesLeft = items.length;
