@@ -36,8 +36,12 @@ function createPlayer(){
     
     player.tick = function(){
         
+        if(this.getWrecked){
+            this.position.add(this.getWrecked);
+            return;
+        }
         if(this.hit > 0){
-            this.position.z -= 0.5;
+            cubesMoving=false;
             return;
         }
         
@@ -85,11 +89,13 @@ function createPlayer(){
         this.raycasters.forEach(function(raycaster){
             raycaster.set(this.position, raycaster.ray.direction)
             cubes.forEach(function(cube){
-                hitThisRound = hitThisRound || Boolean(raycaster.intersectObject(cube).length)
+                hitThisRound = hitThisRound || raycaster.intersectObject(cube)[0]
             });
         }, this);   
         if(hitThisRound){
             this.hit++;
+            console.log(hitThisRound)
+            if(this.hit)hitThisRound.object.hitPlayer = true;
         }
     }
     return player;
