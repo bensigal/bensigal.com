@@ -22,6 +22,7 @@ var adminRequired = [
     "save",
     "exec",
     "mkdir",
+    "rmdir",
 ];
 module.exports=function(req,res,server){
     if(new RegExp(openFunctions.join("|")).test(req.path)){
@@ -200,6 +201,17 @@ module.exports=function(req,res,server){
                 if(err){
                     req.err(err.stack);
                     server.showErrorPage("Failure",req,res);
+                }else{
+                    server.sendString("Success!",req,res);
+                }
+            });
+        }
+        else if(/rmdir\/?/.test(req.path)){
+            req.log("Attempting to remove (hopefully empty) directory at "+req.post.path);
+            fs.rmdir(req.post.path, function(err){
+                if(err){
+                    req.err(err.stack);
+                    server.showErrorPage(err.message,req,res);
                 }else{
                     server.sendString("Success!",req,res);
                 }

@@ -9,9 +9,8 @@ function deleteFile(s){
 }
 function delDir(s){
     if(s){
-        console.log("../"+currentDir+s);
-        $.post("/server/submit", {op:"deleteFolder", edit:"../"+currentDir+s}, function(data){
-            if(data!==""){
+        $.post("/server/rmdir", {path:currentDir+s}, function(data){
+            if(data!=="Success!"){
                 viewText(data.replace(/<[^>]+?>/g, ""));
             }else{
                 changeFiles(currentDir);
@@ -22,7 +21,7 @@ function delDir(s){
 function newDir(s){
     if(s){
         $.post("/server/mkdir", {path:currentDir+s}, function(data){
-            if(data!==""){
+            if(data!=="Success!"){
                 viewText(data.replace(/<[^>]+?>/g, ""));
             }else{
                 changeFiles(currentDir);
