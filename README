@@ -4,3 +4,9 @@ certificate should be at /key.pem and /cert.pem. Also create directory
 /server/logs, which is ignored by .gitignore. Another necessary
 but not included file is /passwords.js, which is not present
 for obvious reasons.
+
+To run the server, execute server/server.js with node. One argument is 
+required; the root. For example, if /www and /server are at /home/meep, 
+the correct execution would be:
+
+node /path/to/server.js /home/meep
