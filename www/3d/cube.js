@@ -83,9 +83,9 @@ function cubeTick(){
         this.position.y -= 0.125
     }
     
-    if(this.position.z > 3){
+    if(this.position.z > 5){
         this.position.z = -20;
-        this.position.x = Math.sqrt(2) * (Math.floor(Math.random()*10) - 5)
+        this.position.x = Math.sqrt(2) * (Math.floor(Math.random()*10) - 4.5)
         this.position.y = 15;
     }
 }

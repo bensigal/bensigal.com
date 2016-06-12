@@ -1,4 +1,4 @@
-var player, cubes, scene, renderer, ticks, cubes, boundaries;
+var player, cubes, scene, renderer, ticks, cubes, boundaries, score = 0;
 
 $(function(){
     
@@ -28,6 +28,11 @@ $(function(){
 		    cube.tick();
 		});
 		
+		if(cubesMoving){
+		    score++;
+		}
+		drawScore(score);
+		
 		renderer.render(scene, camera);
 	};
 	
@@ -38,7 +43,7 @@ $(function(){
     gridHelper.position.set(0, 0.01, -10)
     scene.add( gridHelper );
 	*/
-	render();
+	setTimeout(render, 1000);
 });
 
 function prepareScreen(){

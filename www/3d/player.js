@@ -95,7 +95,10 @@ function createPlayer(){
         if(hitThisRound){
             this.hit++;
             console.log(hitThisRound)
-            if(this.hit)hitThisRound.object.hitPlayer = true;
+            if(this.hit){
+                hitThisRound.object.hitPlayer = true;
+                gameOver();
+            }
         }
     }
     return player;

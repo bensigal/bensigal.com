@@ -8,13 +8,19 @@
         <script src="/3d/player.js"></script>
         <script src="/3d/cube.js"></script>
         <script src="/3d/boundaries.js"></script>
+        <script src="/3d/overlay.js"></script>
         <img style="display:none" src="http://media-curse.cursecdn.com/attachments/173/449/c76da297a8088e034f6fa183f7236193.png">
         <style>
-            canvas{
-                margin: 20px auto;
+            #overlayCanvas{
+                position: absolute;
+                background-color: transparent;x
+                width: 800px;
+                height: 600px;
+                z-index: 1;
             }
         </style>
     </head>
     <body>
+        <canvas id="overlayCanvas"></canvas>
     </body>
 </html>
