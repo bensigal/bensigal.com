@@ -1,10 +1,10 @@
 var allData, currents;
 $(function(){
-    $.get("data.txt",function(data){
-        data=data.replace(/spd/gi, "♠");
-        data=data.replace(/hrt/gi, "♥");
-        data=data.replace(/clb/gi, "♣");
-        data=data.replace(/dmnd|dmd/gi, "♦");
+    $.get("/cheatSheet/data.txt",function(data){
+        data=data.replace(/spd/gi, "&spades;");
+        data=data.replace(/hrt/gi, "&hearts;");
+        data=data.replace(/clb/gi, "&clubs;");
+        data=data.replace(/dmnd|dmd/gi, "&diams;");
         
         allData={info:"No bids have been made."};
         
