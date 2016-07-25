@@ -127,7 +127,7 @@ function defaultTunnel(req, res, whereis, indexFile){
 	
 	indexFile=indexFile||"index.html";
 
-	req.log("At default tunnel");
+	req.log("At default tunnel at "+whereis);
 	fs.stat("www"+whereis,function(err,stat){
 		//File Not Found
 		if(err&&err.code=="ENOENT"){
@@ -135,6 +135,7 @@ function defaultTunnel(req, res, whereis, indexFile){
 			showErrorPage(404, req, res);
 			return;
 		}else if (err){
+			req.err("Error finding current location.");
 			req.err(e.stack);
 			showErrorPage(500);
 			return;
@@ -146,6 +147,7 @@ function defaultTunnel(req, res, whereis, indexFile){
 			relativeUrl=req.path.substring(whereis.length);
 			nextDir = relativeUrl.substring(0,relativeUrl.indexOf("/")+1);
 			//Go through the next folder's tunnel.
+			req.log("Found another supposed folder. Sending through tunnel.")
 			sendThroughTunnel(req, res, whereis+nextDir);
 		//If this is the requested destination...
 		}else if(req.path==whereis){
@@ -271,7 +273,6 @@ function sendThroughTunnel(req, res, path){
 	try{
 		var nextTunnel = require(root+"www"+path+"tunnel.node.js");
 	}catch(e){
-		req.log(e.stack);
 		if(e.code=="MODULE_NOT_FOUND"){
 			req.log("Tunnel not found at "+root+"www"+path+"tunnel.node.js");
 		}else{
@@ -284,19 +285,24 @@ function sendThroughTunnel(req, res, path){
 		return;
 
 	}
-	req.log(nextTunnel);
-	try{
-		var tunnelResponse = nextTunnel(req, res, serverInfo, path);
-	}catch(e){
-		req.err("Error in tunnel execution.");
-		req.err(e.stack);
-		showErrorPage(500, req, res);
-		return;
-	}
+	if(typeof nextTunnel == "function"){
 	
-	if(typeof tunnelResponse == "string"){
-		req.log("Detected output from tunnel; sending as plain text.");
-		sendString(tunnelResponse, req, res);
+		try{
+			var tunnelResponse = nextTunnel(req, res, serverInfo, path);
+		}catch(e){
+			req.err("Error in tunnel execution.");
+			req.err(e.stack);
+			showErrorPage(500, req, res);
+			return;
+		}
+		
+		if(typeof tunnelResponse == "string"){
+			req.log("Detected output from tunnel; sending as plain text.");
+			sendString(tunnelResponse, req, res);
+		}
+		
+	}else{
+		defaultTunnel(req,res,path);
 	}
 }
 function countSlashes(input){
