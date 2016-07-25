@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Hank</title>
+        <style>
+            #button{
+                background-color: #00E;
+                color: white;
+                text-align: center;
+                padding: 30px 0;
+                font-family: "Ubuntu" "Arial" sans-serif;
+                font-size: 36px;
+                cursor: pointer;
+                transition: 0.2s;
+                margin: 0;
+            }
+            #button:hover{
+                background-color: #00A;
+            }
+            #button:active{
+                background-color: #008;
+            }
+            #video{
+                width: 800px;
+                height: 600px;
+                background-color: black;
+                margin: 0;
+            }
+            #all{
+                width: 800px;
+                margin: 20px auto;
+            }
+        </style>
+        <script>
+            function newVideo(){
+                
+                var whichVideo = Math.ceil(Math.random()*15);
+                document.getElementById("source").setAttribute("src", "/hank/"+whichVideo+".mp4");
+                document.getElementById("video").load();
+                
+            }
+        </script>
+    </head>
+    <body>
+        <div id="all">
+            <video id="video" controls autoplay name="media">
+                <source id="source" type="video/mp4">
+                Get a better browser.
+            </video>
+            <div id="button" onclick="newVideo()">Hear What Your Kids Think of You</div>
+        </div>
+    </body>
+</html>

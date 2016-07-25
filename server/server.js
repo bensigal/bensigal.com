@@ -125,7 +125,7 @@ function serverRespond(req, res){
 //What to do when encountering a folder without a "tunnel.node.js" file.
 function defaultTunnel(req, res, whereis, indexFile){
 	
-	indexFile=indexFile||"index.html";;
+	indexFile=indexFile||"index.html";
 
 	req.log("At default tunnel");
 	fs.stat("www"+whereis,function(err,stat){
@@ -145,7 +145,6 @@ function defaultTunnel(req, res, whereis, indexFile){
 			
 			relativeUrl=req.path.substring(whereis.length);
 			nextDir = relativeUrl.substring(0,relativeUrl.indexOf("/")+1);
-			
 			//Go through the next folder's tunnel.
 			sendThroughTunnel(req, res, whereis+nextDir);
 		//If this is the requested destination...
@@ -169,6 +168,7 @@ function defaultTunnel(req, res, whereis, indexFile){
 					//This is a directory. Send to its tunnel, add a slash to make clear to
 					//tunnel is a directory to speed things up a bit.
 					req.path=req.path+"/";
+			        req.url = req.url+"/";
 					req.log("Found directory");
 					sendThroughTunnel(req, res, req.path);				
 				}else if(req.path.endsWith(".node.js")){
