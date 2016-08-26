@@ -53,11 +53,17 @@
                 $("#gameItem").click(function(){
                     location.href="/game/";
                 });
+                $("#3dItem").click(function(){
+                    location.href="/3d/";
+                })
                 $("#adminItem").click(function(){
                     location.href="/portal/";
                 });
                 $("#githubItem").click(function(){
                     location.href="https://github.com/bensigal/bensigal.com";
+                });
+                $("#xwingItem").click(function(){
+                    location.href="/xwing/";
                 });
             });
         </script>
@@ -97,7 +103,7 @@
                     </p>
                 </div>
             </div>
-            <div class="item" id="snakeItem">
+            <div class="item" id="3dItem">
                 <div class="itemDescription">
                     <p class="itemHeader">
                         Game - 3d
@@ -125,11 +131,22 @@
                         Source Code
                     </p>
                     <p class="itemFinerDescription">
-                        Want to see the source code for this website? If for some reason you answered yes, head here for our github.
+                        
                     </p>
                 </div>
                 <!--Credit for image, of course, goes to github.com-->
                 <img src="/images/github.png" class="middlePicture">
+            </div>
+            <div class="item" id="xwingItem">
+                <img src="/images/beaker.jpg" class="middlePicture">
+                <div class="itemDescription">
+                    <p class="itemHeader">
+                        X-Wing Game
+                    </p>
+                    <p class="itemFinerDescription">
+                        A version of Game with a cooler sprite.
+                    </p>
+                </div>
             </div>
         </div>
     </body>

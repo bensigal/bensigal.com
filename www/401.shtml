@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>401 No Authorization</title>
+        <title>Error 401 Authorization Required</title>
         <link rel="stylesheet" type="text/css" href="/style.css">
     </head>
     <body>
         <header id="error">
-            <h1>Error 401 - No Authorization Detected</h1>
+            <h1>Error 401 - Authorization Required</h1>
         </header>
         <nav>
             <a href="/index.html"><div>Home</div></a>

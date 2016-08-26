@@ -187,7 +187,7 @@ function defaultTunnel(req, res, whereis, indexFile){
 
 var supportedErrorCodes = [401,403,404,405,500];
 var messages = [
-	"No Authorization",
+	"Authorization Required",
 	"Forbidden",
 	"File Not Found",
 	"Method Not Allowed",

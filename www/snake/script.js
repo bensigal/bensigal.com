@@ -96,7 +96,17 @@ function mainLoop(){
         clearInterval(mainLoopIntervalCode);
         ctx.fillStyle = "red";
         ctx.font="100px impact"
-        ctx.fillText("UR BAD",250,200)
+        ctx.fillText("SNAKE!",220,200)
+        setTimeout(()=>{
+            ctx.font="100px impact";
+            ctx.fillStyle = "red";
+            ctx.fillText("SNAKE!",220,300)
+        },750);
+        setTimeout(()=>{
+            ctx.font="100px impact";
+            ctx.fillStyle = "red";
+            ctx.fillText("SNAAAAAKE!",80,400)
+        },1500);
     }
     else if(toBeChecked.state == "food"){
         while(true){

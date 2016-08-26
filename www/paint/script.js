@@ -1,5 +1,4 @@
-var canvas, ctx, topLeft, mainLoopIntervalCode;
-var speedMod = 1/15
+var canvas, ctx, topLeft, mainLoopIntervalCode, ticksLeft;
 var keyboard = {};
 var sprite = {};
 var ticks;
@@ -15,25 +14,29 @@ var themes = {
         player2:"#33F",
         player1square:"#600",
         player2square:"#006",
+        powerup:"#3F3",
         background:"white",
         text:"white",
         grid:"#505",
     }
-}
+};
 var theme = themes.basic;
 
 function start(){
     canvas = $("#canvas")[0];
     canvas.width = 800;
     canvas.height= 600;
-    canvas.style.background=theme.background
+    canvas.style.background=theme.background;
     
-    ticks=30*60;
+    ticks=30*30 + 1; //One tick is run for setup
+    ticksLeft = 0;
     
     ctx = canvas.getContext("2d");
     
     player1  = new sprite.Player(true);
     player2  = new sprite.Player(false);
+    
+    powerup = new sprite.Powerup(1);
     
     squares = [];
     for(var i = 0; i < numRows; i++){
@@ -43,6 +46,14 @@ function start(){
         }
     }
     mainLoop();
+    ctx.fillStyle = "white";
+    ctx.fillRect(250,250,300,100);
+    ctx.fillStyle = "black";
+    ctx.font = "30px Georgia";
+    ctx.fillText("Press space to start.", 270, 283);
+    ctx.font = "20px Georgia";
+    ctx.fillText("Instructions are at the ", 303, 315);
+    ctx.fillText("bottom of the page.", 315, 337);
     stopped=true;
 }
 $(start);
@@ -51,21 +62,27 @@ function victory(isp1){
     clearInterval(mainLoopIntervalCode);
     ctx.font="100px Impact";
     ctx.fillStyle = theme.text;
-    ctx.fillText(isp1?"PLAYER 1 WINS":"PLAYER 2 WINS", 120, 100)
+    ctx.fillText(isp1?"PLAYER 1 WINS":"PLAYER 2 WINS", 120, 100);
 }
 function tiedGame(){
     stopped=true;
     clearInterval(mainLoopIntervalCode);
     ctx.font="100px Impact";
     ctx.fillStyle = theme.text;
-    ctx.fillText("TIE", 338, 100)
+    ctx.fillText("TIE", 338, 100);
 }
 function mainLoop(){
-    ctx.clearRect(0,0,800,600)
+    ctx.clearRect(0,0,800,600); 
     ticks--;
     
     player1.tick();
     player2.tick();
+    
+    powerup.tick();
+    
+    if(ticksLeft){
+        ticksLeft--;
+    }
     
     squares.forEach(function(squareArray){
         squareArray.forEach(function(square){
@@ -75,9 +92,11 @@ function mainLoop(){
     
     ctx.fillStyle = "white";
     ctx.fillRect(399,0,2,600);
+    ctx.fillStyle = "#3F3"
+    ctx.fillRect(0,0,ticksLeft*7,10)
     
     //Circular Collision
-    if(distanceBetweenPlayers() < player1.r * 2){
+    if(distanceBetweenPlayers() < player1.r + player2.r){
         var p1in2 = player1.x > 390;
         var p2in1 = player2.x < 410;
         
@@ -93,13 +112,15 @@ function mainLoop(){
         }
     }
     
+    powerup.draw();
+    
     player1.draw();
     player2.draw();
     
-    ctx.fillStyle = ticks < 60*10 ? "white" : "#33F"
+    ctx.fillStyle = ticks < 30*10 ? "white" : "#33F"
     
-    var secondsPassed = Math.floor(ticks/60);
-    var tenthsPlace = Math.floor(ticks/6)%10;
+    var secondsPassed = Math.floor(ticks/30);
+    var tenthsPlace = Math.floor(ticks/3)%10;
     
     ctx.font = "30px Georgia";
     ctx.fillText(secondsPassed+"."+tenthsPlace, 700, 540)
@@ -125,6 +146,16 @@ function mainLoop(){
             tiedGame();
         }
     }
+    if(ticks == 30 * 20){
+        if(!powerup.showing){
+            powerup.setId(2);
+        }
+    }
+    if(ticks == 30 * 10){
+        if(!powerup.showing){
+            powerup.setId(3);
+        }
+    }
 }
 function distanceBetweenPlayers(){
     //That geometry tho...
@@ -136,52 +167,55 @@ function distanceBetweenPlayers(){
 sprite.Player = function(isp1){
     
     this.x=isp1?50:750;
-    this.y=330;
+    this.y=300;
     
     this.r=10;
     this.isp1 = isp1;
+    
+    this.speed = 1/15;
+    
     this.tick=function(){
         
         if(isp1){
             if(keyboard.w){
-                this.yVel-=0.3;
+                this.yVel-=0.6;
             }
             if(keyboard.s){
-                this.yVel+=0.3;
+                this.yVel+=0.6;
             }
             if(keyboard.d){
-                this.xVel+=0.3;
+                this.xVel+=0.6;
             }
             if(keyboard.a){
-                this.xVel-=0.3;
+                this.xVel-=0.6;
             }
         }else{
             if(keyboard.up){
-                this.yVel-=0.3;
+                this.yVel-=0.6;
             }
             if(keyboard.down){
-                this.yVel+=0.3;
+                this.yVel+=0.6;
             }
             if(keyboard.right){
-                this.xVel+=0.3;
+                this.xVel+=0.6;
             }
             if(keyboard.left){
-                this.xVel-=0.3;
+                this.xVel-=0.6;
             }
         }
         
         //Slow down; stop if going really slowly.
         if(this.xVel > 0.01){
-            this.xVel -= this.xVel*speedMod
+            this.xVel -= this.xVel*this.speed
         }else if(this.xVel < 0.01){
-            this.xVel -= this.xVel*speedMod
+            this.xVel -= this.xVel*this.speed
         }else{
             this.xVel = 0;
         }
         if(this.yVel > 0.01){
-            this.yVel -= this.yVel*speedMod
+            this.yVel -= this.yVel*this.speed
         }else if(this.yVel < 0.01){
-            this.yVel -= this.yVel*speedMod
+            this.yVel -= this.yVel*this.speed
         }else{
             this.yVel = 0;
         }
@@ -189,20 +223,20 @@ sprite.Player = function(isp1){
         this.x+=this.xVel;
         this.y+=this.yVel;
         //If on edge, bounce
-        if(this.x > 790){
-            this.x=790;
+        if(this.x > 800 - this.r){
+            this.x=800 - this.r;
             this.xVel = - this.xVel
         }
-        if(this.x < 10){
-            this.x=10;
+        if(this.x < this.r){
+            this.x=this.r;
             this.xVel = - this.xVel
         }
-        if(this.y > 590){
-            this.y=590;
+        if(this.y > 600 - this.r){
+            this.y=600 - this.r;
             this.yVel = - this.yVel
         }
-        if(this.y < 10){
-            this.y=10;
+        if(this.y < this.r){
+            this.y=this.r;
             this.yVel = - this.yVel
         }
         
@@ -210,6 +244,13 @@ sprite.Player = function(isp1){
         columnIndex = Math.floor(this.y/squareWidth);
         
         squares[rowIndex][columnIndex].setOwnership(this.isp1);
+        
+        if(this.r > 15){
+            squares[rowIndex - 1][columnIndex].setOwnership(this.isp1);
+            squares[rowIndex + 1][columnIndex].setOwnership(this.isp1);
+            squares[rowIndex][columnIndex - 1].setOwnership(this.isp1);
+            squares[rowIndex][columnIndex + 1].setOwnership(this.isp1);
+        }
     }
     this.draw = function(){
         ctx.fillStyle=this.isp1?theme.player1:theme.player2
@@ -239,6 +280,91 @@ sprite.Square = function(row, column){
         ctx.fillRect(this.x-1,this.y-1,squareWidth,1);
     }
     this.setOwnership(this.row < numRows/2)
+}
+sprite.Powerup = function(){
+    this.id = 1;
+    this.x = 400;
+    this.y = 300;
+    this.r = 10;
+    this.showing = true;
+    this.setId = function(id){
+        this.id = id;
+        this.showing = true;
+        if(id == 2){
+            this.y = 100;
+        }else if(id == 3){
+            this.y = 500;
+        }
+    }
+    this.draw = function(){
+        if(!this.showing)return;
+        ctx.fillStyle=theme.powerup
+        ctx.beginPath();
+        ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
+        ctx.fill();
+        ctx.closePath();
+    }
+    this.tick = function(){
+        if(this.showing){
+            
+            var touchingPlayer = null;
+            
+            var player1IsTouching = Math.sqrt(
+                Math.pow(this.x - player1.x, 2) +
+                Math.pow(this.y - player1.y, 2)
+            ) < this.r + player1.r
+            
+            var player2IsTouching = Math.sqrt(
+                Math.pow(this.x - player2.x, 2) +
+                Math.pow(this.y - player2.y, 2)
+            ) < this.r + player2.r
+            
+            if(player1IsTouching && player2IsTouching)return;
+            
+            if(player1IsTouching){
+                touchingPlayer = player1;
+            }
+            if(player2IsTouching){
+                touchingPlayer = player2;
+            }
+            
+            if(!touchingPlayer)return;
+            
+            switch(this.id){
+            case 1:
+                var callback = function(touchingPlayer, isNegative){
+                    touchingPlayer.r++;
+                    if(isNegative)touchingPlayer.r-=2;
+                }
+                for(var i = 0; i < 20; i++){
+                    setTimeout(function(){
+                        callback(touchingPlayer);
+                    }, i*20);
+                    setTimeout(function(){
+                        callback(touchingPlayer, true);
+                    }, i*20 + 3000);
+                }
+                ticksLeft = 30*3;
+                break;
+            case 2:
+                touchingPlayer.speed /=2;
+                setTimeout(function(){
+                    touchingPlayer.speed *= 2;
+                }, 5000)
+                ticksLeft = 30*5;
+                break;
+            case 3:
+                var notTouchingPlayer = touchingPlayer.isp1?player2:player1;
+                notTouchingPlayer.speed *=3;
+                setTimeout(function(){
+                    notTouchingPlayer.speed /=3;
+                }, 2000)
+                ticksLeft = 30*2;
+            }
+            this.showing = false;
+            
+        }
+    }
 }
 $(document).keydown(function(e){
     e.preventDefault();
@@ -270,7 +396,7 @@ $(document).keydown(function(e){
     }
     if(e.keyCode==32 && stopped){
         start();
-        mainLoopIntervalCode = setInterval(mainLoop, 16);
+        mainLoopIntervalCode = setInterval(mainLoop, 33);
         stopped = false;
     }
 });
