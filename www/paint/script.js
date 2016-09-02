@@ -173,55 +173,63 @@ sprite.Player = function(isp1){
     this.isp1 = isp1;
     
     this.speed = 1/15;
+    this.bonusSpeedMod = 0.5;
+    this.acceleration = 0.6
     
     this.tick=function(){
         
         if(isp1){
             if(keyboard.w){
-                this.yVel-=0.6;
+                this.yVel-=this.acceleration;
             }
             if(keyboard.s){
-                this.yVel+=0.6;
+                this.yVel+=this.acceleration;
             }
             if(keyboard.d){
-                this.xVel+=0.6;
+                this.xVel+=this.acceleration;
             }
             if(keyboard.a){
-                this.xVel-=0.6;
+                this.xVel-=this.acceleration;
             }
         }else{
             if(keyboard.up){
-                this.yVel-=0.6;
+                this.yVel-=this.acceleration;
             }
             if(keyboard.down){
-                this.yVel+=0.6;
+                this.yVel+=this.acceleration;
             }
             if(keyboard.right){
-                this.xVel+=0.6;
+                this.xVel+=this.acceleration;
             }
             if(keyboard.left){
-                this.xVel-=0.6;
+                this.xVel-=this.acceleration;
             }
         }
         
         //Slow down; stop if going really slowly.
         if(this.xVel > 0.01){
-            this.xVel -= this.xVel*this.speed
+            this.xVel -= this.xVel*this.speed*this.bonusSpeedMod
         }else if(this.xVel < 0.01){
-            this.xVel -= this.xVel*this.speed
+            this.xVel -= this.xVel*this.speed*this.bonusSpeedMod
         }else{
             this.xVel = 0;
         }
         if(this.yVel > 0.01){
-            this.yVel -= this.yVel*this.speed
+            this.yVel -= this.yVel*this.speed*this.bonusSpeedMod
         }else if(this.yVel < 0.01){
-            this.yVel -= this.yVel*this.speed
+            this.yVel -= this.yVel*this.speed*this.bonusSpeedMod
         }else{
             this.yVel = 0;
         }
         //Move based on velocity;
         this.x+=this.xVel;
         this.y+=this.yVel;
+        //Determine which side of stage are on, calculate speed modifier (changes max speed)
+        if((this.isp1 && this.x < 400) || (!this.isp1 && this.x > 400)){
+            this.bonusSpeedMod = 0.5;
+        }else{
+            this.bonusSpeedMod = 1;
+        }
         //If on edge, bounce
         if(this.x > 800 - this.r){
             this.x=800 - this.r;
@@ -331,7 +339,7 @@ sprite.Powerup = function(){
             if(!touchingPlayer)return;
             
             switch(this.id){
-            case 1:
+            case 1: case 3:
                 var callback = function(touchingPlayer, isNegative){
                     touchingPlayer.r++;
                     if(isNegative)touchingPlayer.r-=2;
@@ -342,24 +350,26 @@ sprite.Powerup = function(){
                     }, i*20);
                     setTimeout(function(){
                         callback(touchingPlayer, true);
-                    }, i*20 + 3000);
+                    }, i*20 + 2000);
                 }
-                ticksLeft = 30*3;
+                ticksLeft = 30*2;
                 break;
-            case 2:
+            /*case 2:
                 touchingPlayer.speed /=2;
+                touchingPlayer.acceleration *=2;
                 setTimeout(function(){
                     touchingPlayer.speed *= 2;
+                    touchingPlayer.acceleration /= 2;
                 }, 5000)
                 ticksLeft = 30*5;
-                break;
-            case 3:
+                break;*/
+            case 2:
                 var notTouchingPlayer = touchingPlayer.isp1?player2:player1;
                 notTouchingPlayer.speed *=3;
                 setTimeout(function(){
                     notTouchingPlayer.speed /=3;
-                }, 2000)
-                ticksLeft = 30*2;
+                }, 2500)
+                ticksLeft = 30*2.5;
             }
             this.showing = false;
             
@@ -367,7 +377,7 @@ sprite.Powerup = function(){
     }
 }
 $(document).keydown(function(e){
-    e.preventDefault();
+    var didntMatter = false;
     switch(e.keyCode){
     case 37:
         keyboard.left = true;
@@ -393,8 +403,14 @@ $(document).keydown(function(e){
     case 83:
         keyboard.s=true
         break;
+    default:
+        didntMatter = true;
+    }
+    if(!didntMatter){
+        e.preventDefault();
     }
     if(e.keyCode==32 && stopped){
+        e.preventDefault();
         start();
         mainLoopIntervalCode = setInterval(mainLoop, 33);
         stopped = false;
