@@ -1,26 +1,35 @@
 $(function(){
     $("#resourceRow button").click(buttonClickHandler);
     $("#rightResourcesTable button").prop("disabled", true);
+    updateMoney();
+    updateCommodityAmounts();
 });
 
 function buttonClickHandler(event){
-    var isOnLeft = $.contains($("#leftResources")[0], event.target);
+    
+    var isLeft = $.contains($("#leftResources")[0], event.target);
     var isBuy = $(event.target).is(".buy");
     var commodityName = $(event.target).parent().parent().find(".resourceName").html();
-    var currentCommodityAmount = 
-    alert(commodityName);
+    var commodityAmount = players[Number(isLeft)].getCommodityAmount(commodityName);
+    
+    console.log((isLeft?"Left":"Right") + " is attempting to " + (isBuy?"buy":"sell") + " a " +
+        commodityName + ".");
+    
     if(!isBuy){
-        
+        if(commodityAmount <= 0){
+            console.log("They fail.");
+            alert("You do not have any "+commodityName+" to sell!");
+        }
     }
 }
 
 var Player = function(isLeft){
     this.isp1 = isLeft;
-    this.commmodityAmounts = [0,0,0,0,0];
+    this.commodityAmounts = [0,0,0,0,0];
     this.money = isLeft?500:600;
     this.getCommodityAmount = function(commodity){
-        if(typeof name == "string"){
-            return this.commodityAmounts[Commodity[name.toLowerCase()]];
+        if(typeof commodity == "string"){
+            return this.commodityAmounts[Commodity[commodity.toLowerCase()]];
         }
         return this.commodityAmounts[commodity.id];
     };
@@ -28,6 +37,8 @@ var Player = function(isLeft){
 
 //Yes, the player on the left is the second item in the array. Deal with it.
 var players = [new Player(false), new Player(true)]
+
+var prices = [100,100,100,100,100];
 
 var Commodity = function(name, id){
     this.name=name;
@@ -47,3 +58,16 @@ var commodities = [
     new Commodity("Metal",3),
     new Commodity("Food",4),
 ];
+
+function updateMoney(){
+    $("#leftInfo .moneyInfo").html("$"+players[1].money);
+    $("#rightInfo .moneyInfo").html("$"+players[0].money);
+}
+
+function updateCommodityAmounts(){
+    
+}
+
+function nextTurn(){
+    
+}
