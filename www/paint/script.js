@@ -173,7 +173,7 @@ sprite.Player = function(isp1){
     this.isp1 = isp1;
     
     this.speed = 1/15;
-    this.bonusSpeedMod = 0.5;
+    this.bonusSpeedMod = 0.75;
     this.acceleration = 0.6
     
     this.tick=function(){
