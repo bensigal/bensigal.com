@@ -1,13 +1,17 @@
 var isLeftTurn = true;
-var winConditionMoneyAmount = 1000;
+var winConditionMoneyAmount = 3000;
+var deals;
 
 $(function(){
     $("#resourceRow button").click(buttonClickHandler);
     $("#rightResourcesTable button").prop("disabled", true);
     updateMoney();
     updateCommodityAmounts();
-    var deal = new SpecialDeal(true);
-    $("#cardsForSaleRow").children().first().html(deal.totalDescription);
+    deals = [];
+    for(var i = 1; i < 7; i++){
+        deals[i] = new Deal("autobuy");
+        deals[i].populate(i);
+    }
 });
 
 function buttonClickHandler(event){
@@ -45,6 +49,7 @@ var Player = function(isLeft){
     this.isLeft = isLeft;
     this.commodityAmounts = [1,1,1,1,1];
     this.money = isLeft?500:600;
+    this.effects = [];
     this.setMoney = function(money){
         this.money = money;
         if(this.money >= winConditionMoneyAmount){
@@ -60,6 +65,9 @@ var Player = function(isLeft){
         }
         return this.commodityAmounts[commodity.id];
     };
+    this.removeEffect = function(effect){
+        this.effects.splice(this.effects.indexOf(effect), 1);
+    }
 };
 
 //Yes, the player on the left is the second item in the array. Deal with it.
@@ -127,33 +135,93 @@ Commodity.cloth = commodities[2];
 Commodity.metal = commodities[3];
 Commodity.food = commodities[4];
 
-var SpecialDeal = function(random){
+var Deal = function(type){
     
-    if(random){
+    this.generatePriceDescription = function(){
         
-        this.amounts = [2, 1, 1, 0, 0];
-        this.markup = "200";
-        var commodityOrder = shuffle([0,1,2,3,4]);
+        result = "";
         
-        console.log("Order for random deal: "+commodityOrder);
-        
-        this.resourcesList = "";
         this.amounts.forEach(function(element, index){
-            console.log("Item "+element+" at index "+index)
             if(element){
-                this.resourcesList += element + " " + commodities[commodityOrder[index]] + "<br>";
+                result += element + " " + 
+                    commodities[this.commodityOrder[index]].name + "<br>";
             }
-        });
-        console.log(this.resourcesList);
+        }, this);
         
-        this.priceDescription = "<span class='greenText'>" + this.markup + "</span>";
-        this.totalDescription = this.resourcesList + this.priceDescription;
+        return result;
         
-    }else{
-        //TODO
-        throw "Non-random deals not yet supported.";
     }
-}
+    
+    switch(type){
+    case "discount":
+        this.amounts = [4, 1, 1, 0, 0];
+        this.markup = 200;
+        this.commodityOrder = shuffle([0,1,2,3,4]);
+        
+        this.benefitDescription = "<span class='greenText'>+$"+this.markup+"</span><br>";
+        
+        console.log("Order for random deal: "+this.commodityOrder);
+        
+        this.priceDescription = this.generatePriceDescription();
+        
+        break;
+    case "autobuy":
+        this.amounts = [2, 1, 0, 0, 0];
+        this.commodityOrder = shuffle([0,1,2,3,4]);
+        this.commodityBought = commodities[this.commodityOrder[2]];
+        
+        this.benefitDescription = "<span class='greenText'>Buys a "+
+            this.commodityBought.name+" every turn.</span><br>";
+        this.priceDescription = this.generatePriceDescription();
+        this.resolve = function(player){
+            player.effects.push({
+                commodityBought: this.commodityBought,
+                resolve: function(player){
+                    if(player.money < this.commodityBought.getPrice()){
+                        alert("An autobuyer was unable to buy "+this.commodityBought.name+" and was destroyed!");
+                        updateEffects();
+                        return this;
+                    }
+                    player.commodityAmounts[this.commodityBought.id]++;
+                    player.addMoney(-this.commodityBought.buy());
+                },
+                description: "Autobuys one "+this.commodityBought.name+" every turn."
+            });
+            updateEffects();
+        };
+        break;
+    }
+    this.populate = function(index){
+        this.chosenCard = $("#cardsForSaleRow").children().eq(index)
+        this.chosenCard.cardIndex = index;
+        this.chosenCard.html(this.priceDescription + this.benefitDescription);
+        this.chosenCard.append($("<button>")
+            .addClass("cardButton")
+            .click(function(event){
+                deals[$(event.target).data("index")].click()
+            })
+            .data("index", index)
+            .html("It's a Deal!")
+        );
+    };
+    this.click = function(){
+        var activePlayer = players[isLeftTurn];
+        this.amounts.forEach(function(element, index){
+            
+            if(activePlayer.commodityAmounts[this.commodityOrder[index]] < element){
+                alert("Not enough "+commodities[this.commodityOrder[index]].name + "!");
+                throw "Not enough."
+            }
+            
+        }, this);
+        this.amounts.forEach(function(element, index){
+            activePlayer.commodityAmounts[this.commodityOrder[index]]-=element;
+        }, this);
+        updateCommodityAmounts();
+        this.resolve(activePlayer);
+        nextTurn();
+    }
+};
 
 function updateMoney(){
     $("#leftInfo .moneyInfo").html("$"+players[1].money);
@@ -176,6 +244,19 @@ function updateCommodityAmountsTable(table, isLeft){
     });
 }
 
+function updateEffects(){
+    $("#leftInfo .factoryInfo").html(players.left.effects.map(
+        function(element){
+            return element.description;
+        }
+    ).join("<br>"));
+    $("#rightInfo .factoryInfo").html(players.right.effects.map(
+        function(element){
+            return element.description;
+        }
+    ).join("<br>"));
+}
+
 function updatePrices(){
     //Two children calls to bypass <tbody>
     $("#pricesTable").children().children().each(function(){
@@ -196,6 +277,16 @@ function nextTurn(){
         $("#rightResourcesTable button").prop("disabled", true);
     }
     isLeftTurn = !isLeftTurn;
+    var deadEffects = [];
+    players[isLeftTurn].effects.forEach(function(element){
+        var result = element.resolve(players[isLeftTurn])
+        if(result)
+            deadEffects.push(result);
+    });
+    deadEffects.forEach(function(element){
+        players[isLeftTurn].removeEffect(element);
+    })
+    updateEffects();
 }
 //http://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array-in-javascript
 //changes argument. :(

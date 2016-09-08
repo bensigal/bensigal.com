@@ -5,6 +5,7 @@ body{
     overflow-y: hidden;
     font-family: "Ubuntu", "Georgia", sans-serif;
     background-color: #BBF;
+    text-align: center;
 }
 table{
     border-collapse: collapse;
@@ -17,6 +18,9 @@ table{
 }
 #pricesTable{
     margin: 0 auto;
+}
+#pricesTable td{
+    width: 50px;
 }
 #resourceRow > td:not(#pricesTD){
     background-color: #EEE;
@@ -67,6 +71,12 @@ table{
 }
 #cardsForSaleTD{
     background-color: #FFE9D0;
+}
+#cardsForSaleTable{
+    text-align: center;
+}
+.greenText{
+    color: #007019;
 }
 .resourcesTable{
     margin: 0 auto;
