@@ -7,6 +7,8 @@ var numRows = 40;
 var numColumns = 30;
 var squareWidth = 20;
 var squareHeight = 20;
+var leftScore = 0;
+var rightScore = 0;
 
 var themes = {
     basic:{
@@ -63,6 +65,7 @@ function victory(isp1){
     ctx.font="100px Impact";
     ctx.fillStyle = theme.text;
     ctx.fillText(isp1?"PLAYER 1 WINS":"PLAYER 2 WINS", 120, 100);
+    $(isp1?"#leftScore":"#rightScore").html(isp1?++leftScore:++rightScore);
 }
 function tiedGame(){
     stopped=true;
