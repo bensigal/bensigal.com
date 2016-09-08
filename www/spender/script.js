@@ -6,6 +6,8 @@ $(function(){
     $("#rightResourcesTable button").prop("disabled", true);
     updateMoney();
     updateCommodityAmounts();
+    var deal = new SpecialDeal(true);
+    $("#cardsForSaleRow").children().first().html(deal.totalDescription);
 });
 
 function buttonClickHandler(event){
@@ -126,18 +128,27 @@ Commodity.metal = commodities[3];
 Commodity.food = commodities[4];
 
 var SpecialDeal = function(random){
+    
     if(random){
+        
         this.amounts = [2, 1, 1, 0, 0];
+        this.markup = "200";
         var commodityOrder = shuffle([0,1,2,3,4]);
+        
         console.log("Order for random deal: "+commodityOrder);
+        
         this.resourcesList = "";
         this.amounts.forEach(function(element, index){
+            console.log("Item "+element+" at index "+index)
             if(element){
-                resourcesList += element + " " + commodities[commodityOrder[index]] + "<br>";
+                this.resourcesList += element + " " + commodities[commodityOrder[index]] + "<br>";
             }
         });
+        console.log(this.resourcesList);
+        
         this.priceDescription = "<span class='greenText'>" + this.markup + "</span>";
         this.totalDescription = this.resourcesList + this.priceDescription;
+        
     }else{
         //TODO
         throw "Non-random deals not yet supported.";
@@ -187,6 +198,7 @@ function nextTurn(){
     isLeftTurn = !isLeftTurn;
 }
 //http://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array-in-javascript
+//changes argument. :(
 function shuffle(a) {
     var j, x, i;
     for (i = a.length; i; i--) {
@@ -195,4 +207,5 @@ function shuffle(a) {
         a[i - 1] = a[j];
         a[j] = x;
     }
+    return a;
 }
