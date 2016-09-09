@@ -3,11 +3,14 @@
     height: 600px;
     background-color: black;
 }
+p{
+    margin: 0;
+}
 body{
     margin: 0;
 }
 #canvasHolder{
-    margin: 20px auto;
+    margin: 5px auto;
     border: 1px solid black;
     width: 800px;
 }
