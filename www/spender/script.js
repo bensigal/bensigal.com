@@ -7,11 +7,15 @@ $(function(){
     $("#rightResourcesTable button").prop("disabled", true);
     updateMoney();
     updateCommodityAmounts();
-    deals = [];
-    for(var i = 1; i < 7; i++){
+    deals = [new Deal("market"), new Deal("markup")];
+    for(var i = 2; i < 8; i++){
         deals[i] = new Deal("autobuy");
-        deals[i].populate(i);
     }
+    deals.push(new Deal("markup"));
+    deals.push(new Deal("market"));
+    deals.forEach(function(element, index){
+        element.populate(index);
+    });
 });
 
 function buttonClickHandler(event){
@@ -48,13 +52,24 @@ function buttonClickHandler(event){
 var Player = function(isLeft){
     this.isLeft = isLeft;
     this.commodityAmounts = [1,1,1,1,1];
-    this.money = isLeft?500:600;
-    this.effects = [];
+    this.money = isLeft?800:1000;
+    this.moneyPerTurn = 0;
+    this.effects = [{
+        resolve:function(){
+            this.player.addMoney(this.player.moneyPerTurn);
+        },
+        player: this,
+        description: "Makes $0 per turn automatically.",
+        updateDescription: function(){
+            this.description = "Makes $"+this.player.moneyPerTurn+" per turn automatically."
+        }
+    }];
     this.setMoney = function(money){
         this.money = money;
         if(this.money >= winConditionMoneyAmount){
             alert((this.isLeft?"Left":"Right" ) + " wins!");
         }
+        updateMoney();
     }
     this.addMoney = function(amount){
         this.setMoney(this.money + amount);
@@ -153,7 +168,25 @@ var Deal = function(type){
     }
     
     switch(type){
-    case "discount":
+    case "market":
+        this.amounts = [8, 2, 1, 0, 0];
+        this.moneyPerTurn = 50;
+        this.commodityOrder = shuffle([0,1,2,3,4]);
+        
+        this.benefitDescription = "<span class='greenText'>+$"+this.moneyPerTurn+"/turn</span><br>";
+        
+        console.log("Order for random deal: "+this.commodityOrder);
+        
+        this.priceDescription = this.generatePriceDescription();
+        
+        this.resolve = function(player){
+            player.moneyPerTurn+=this.moneyPerTurn;
+            player.effects[0].updateDescription();
+            new Deal("market").populate(this.index);
+        }
+        
+        break;
+    case "markup":
         this.amounts = [4, 1, 1, 0, 0];
         this.markup = 200;
         this.commodityOrder = shuffle([0,1,2,3,4]);
@@ -163,6 +196,17 @@ var Deal = function(type){
         console.log("Order for random deal: "+this.commodityOrder);
         
         this.priceDescription = this.generatePriceDescription();
+        
+        this.resolve = function(player){
+            player.addMoney(this.markup);
+            this.amounts.forEach(function(element, index){
+                var activeCommodity = commodities[this.commodityOrder[index]];
+                for(var i = 0; i < element; i++){
+                    player.addMoney(activeCommodity.sell());
+                }
+            }, this);
+            new Deal("markup").populate(this.index);
+        }
         
         break;
     case "autobuy":
@@ -188,10 +232,12 @@ var Deal = function(type){
                 description: "Autobuys one "+this.commodityBought.name+" every turn."
             });
             updateEffects();
+            new Deal("autobuy").populate(this.index);
         };
         break;
     }
     this.populate = function(index){
+        this.index = index;
         this.chosenCard = $("#cardsForSaleRow").children().eq(index)
         this.chosenCard.cardIndex = index;
         this.chosenCard.html(this.priceDescription + this.benefitDescription);
