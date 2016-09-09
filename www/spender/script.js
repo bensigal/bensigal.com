@@ -287,6 +287,9 @@ function nextTurn(){
         players[isLeftTurn].removeEffect(element);
     })
     updateEffects();
+    updatePrices();
+    updateCommodityAmounts();
+    updateMoney();
 }
 //http://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array-in-javascript
 //changes argument. :(
