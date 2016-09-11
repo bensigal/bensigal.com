@@ -177,7 +177,7 @@ var Deal = function(type, optionalParameter){
     switch(type){
     case "market":
         this.amounts = [8, 2, 1, 0, 0];
-        this.moneyPerTurn = 100;
+        this.moneyPerTurn = 200;
         this.commodityOrder = shuffle([0,1,2,3,4]);
         
         this.benefitDescription = "<span class='greenText'>+$"+this.moneyPerTurn+"/turn</span><br>";
@@ -242,6 +242,7 @@ var Deal = function(type, optionalParameter){
         break;
     }
     this.populate = function(index){
+        deals[index] = this;
         this.index = index;
         this.chosenCard = $("#cardsForSaleRow").children().eq(index)
         this.chosenCard.cardIndex = index;
@@ -277,6 +278,7 @@ var Deal = function(type, optionalParameter){
                 alert("Not enough money!");
                 throw "Not enough."
             }
+            activePlayer.addMoney(-100);
             /*if(activePlayer.commodityAmounts[this.optionalParameter] < 2){
                 alert("Not enough "+commodities[this.optionalParameter].name + "!");
                 throw "Not enough.";
