@@ -8,8 +8,8 @@ $(function(){
     updateMoney();
     updateCommodityAmounts();
     deals = [new Deal("market"), new Deal("markup")];
-    for(var i = 2; i < 8; i++){
-        deals[i] = new Deal("autobuy");
+    for(var i = 0; i < 5; i++){
+        deals[i+2] = new Deal("autobuy", i);
     }
     deals.push(new Deal("markup"));
     deals.push(new Deal("market"));
@@ -150,7 +150,10 @@ Commodity.cloth = commodities[2];
 Commodity.metal = commodities[3];
 Commodity.food = commodities[4];
 
-var Deal = function(type){
+var Deal = function(type, optionalParameter){
+    
+    this.optionalParameter = optionalParameter;
+    this.type = type;
     
     this.generatePriceDescription = function(){
         
@@ -170,7 +173,7 @@ var Deal = function(type){
     switch(type){
     case "market":
         this.amounts = [8, 2, 1, 0, 0];
-        this.moneyPerTurn = 50;
+        this.moneyPerTurn = 100;
         this.commodityOrder = shuffle([0,1,2,3,4]);
         
         this.benefitDescription = "<span class='greenText'>+$"+this.moneyPerTurn+"/turn</span><br>";
@@ -187,8 +190,8 @@ var Deal = function(type){
         
         break;
     case "markup":
-        this.amounts = [4, 1, 1, 0, 0];
-        this.markup = 200;
+        this.amounts = [3, 1, 1, 0, 0];
+        this.markup = 300;
         this.commodityOrder = shuffle([0,1,2,3,4]);
         
         this.benefitDescription = "<span class='greenText'>+$"+this.markup+"</span><br>";
@@ -210,13 +213,12 @@ var Deal = function(type){
         
         break;
     case "autobuy":
-        this.amounts = [2, 1, 0, 0, 0];
-        this.commodityOrder = shuffle([0,1,2,3,4]);
-        this.commodityBought = commodities[this.commodityOrder[2]];
         
-        this.benefitDescription = "<span class='greenText'>Buys a "+
-            this.commodityBought.name+" every turn.</span><br>";
-        this.priceDescription = this.generatePriceDescription();
+        this.commodityBought = commodities[(this.optionalParameter + 1)%5];
+        
+        this.benefitDescription = "<span class='greenText'>Autobuy<br>"+
+            this.commodityBought.name+"</span><br>";
+        this.priceDescription = "2 "+commodities[optionalParameter].name+"<br>"
         this.resolve = function(player){
             player.effects.push({
                 commodityBought: this.commodityBought,
@@ -232,7 +234,6 @@ var Deal = function(type){
                 description: "Autobuys one "+this.commodityBought.name+" every turn."
             });
             updateEffects();
-            new Deal("autobuy").populate(this.index);
         };
         break;
     }
@@ -252,17 +253,29 @@ var Deal = function(type){
     };
     this.click = function(){
         var activePlayer = players[isLeftTurn];
-        this.amounts.forEach(function(element, index){
-            
-            if(activePlayer.commodityAmounts[this.commodityOrder[index]] < element){
-                alert("Not enough "+commodities[this.commodityOrder[index]].name + "!");
-                throw "Not enough."
+        switch(this.type){
+        case "markup":
+        case "market":
+            this.amounts.forEach(function(element, index){
+                console.log("checking if "+element+" "+commodities[this.commodityOrder[index]].name+" exist");
+                if(activePlayer.commodityAmounts[this.commodityOrder[index]] < element){
+                    alert("Not enough "+commodities[this.commodityOrder[index]].name + "!");
+                    throw "Not enough."
+                }
+                
+            }, this);
+            this.amounts.forEach(function(element, index){
+                activePlayer.commodityAmounts[this.commodityOrder[index]]-=element;
+            }, this);
+            break;
+        case "autobuy":
+            if(activePlayer.commodityAmounts[this.optionalParameter] < 2){
+                alert("Not enough "+commodities[this.optionalParameter].name + "!");
+                throw "Not enough.";
             }
-            
-        }, this);
-        this.amounts.forEach(function(element, index){
-            activePlayer.commodityAmounts[this.commodityOrder[index]]-=element;
-        }, this);
+            activePlayer.commodityAmounts[this.optionalParameter] -= 2;
+            break;
+        }
         updateCommodityAmounts();
         this.resolve(activePlayer);
         nextTurn();
