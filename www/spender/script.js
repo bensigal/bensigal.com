@@ -40,6 +40,10 @@ function buttonClickHandler(event){
         players[isLeft].addMoney(activeCommodity.sell());
     }else{
         console.log("Buying.");
+        if(players[isLeft].money < activeCommodity.getPrice()){
+            alert("Not enough money!");
+            return;
+        }
         players[isLeft].commodityAmounts[activeCommodity.id]++;
         players[isLeft].addMoney(-activeCommodity.buy());
         nextTurn();
@@ -214,11 +218,11 @@ var Deal = function(type, optionalParameter){
         break;
     case "autobuy":
         
-        this.commodityBought = commodities[(this.optionalParameter + 1)%5];
+        this.commodityBought = commodities[this.optionalParameter];
         
         this.benefitDescription = "<span class='greenText'>Autobuy<br>"+
             this.commodityBought.name+"</span><br>";
-        this.priceDescription = "2 "+commodities[optionalParameter].name+"<br>"
+        this.priceDescription = "End Turn<br>$100<br>";
         this.resolve = function(player){
             player.effects.push({
                 commodityBought: this.commodityBought,
@@ -269,15 +273,24 @@ var Deal = function(type, optionalParameter){
             }, this);
             break;
         case "autobuy":
-            if(activePlayer.commodityAmounts[this.optionalParameter] < 2){
+            if(activePlayer.money < 100){
+                alert("Not enough money!");
+                throw "Not enough."
+            }
+            /*if(activePlayer.commodityAmounts[this.optionalParameter] < 2){
                 alert("Not enough "+commodities[this.optionalParameter].name + "!");
                 throw "Not enough.";
             }
-            activePlayer.commodityAmounts[this.optionalParameter] -= 2;
+            activePlayer.commodityAmounts[this.optionalParameter] -= 2;*/
             break;
         }
         updateCommodityAmounts();
         this.resolve(activePlayer);
+        switch(this.type){
+        case "autobuy":
+            nextTurn();
+            break;
+        }
     }
 };
 
