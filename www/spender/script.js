@@ -278,7 +278,6 @@ var Deal = function(type, optionalParameter){
         }
         updateCommodityAmounts();
         this.resolve(activePlayer);
-        nextTurn();
     }
 };
 
