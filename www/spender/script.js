@@ -297,8 +297,8 @@ var Deal = function(type, optionalParameter){
 };
 
 function updateMoney(){
-    $("#leftInfo .moneyInfo").html("$"+players[1].money);
-    $("#rightInfo .moneyInfo").html("$"+players[0].money);
+    $("#leftInfo .moneyInfo").html("<span>$"+players[1].money+"</span>");
+    $("#rightInfo .moneyInfo").html("<span>$"+players[0].money+"</span>");
 }
 
 function updateCommodityAmounts(){
