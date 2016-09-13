@@ -1,8 +1,15 @@
+img{
+    width: 40px;
+    height: 40px;
+    margin: 3px 3px;
+}
+.pricesCommodityValue{
+    padding: 5px 15px;
+}
 body{
     margin: 0 auto;
-    width: 98vw;
-    height: 98vh;
-    /*overflow-y: hidden;*/
+    font-size: 24px;
+    overflow: hidden;
     font-family: "Ubuntu", "Georgia", sans-serif;
     background-color: #BBF;
     text-align: center;
@@ -12,9 +19,10 @@ table{
     background-color: white;
 }
 #mainTable{
-    width: 1200px;
-    margin: 30px auto 0 auto;
-    height: 700px;
+    background-color: inherit;
+    width: 1336px;
+    margin: 15px auto 0 auto;
+    height: 738px;
 }
 #pricesTable{
     margin: 0 auto;
@@ -23,31 +31,40 @@ table{
     width: 50px;
 }
 #resourceRow > td:not(#pricesTD){
-    background-color: #EEE;
     width: 330px;
 }
+#resourceRow > td{
+    padding-bottom: 30px;
+}
 #pricesTD{
-    background-color: #FFE9D0; 
 }
 #pricesTable td{
-    padding: 10px;
+    /*padding: 10px;*/
 }
 .resourcesTable td{
-    padding: 15px;
+    font-size: 20px;
+   /*padding: 15px;*/
+}
+.amount{
+    padding: 5px;
 }
 #resourceRow{
     height: auto;
 }
 #infoRow{
-    height: 220px;
+    height: 120px;
+}
+#infoRow td{
+    border: 1px solid black;
+    margin: 200px;
 }
 .moneyInfo{
     float: left; 
-    padding: 60px 10px;
+    padding: 30px 10px;
     text-align: center;
     vertical-align: middle;
     font-size: 36px;
-    height: 100px;
+    height: 60px;
     width: 100px;
     background-color: #9FA;
 }
@@ -57,7 +74,7 @@ table{
     text-align: center;
     font-size: 20px;
     padding: 20px 15px 0 15px;
-    height: 200px;
+    height: 100px;
     width: calc(100% - 150px);
 }
 .moneyInfo span{
@@ -66,15 +83,17 @@ table{
 .info{
     width: 200px;
 }
+#cardsForSaleTD{
+    padding-top: 30px;
+}
 #cardsForSaleTable{
     margin: 0 auto;
 }
 #cardsForSaleTable td{
-    width: 100px;
+    min-width: 100px;
+    max-width: 170px;
+    padding: 8px;
     height: 150px;
-}
-#cardsForSaleTD{
-    background-color: #FFE9D0;
 }
 #cardsForSaleTable{
     text-align: center;
@@ -86,6 +105,6 @@ table{
     margin: 0 auto;
     width: 240px;
 }
-td{
+td td{
     border: 1px solid black;
 }

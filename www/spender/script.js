@@ -6,6 +6,7 @@ $(function(){
     $("#resourceRow button").click(buttonClickHandler);
     $("#rightResourcesTable button").prop("disabled", true);
     updateMoney();
+    updateEffects();
     updateCommodityAmounts();
     deals = [new Deal("market"), new Deal("markup")];
     for(var i = 0; i < 5; i++){
@@ -22,7 +23,7 @@ function buttonClickHandler(event){
     
     var isLeft = $.contains($("#leftResources")[0], event.target);
     var isBuy = $(event.target).is(".buy");
-    var commodityName = $(event.target).parent().parent().find(".resourceName").html();
+    var commodityName = $(event.target).parent().data("name");
     var activeCommodity = Commodity.getByName(commodityName);
     var commodityAmount = players[isLeft].commodityAmounts[activeCommodity.id];
     
@@ -58,6 +59,7 @@ var Player = function(isLeft){
     this.commodityAmounts = [1,1,1,1,1];
     this.money = isLeft?800:1000;
     this.moneyPerTurn = 0;
+    this.autobuys = [];
     this.effects = [{
         resolve:function(){
             this.player.addMoney(this.player.moneyPerTurn);
@@ -84,8 +86,8 @@ var Player = function(isLeft){
         }
         return this.commodityAmounts[commodity.id];
     };
-    this.removeEffect = function(effect){
-        this.effects.splice(this.effects.indexOf(effect), 1);
+    this.removeAutobuy = function(effect){
+        this.autobuys.splice(this.autobuys.indexOf(effect), 1);
     }
 };
 
@@ -105,6 +107,7 @@ var prices = [100,100,100,100,100];
 
 var Commodity = function(name, id){
     this.name=name;
+    this.imgHTML = "<img src='/spender/images/"+this.name.toLowerCase()+".png'</img>";
     this.id  =id;
     this.buysMinusSells = 0;
     this.getExactPrice = function(){
@@ -130,9 +133,9 @@ Commodity.getIdByName = function(name){
     switch(name){
     case "wood" : return 0;
     case "stone": return 1;
-    case "cloth": return 2;
-    case "metal": return 3;
-    case "food" : return 4;
+    case "iron": return 2;
+    case "gold": return 3;
+    case "diamond" : return 4;
     default: throw "Name '"+name+"' does not represent a commodity.";
     }
 };
@@ -143,16 +146,16 @@ Commodity.getByName = function(name){
 var commodities = [
     new Commodity("Wood",0),
     new Commodity("Stone",1),
-    new Commodity("Cloth",2),
-    new Commodity("Metal",3),
-    new Commodity("Food",4),
+    new Commodity("iron",2),
+    new Commodity("gold",3),
+    new Commodity("diamond",4),
 ];
 
 Commodity.wood = commodities[0];
 Commodity.stone = commodities[1];
-Commodity.cloth = commodities[2];
-Commodity.metal = commodities[3];
-Commodity.food = commodities[4];
+Commodity.iron = commodities[2];
+Commodity.gold = commodities[3];
+Commodity.diamond = commodities[4];
 
 var Deal = function(type, optionalParameter){
     
@@ -165,8 +168,10 @@ var Deal = function(type, optionalParameter){
         
         this.amounts.forEach(function(element, index){
             if(element){
-                result += element + " " + 
-                    commodities[this.commodityOrder[index]].name + "<br>";
+                for(var i = 0; i < element; i++){
+                    result += commodities[this.commodityOrder[index]].imgHTML;
+                }
+                result+="<br>";
             }
         }, this);
         
@@ -221,11 +226,11 @@ var Deal = function(type, optionalParameter){
         
         this.commodityBought = commodities[this.optionalParameter];
         
-        this.benefitDescription = "<span class='greenText'>Autobuy<br>"+
-            this.commodityBought.name+"</span><br>";
+        this.benefitDescription = this.commodityBought.imgHTML+
+            "<span class='greenText'>Autobuy</span><br>";
         this.priceDescription = "End Turn<br>$100<br>";
         this.resolve = function(player){
-            player.effects.push({
+            player.autobuys.push({
                 commodityBought: this.commodityBought,
                 resolve: function(player){
                     if(player.money < this.commodityBought.getPrice()){
@@ -236,7 +241,7 @@ var Deal = function(type, optionalParameter){
                     player.commodityAmounts[this.commodityBought.id]++;
                     player.addMoney(-this.commodityBought.buy());
                 },
-                description: "Autobuys one "+this.commodityBought.name+" every turn."
+                description: this.commodityBought.imgHTML
             });
             updateEffects();
         };
@@ -309,11 +314,9 @@ function updateCommodityAmounts(){
 
 function updateCommodityAmountsTable(table, isLeft){
     //Two children calls to bypass <tbody>
-    table.children().children().each(function(){
+    table.children().children().each(function(index){
         $(this).children(".amount").html(
-            players[isLeft].commodityAmounts[Commodity.getIdByName(
-                $(this).children(".resourceName").html()
-            )]
+            players[isLeft].commodityAmounts[index]
         );
     });
 }
@@ -323,21 +326,27 @@ function updateEffects(){
         function(element){
             return element.description;
         }
-    ).join("<br>"));
+    ).join("<br>") + "<br> Autobuys: <br>" + players.left.autobuys.map(
+        function(element){
+            return element.description;
+        }
+    ));
     $("#rightInfo .factoryInfo").html(players.right.effects.map(
         function(element){
             return element.description;
         }
-    ).join("<br>"));
+    ).join("<br>") + "<br> Autobuys: <br>" + players.right.autobuys.map(
+        function(element){
+            return element.description;
+        }
+    ).join(" "));
 }
 
 function updatePrices(){
     //Two children calls to bypass <tbody>
-    $("#pricesTable").children().children().each(function(){
+    $("#pricesTable").children().children().each(function(index){
         $(this).children(".pricesCommodityValue").html(
-            "$" + Commodity.getByName(
-                $(this).children(".pricesCommodityName").html()
-            ).getPrice()
+            "$" + commodities[index].getPrice()
         );
     });
 }
@@ -353,12 +362,15 @@ function nextTurn(){
     isLeftTurn = !isLeftTurn;
     var deadEffects = [];
     players[isLeftTurn].effects.forEach(function(element){
+        element.resolve(players[isLeftTurn])
+    });
+    players[isLeftTurn].autobuys.forEach(function(element){
         var result = element.resolve(players[isLeftTurn])
         if(result)
             deadEffects.push(result);
-    });
+    })
     deadEffects.forEach(function(element){
-        players[isLeftTurn].removeEffect(element);
+        players[isLeftTurn].removeAutobuy(element);
     })
     updateEffects();
     updatePrices();
