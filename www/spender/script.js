@@ -22,25 +22,25 @@ $(function(){
 function buttonClickHandler(event){
     
     var isLeft = $.contains($("#leftResources")[0], event.target);
-    var isBuy = $(event.target).is(".buy");
+    var action = $(event.target).data("action");
     var commodityName = $(event.target).parent().data("name");
     var activeCommodity = Commodity.getByName(commodityName);
     var commodityAmount = players[isLeft].commodityAmounts[activeCommodity.id];
     
-    console.log((isLeft?"Left":"Right") + " is attempting to " + (isBuy?"buy":"sell") + " a " +
+    console.log((isLeft?"Left":"Right") + " is attempting to " + (action) + " a " +
         commodityName + ".");
     
-    if(!isBuy){
+    switch(action){ 
+    case "sell":
         if(commodityAmount <= 0){
             console.log("They fail.");
             alert("You do not have any "+commodityName+" to sell!");
             return;
         }
-        console.log("Selling.");
         players[isLeft].commodityAmounts[activeCommodity.id]--;
         players[isLeft].addMoney(activeCommodity.sell());
-    }else{
-        console.log("Buying.");
+        break;
+    case "buy":
         if(players[isLeft].money < activeCommodity.getPrice()){
             alert("Not enough money!");
             return;
@@ -48,6 +48,37 @@ function buttonClickHandler(event){
         players[isLeft].commodityAmounts[activeCommodity.id]++;
         players[isLeft].addMoney(-activeCommodity.buy());
         nextTurn();
+        break;
+    case "quickbuy":
+        if(players[isLeft].money < activeCommodity.getPrice() + 100){
+            alert("Not enough money!");
+            return;
+        }
+        players[isLeft].commodityAmounts[activeCommodity.id]++;
+        players[isLeft].addMoney(-activeCommodity.buy());
+        players[isLeft].addMoney(-100);
+        break;
+    case "autobuy":
+        if(players[isLeft].money < 100){
+            alert("Not enough money!");
+            return;
+        }
+        player.autobuys.push({
+            commodityBought: activeCommodity,
+            resolve: function(player){
+                if(player.money < this.commodityBought.getPrice()){
+                    alert("An autobuyer was unable to buy "+this.commodityBought.name+" and was destroyed!");
+                    updateEffects();
+                    return this;
+                }
+                player.commodityAmounts[this.commodityBought.id]++;
+                player.addMoney(-this.commodityBought.buy());
+            },
+            description: activeCommodity.imgHTML
+        });
+        updateEffects();
+        nextTurn();
+        break;
     }
     updatePrices();
     updateMoney();
@@ -201,7 +232,7 @@ var Deal = function(type, optionalParameter){
         break;
     case "markup":
         this.amounts = [3, 1, 1, 0, 0];
-        this.markup = 300;
+        this.markup = 800;
         this.commodityOrder = shuffle([0,1,2,3,4]);
         
         this.benefitDescription = "<span class='greenText'>+$"+this.markup+"</span><br>";
@@ -212,12 +243,12 @@ var Deal = function(type, optionalParameter){
         
         this.resolve = function(player){
             player.addMoney(this.markup);
-            this.amounts.forEach(function(element, index){
+            /*this.amounts.forEach(function(element, index){
                 var activeCommodity = commodities[this.commodityOrder[index]];
                 for(var i = 0; i < element; i++){
                     player.addMoney(activeCommodity.sell());
                 }
-            }, this);
+            }, this);*/
             new Deal("markup").populate(this.index);
         }
         
