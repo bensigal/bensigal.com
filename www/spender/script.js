@@ -118,12 +118,12 @@ var Commodity = function(name, id){
     }
     this.sell = function(){
         var result = this.getPrice();
-        this.buysMinusSells--;
+        //this.buysMinusSells--;
         return result;
     }
     this.buy = function(){
         var result = this.getPrice();
-        this.buysMinusSells++;
+        //this.buysMinusSells++;
         return result;
     }
 };
