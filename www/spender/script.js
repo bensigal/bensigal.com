@@ -330,7 +330,7 @@ function updateEffects(){
         function(element){
             return element.description;
         }
-    ));
+    ).join(""));
     $("#rightInfo .factoryInfo").html(players.right.effects.map(
         function(element){
             return element.description;
@@ -339,7 +339,7 @@ function updateEffects(){
         function(element){
             return element.description;
         }
-    ).join(" "));
+    ).join(""));
 }
 
 function updatePrices(){
