@@ -30,23 +30,18 @@ table{
 #pricesTable td{
     width: 50px;
 }
-#resourceRow > td:not(#pricesTD){
-    width: 330px;
+.buttonHolder{
+    width: 260px;
 }
 #resourceRow > td{
     padding-bottom: 30px;
 }
-#pricesTD{
-}
-#pricesTable td{
-    /*padding: 10px;*/
-}
 .resourcesTable td{
-    font-size: 20px;
-   /*padding: 15px;*/
+    font-size: 24px;
+    padding: 5px;
 }
 .amount{
-    padding: 5px;
+    padding: 5px 20px;
 }
 #resourceRow{
     height: auto;
@@ -103,7 +98,7 @@ table{
 }
 .resourcesTable{
     margin: 0 auto;
-    width: 240px;
+    width: 350px;
 }
 td td{
     border: 1px solid black;
