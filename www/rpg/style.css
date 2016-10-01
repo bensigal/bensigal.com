@@ -1,0 +1,21 @@
+body{
+    background-color: white;
+}
+header{
+    width: 800px;
+    border: 1px solid black;
+    margin: 0 auto;
+    height: 550px;
+    overflow-y: hidden;
+}
+h1{
+    text-align: center;
+}
+#logo{
+    margin: 0 150px;
+    width: 500px;
+}
+#cloak{
+    margin-top: -80px;
+    width: 800px;
+}
