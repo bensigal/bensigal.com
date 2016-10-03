@@ -25,8 +25,10 @@ function prepareLogs(req, res){
 	req.serverOrder = numberOfRequests++;
 	console.log("Request "+req.serverOrder+" recieved: "+req.url)
 	req.logLocation = root+"server/logs/"+startTime+"/"+req.serverOrder+"/";
+	//Create directory for logs
 	fs.mkdir(req.logLocation,function(err){
 		if(err) throw err;
+		//Create headers.log file with the headers recieved from the client
 		fs.writeFile(req.logLocation+"headers.log",benSpect(req.headers),function(err){
 			if(err) throw err;
 			req.logBody="";
@@ -54,7 +56,10 @@ function serverRespond(req, res){
 	
 	req.path=url.parse(req.url).pathname;
 	if(req.path=="/index.html.var"){//Proxy index from .htaccess
-		req.path="/"
+		req.path="/";
+		//Signal to defaultTunnel that a redirect should be given.
+		//Ommiting this means to get the file at req.path, but to maintain the url the client asked for
+		req.redirectPath = "/";
 	}
 	req.log(req.path);
 	
@@ -151,9 +156,15 @@ function defaultTunnel(req, res, whereis, indexFile){
 			sendThroughTunnel(req, res, whereis+nextDir);
 		//If this is the requested destination...
 		}else if(req.path==whereis){
+		    
 			req.log("Current location is request. Sending index file.");
 			//Show index file, or, if id does not exist, show 403
-			getFile(req.path+indexFile, req, res, ()=>showErrorPage(403, req, res));		
+			getFile(req.path+indexFile, req, res, {
+                notFoundCallback: () => showErrorPage(403, req, res),
+                location: req.redirectPath,
+                statusCode: req.redirectPath?301:undefined
+			});
+			
 		//There is another thing, but just one. Example: Request is /meep/hi, 
 		//	Current directory is /meep/
 		}else{
@@ -170,6 +181,7 @@ function defaultTunnel(req, res, whereis, indexFile){
 					//This is a directory. Send to its tunnel, add a slash to make clear to
 					//tunnel is a directory to speed things up a bit.
 					req.path=req.path+"/";
+					req.redirectPath = req.path;
 			        req.url = req.url+"/";
 					req.log("Found directory");
 					sendThroughTunnel(req, res, req.path);				
@@ -215,7 +227,7 @@ function showErrorPage(errorCode, req, res, showAsText){
 		showErrorPage(500,req,res);
 	}
 }
-
+//Send the file at path
 function getFile(path,req,res,options){
 	options=options||{};
 	req.log("Sending "+path+" with options "+benSpect(options));
@@ -226,7 +238,7 @@ function getFile(path,req,res,options){
 	fs.readFile(path, options.encoding||null, function readFileCallback(err, data){
 		req.log(benSpect(data));
 		if(err && err.code=="ENOENT"){
-			req.log("File not found.")
+			req.log("File not found.");
 			if(options.notFoundCallback){
 				req.log("Executing special callback.");
 				options.notFoundCallback();
@@ -242,6 +254,8 @@ function getFile(path,req,res,options){
 			res.setHeader('Content-Type'    ,
 				options.encoding=="binary"?"application/octet-stream":mime.lookup(path)
 			);
+			if(options.location)
+                res.setHeader('Location', options.location);
 			if(options.cookie)
 				res.setHeader('Set-Cookie',options.cookieName+'='+options.cookie+";");
 			res.statusCode=options.statusCode||200;
