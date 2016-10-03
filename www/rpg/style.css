@@ -1,21 +1,49 @@
-body{
-    background-color: white;
+body{ 
+    background-color: #CCD; 
+    overflow-y: hidden; 
+    margin: 0px; 
+    
+} 
+#all{ 
+    width: 750px; 
+    padding: 20px 50px; 
+    margin: 0 auto; 
+    height: calc(100vh - 40px); 
+    overflow-y: hidden; 
+    background-color: white; 
+} 
+#phsLogo{ 
+    height: 144px; 
+    margin-left: 50px; 
+    
+} 
+p{ 
+    font-size: 26px; 
+    text-align: center; 
+} 
+span{ 
+    font-size: 40px; 
+} 
+#menu{ 
+    margin: 50px 50px;
+    border-top: 1px solid #CCD; 
+    border-bottom: 1px solid #CCD; 
+} 
+.menuOption{ 
+    padding: 20px 0px; 
+    text-align: center; 
+    font-size: 24px; 
+    cursor: pointer;
+    font-family: "Ubuntu", "Georgia", sans-serif; 
+} 
+.menuOption:hover{
+    background-color: #EEEEF5;
+    transition: .2s;
 }
-header{
-    width: 800px;
-    border: 1px solid black;
-    margin: 0 auto;
-    height: 550px;
-    overflow-y: hidden;
+.menuOption:active{
+    background-color: #E0E0F0;
+    transition: .1s;
 }
-h1{
-    text-align: center;
-}
-#logo{
-    margin: 0 150px;
-    width: 500px;
-}
-#cloak{
-    margin-top: -80px;
-    width: 800px;
+.menuOption:not(:first-child){ 
+    border-top: 1px solid #CCD; 
 }

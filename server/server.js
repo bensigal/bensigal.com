@@ -60,6 +60,7 @@ function serverRespond(req, res){
 		//Signal to defaultTunnel that a redirect should be given.
 		//Ommiting this means to get the file at req.path, but to maintain the url the client asked for
 		req.redirectPath = "/";
+		req.redirectStatusCode = 301;
 	}
 	req.log(req.path);
 	
@@ -128,12 +129,17 @@ function serverRespond(req, res){
 	}
 }
 //What to do when encountering a folder without a "tunnel.node.js" file.
-function defaultTunnel(req, res, whereis, indexFile){
-	
-	indexFile=indexFile||"index.html";
+function defaultTunnel(req, res, whereis, options){
 
-	req.log("At default tunnel at "+whereis);
+	req.log("At default tunnel at "+whereis+ " with options "+benSpect(options));
+
+	
+	options = options || {};
+	indexFile=options.indexFile||"index.html";
+
 	fs.stat("www"+whereis,function(err,stat){
+		//TODO
+		req.log("MEEP:"+benSpect(options));
 		//File Not Found
 		if(err&&err.code=="ENOENT"){
 			req.log("Location of current tunnel not found.");
@@ -162,7 +168,7 @@ function defaultTunnel(req, res, whereis, indexFile){
 			getFile(req.path+indexFile, req, res, {
                 notFoundCallback: () => showErrorPage(403, req, res),
                 location: req.redirectPath,
-                statusCode: req.redirectPath?301:undefined
+                statusCode: req.redirectStatusCode
 			});
 			
 		//There is another thing, but just one. Example: Request is /meep/hi, 
@@ -170,6 +176,16 @@ function defaultTunnel(req, res, whereis, indexFile){
 		}else{
 			
 			req.log("Searching for "+req.path);
+			
+			if(options.links){
+                req.log("Searching for a link from "+req.path.substring(req.path.lastIndexOf("/")+1))
+                var linkEnd = options.links[req.path.substring(req.path.lastIndexOf("/")+1)]
+                req.log("Found "+linkEnd);
+                if(linkEnd){
+                    req.path=req.path.substring(0,req.path.lastIndexOf("/")+1) + linkEnd;
+                    req.log("Set req.path to "+req.path);
+                }
+			}
 			
 			fs.stat("www"+req.path,function statCallback(err,stats){
 				if(err&&err.code=="ENOENT"){
@@ -182,7 +198,8 @@ function defaultTunnel(req, res, whereis, indexFile){
 					//tunnel is a directory to speed things up a bit.
 					req.path=req.path+"/";
 					req.redirectPath = req.path;
-			        req.url = req.url+"/";
+                    req.redirectStatusCode = 301;
+                    req.url = req.url+"/";
 					req.log("Found directory");
 					sendThroughTunnel(req, res, req.path);				
 				}else if(req.path.endsWith(".node.js")){
