@@ -1,15 +1,23 @@
+hr{
+    color: black;
+}
+
+#menu > a {
+    text-decoration: none;
+    color: black;
+}
 body{ 
     background-color: #CCD; 
-    overflow-y: hidden; 
-    margin: 0px; 
+    margin: 0px 0px 0px 0px; 
+    padding-bottom: -20px;
     
 } 
 #all{ 
     width: 750px; 
-    padding: 20px 50px; 
-    margin: 0 auto; 
-    height: calc(100vh - 40px); 
-    overflow-y: hidden; 
+    padding: 40px 50px 40px 50px; 
+    margin: 0 auto -10px auto; 
+    min-height: calc(100vh - 80px); 
+    height: auto;
     background-color: white; 
 } 
 #phsLogo{ 
@@ -17,18 +25,29 @@ body{
     margin-left: 50px; 
     
 } 
-p{ 
-    font-size: 26px; 
+#header > p{ 
+    margin-top: -20px;
+    font-size: 30px; 
     text-align: center; 
 } 
 span{ 
-    font-size: 40px; 
+    font-size: 50px; 
 } 
-#menu{ 
+#menu, #article{ 
     margin: 50px 50px;
     border-top: 1px solid #CCD; 
     border-bottom: 1px solid #CCD; 
 } 
+#article{
+    padding: 30px 0;
+}
+body{
+    font-family: "Ubuntu", "Georgia", sans-serif;
+    font-size: 20px;
+    text-align: justify;
+    line-height: 1.3;
+    padding-bottom: 7px;
+}
 .menuOption{ 
     padding: 20px 0px; 
     text-align: center; 

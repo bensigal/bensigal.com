@@ -17,6 +17,8 @@ var sessions  = [];
 var serverInfo = {};
 //Location of localhost, which is parent of www and server, folder.
 var root = process.argv[2];
+//Options
+var processOptions = process.argv[3] || ""
 //Time of start of execution
 var startTime = new Date().getTime();
 
@@ -29,6 +31,7 @@ function prepareLogs(req, res){
 	fs.mkdir(req.logLocation,function(err){
 		if(err) throw err;
 		//Create headers.log file with the headers recieved from the client
+		//if(processOptions.includes("headersLog"))
 		fs.writeFile(req.logLocation+"headers.log",benSpect(req.headers),function(err){
 			if(err) throw err;
 			req.logBody="";
@@ -50,6 +53,7 @@ function prepareLogs(req, res){
 			});
 			serverRespond(req,res);
 		});
+		//else serverRespond(req, res);
 	});
 }
 function serverRespond(req, res){
@@ -189,24 +193,29 @@ function defaultTunnel(req, res, whereis, options){
 			
 			fs.stat("www"+req.path,function statCallback(err,stats){
 				if(err&&err.code=="ENOENT"){
+				    //File Not Found
 					showErrorPage(404, req, res);
 				}else if(err){
+				    //Could not read whether there is a file.
 					req.err(err.stack);
 					showErrorPage(500, req, res);
 				}else if(stats.isDirectory()){
 					//This is a directory. Send to its tunnel, add a slash to make clear to
 					//tunnel is a directory to speed things up a bit.
 					req.path=req.path+"/";
-					req.redirectPath = req.path;
-                    req.redirectStatusCode = 301;
+					//If request is bensigal.com, do not redirect client to bensigal.com/
+					if(whereis != "/"){
+                        req.redirectPath = req.path;
+                        req.redirectStatusCode = 301;
+					}
                     req.url = req.url+"/";
 					req.log("Found directory");
 					sendThroughTunnel(req, res, req.path);				
 				}else if(req.path.endsWith(".node.js")){
 					req.log("Node js file found.");
+					showErrorPage(403, req, res);
 					//TODO require("www"+req.path)(req,res);
 				}else{
-
 					getFile(req.path, req, res);
 				}
 			});
@@ -230,6 +239,7 @@ function showErrorPage(errorCode, req, res, showAsText){
 		fs.readFile("www/"+errorCode+".shtml",function readErrorPageCallback(err, data){
 			if(err){
 				req.err(err.stack);
+				//TODO assumes error is file not found.
 				data="Error "+errorCode+"<br>Also, 404 error trying to find"+
 					" the error page.";
 			}
@@ -264,6 +274,7 @@ function getFile(path,req,res,options){
 				showErrorPage(404, req, res);
 			}
 		}else if(err){
+		    //Other error. Uncommon.
 			req.err(err.stack);
 			showErrorPage(500, req, res);
 		}else{
@@ -291,6 +302,7 @@ function sendString(output, req, res,options){
 	res.statusCode=options.statusCode||200;
 	res.end(output);
 }
+//Send 302 (default) redirect to specified path.
 function redirect(path, req, res, options){
 	if(typeof options == "number")options = {statusCode: options};
 	options = options || {};
@@ -339,7 +351,7 @@ function sendThroughTunnel(req, res, path){
 function countSlashes(input){
 	return (input.match(/\/.?/g)||[]).length //.? at end of regex is to stop syntax highlight from reading comment.
 }
-
+//Got this from... Somewhere. Sorry, citation got lost somewhere. All credit goes to whoever wrote this.
 function parseCookies (request) {
     var list = {},
         rc = request.headers.cookie;
