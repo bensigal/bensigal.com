@@ -59,12 +59,15 @@ function prepareLogs(req, res){
 function serverRespond(req, res){
 	
 	req.path=url.parse(req.url).pathname;
+	if(req.path==""){
+		req.path="/";
+		//Do not send redirect; most browsers redirect example.com/ to example.com
+	}
 	if(req.path=="/index.html.var"){//Proxy index from .htaccess
+        req.log("Request is for index.html.var, redirecting to /")
 		req.path="/";
 		//Signal to defaultTunnel that a redirect should be given.
 		//Ommiting this means to get the file at req.path, but to maintain the url the client asked for
-		req.redirectPath = "/";
-		req.redirectStatusCode = 301;
 	}
 	req.log(req.path);
 	
@@ -204,7 +207,8 @@ function defaultTunnel(req, res, whereis, options){
 					//tunnel is a directory to speed things up a bit.
 					req.path=req.path+"/";
 					//If request is bensigal.com, do not redirect client to bensigal.com/
-					if(whereis != "/"){
+					if(req.path != "/"){
+					    console.log("Redirecting to trailing slash url.")
                         req.redirectPath = req.path;
                         req.redirectStatusCode = 301;
 					}
