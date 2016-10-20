@@ -22,6 +22,7 @@ var theme = {
 }
 var sprite = {};
 var stopped = false;
+var paused = true;
 var blocks, zones, zoneTexts, p1Points, p2Points;
 
 function start(){
@@ -36,36 +37,49 @@ function start(){
     
     //In order from lowest to highest where conflicts may occur
     blocks = [
+        //Bottom left/right square
         new Block(  0, 500, 100, 100),
         new Block(700, 500, 100, 100),
+        //Small squares above the corners
         new Block(  0, 425,  25,  25),
         new Block(775, 425,  25,  25),
+        //Floor of 2 zone
         new Block(100, 400, 100, 200),
-        new Block(300, 400, 200, 200),
         new Block(600, 400, 100, 200),
+        //Center floor
+        new Block(300, 400, 200, 200),
+        //"Flag" in corners
         new Block(100, 375,  25,  25),
         new Block(675, 375,  25,  25),
+        //"Flagpole" in corners
         new Block( 75, 350,  50,  25),
         new Block(675, 350,  50,  25),
+        //Floor of 1 zone
         new Block(200, 300, 100, 300),
         new Block(500, 300, 100, 300),
+        //Floor of 3 zone
         new Block(  0, 200, 100,  50),
-        new Block(350, 200, 100,  50),
         new Block(700, 200, 100,  50),
+        //Center platform
+        new Block(350, 200, 100,  50),
+        //Inner wall of 3 zone
         new Block(100,   0,  25, 150),
         new Block(675,   0,  25, 150),
+        //1 zone platform
+        new Block(215, 125,  70,  25),
+        new Block(515, 125,  70,  25),
     ];
     
     zoneTexts = [
-        new ZoneText(239, 120),
-        new ZoneText(139, 220),
-        new ZoneText( 39, 120),
-        new ZoneText( 39, 485),
+        new ZoneText(250, 220),
+        new ZoneText(150, 220),
+        new ZoneText( 50, 120),
+        new ZoneText( 50, 485),
         
-        new ZoneText(544, 120),
-        new ZoneText(644, 220),
-        new ZoneText(744, 120),
-        new ZoneText(744, 485),
+        new ZoneText(550, 220),
+        new ZoneText(650, 220),
+        new ZoneText(750, 120),
+        new ZoneText(750, 485),
     ];
     
     //In order from lowest point value to highest for each player
@@ -92,14 +106,17 @@ function start(){
     
     ctx.font = "30px Ubuntu";
     
-    mainLoopIntervalCode = setInterval(mainLoop, 16);
-    
     stopped=false;
     
     p1points = 400;
     p2points = 400;
     
-    ticks = 1800;
+    ticks = 1801;
+    
+    ctx.textAlign = "center";
+    
+    //Render once
+    mainLoop();
 }
 $(start);
 
@@ -154,6 +171,7 @@ class Zone{
 function mainLoop(){
     ctx.clearRect(0,0,800,600);
     
+    ctx.font = "30px Ubuntu"
     for(var zone of zones){
         zone.tick();
         zone.draw();
@@ -197,18 +215,38 @@ function mainLoop(){
     player2.points = 0;
     
     ctx.fillStyle = "white";
-    ctx.fillText(Math.round(ticks/6)/10, 30, 550);
+    if(ticks < 300){
+        ctx.font = "80px Ubuntu"
+    }
+    ctx.fillText(Math.round(ticks/6)/10, ticks<300?400:50, ticks<300?470:550);
     if(ticks === 0){
         clearInterval(mainLoopIntervalCode);
         stopped=true;
     }
     
     if(rectangularCollisionTest(player1, player2)){
-        if(player1.x + player1.w > 500){
+        var p1In = player1.x + player1.w > 400;
+        var p2In = player2.x < 400;
+        if(p1In && p2In){
+            player1.velocity.x = -10;
+            player2.velocity.x = 10;
+            player1.x -=20;
+            player2.x +=20;
+            ctx.font = "30px Ubuntu"
+            ctx.fillText("Don't cross the beams!", 400, 500)
             clearInterval(mainLoopIntervalCode);
+            setTimeout(function(){
+                mainLoopIntervalCode = setInterval(mainLoop, 16);
+            }, 1000);
+        }else if(p1In){
+            clearInterval(mainLoopIntervalCode);
+            ctx.font = "50px Ubuntu"
+            ctx.fillText("Player 2 Wins!", 400, 520)
             stopped = true;
-        }else if(player2.x < 300){
+        }else if(p2In){
             clearInterval(mainLoopIntervalCode);
+            ctx.font = "50px Ubuntu"
+            ctx.fillText("Player 1 Wins!", 400, 520);
             stopped = true;
         }
     }
@@ -219,8 +257,8 @@ class Player{
         
         this.playerNumber = playerNumber;
         
-        this.x = this.playerNumber==1?40:750;
-        this.y = 400;
+        this.x = this.playerNumber==1?340:440;
+        this.y = 380;
         
         this.w = 20;
         this.h = 20;
@@ -454,9 +492,18 @@ $(document).keydown(function(e){
     case 83:
         keyboard.s=true;
         break;
-    }
-    if(e.keyCode==32 && stopped){
-        start();
+    case 32:
+        if(stopped){
+            start();
+            mainLoopIntervalCode = setInterval(mainLoop, 16);
+            paused=false;
+        }else if(paused){
+            mainLoopIntervalCode = setInterval(mainLoop, 16);
+            paused = false;
+        }else{
+            clearInterval(mainLoopIntervalCode);
+            paused = true;
+        }
     }
 });
 $(document).keyup(function(e){

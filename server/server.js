@@ -59,7 +59,12 @@ function prepareLogs(req, res){
 function serverRespond(req, res){
 	
 	req.path=url.parse(req.url).pathname;
-	if(req.path==""){
+	
+	req.lastPath = req.path;
+	if(req.lastPath.endsWith("/"))req.lastPath = req.lastPath.substring(0, req.lastPath.length - 1);
+	req.lastPath = req.lastPath.substring(req.lastPath.lastIndexOf("/")+1);
+	
+	if(req.path===""){
 		req.path="/";
 		//Do not send redirect; most browsers redirect example.com/ to example.com
 	}
