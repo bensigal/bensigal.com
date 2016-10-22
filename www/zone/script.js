@@ -8,92 +8,69 @@ var theme = {
     player2Color: "#00A",
     blockColor: "black",
     color11:"#FDD",
-    color12:"#FBB",
-    color13:"#F99",
-    color14:"#F77",
+    color12:"#FCC",
+    color13:"#FAA",
+    color14:"#F88",
     color21:"#DDF",
-    color22:"#BBF",
-    color23:"#99F",
-    color24:"#77F",
-    color3: "#F9E9FF",
+    color22:"#CCF",
+    color23:"#AAF",
+    color24:"#88F",
+    color3: "#FFF",
     zoneText: "#000",
     glowText: "#0F0",
     darkGlowText:"#0C0",
-}
+    background: "#FAECFF"
+};
 var sprite = {};
 var stopped = false;
-var paused = true;
-var blocks, zones, zoneTexts, p1Points, p2Points;
+var paused = false;
+var blocks, zones, zoneTexts, p1Points, p2Points
+var p1wins = 0;
+var p2wins = 0;
+var loopMode = "selectStage"
 
-function start(){
+function win(isp1){
+    paused = true;
+    
+    if(isp1)p1wins++;
+    else p2wins++;
+    
+    $("#score").html(p1wins + " - " + p2wins);
+    
+    stopped = true;
+    ctx.font = "50px Ubuntu";
+    ctx.fillText((isp1?"Red":"Blue")+" Wins!", 400, 520);
+}
+function tie(){
+    paused = true;
+    stopped = true;
+    ctx.font = "30px Ubuntu";
+    ctx.fillText("That's odd... They're identical!!!", 400, 520);
+}
+
+function init(){
     canvas = $("#canvas")[0];
     canvas.width = 800;
     canvas.height= 600;
     canvas.style.background=theme.background;
     
+    ctx = canvas.getContext("2d");
+    
+    mainLoopIntervalCode = setInterval(mainLoop, 16);
+}
+
+function start(){
+    
+    loopMode = "playing";
+    
+    console.log("Starting game...");
+    
     player1 = new Player(1);
     player2 = new Player(2);
     
-    
-    //In order from lowest to highest where conflicts may occur
-    blocks = [
-        //Bottom left/right square
-        new Block(  0, 500, 100, 100),
-        new Block(700, 500, 100, 100),
-        //Small squares above the corners
-        new Block(  0, 425,  25,  25),
-        new Block(775, 425,  25,  25),
-        //Floor of 2 zone
-        new Block(100, 400, 100, 200),
-        new Block(600, 400, 100, 200),
-        //Center floor
-        new Block(300, 400, 200, 200),
-        //"Flag" in corners
-        new Block(100, 375,  25,  25),
-        new Block(675, 375,  25,  25),
-        //"Flagpole" in corners
-        new Block( 75, 350,  50,  25),
-        new Block(675, 350,  50,  25),
-        //Floor of 1 zone
-        new Block(200, 300, 100, 300),
-        new Block(500, 300, 100, 300),
-        //Floor of 3 zone
-        new Block(  0, 200, 100,  50),
-        new Block(700, 200, 100,  50),
-        //Center platform
-        new Block(350, 200, 100,  50),
-        //Inner wall of 3 zone
-        new Block(100,   0,  25, 150),
-        new Block(675,   0,  25, 150),
-        //1 zone platform
-        new Block(215, 125,  70,  25),
-        new Block(515, 125,  70,  25),
-    ];
-    
-    zoneTexts = [
-        new ZoneText(250, 220),
-        new ZoneText(150, 220),
-        new ZoneText( 50, 120),
-        new ZoneText( 50, 485),
-        
-        new ZoneText(550, 220),
-        new ZoneText(650, 220),
-        new ZoneText(750, 120),
-        new ZoneText(750, 485),
-    ];
-    
-    //In order from lowest point value to highest for each player
-    zones = [
-        new Zone(200, 0, 100, 500, 1, 1),
-        new Zone(100, 0, 100, 500, 1, 2),
-        new Zone(0, 0, 100, 200, 1, 3),
-        new Zone(0, 450, 100, 50, 1, 4),
-        
-        new Zone(500, 0, 100, 500, 2, 1),
-        new Zone(600, 0, 100, 500, 2, 2),
-        new Zone(700, 0, 100, 200, 2, 3),
-        new Zone(700, 450, 100, 50, 2, 4),
-    ];
+    blocks = map.blocks;
+    zoneTexts = map.zoneTexts;
+    zones = map.zones;
     
     for(var i = 0; i < zones.length; i++){
         zoneTexts[i].zone = zones[i];
@@ -101,8 +78,6 @@ function start(){
     }
     
     topLeft = {x:0,y:0};
-    
-    ctx = canvas.getContext("2d");
     
     ctx.font = "30px Ubuntu";
     
@@ -115,61 +90,48 @@ function start(){
     
     ctx.textAlign = "center";
     
-    //Render once
-    mainLoop();
+    paused = true;
+    
+    mainLoop(true);
 }
-$(start);
+$(init);
 
-class ZoneText{
-    constructor(x, y){
-        this.x = x;
-        this.y = y;
-    }
-    draw(glow){
-        ctx.fillStyle = glow?(this.zone.points>2?theme.glowText:theme.darkGlowText):theme.zoneText;
-        ctx.fillText(this.zone.points, this.x, this.y);
-    }
-}
-
-class Zone{
+function selectStageDraw(){
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, 800, 600);
+    ctx.fillStyle = "black";
     
-    constructor(x, y, w, h, playerNumber, points){
-        
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
-        
-        this.playerNumber = playerNumber;
-        this.points = points;
-        
-    }
+    ctx.textAlign = "right";
+    ctx.font = "90px Ubuntu";
+    ctx.fillText("W: ", 160, 100)
+    ctx.fillText("A: ", 160, 200)
+    ctx.fillText("S: ", 160, 300)
     
-    get color(){
-        return theme["color"+this.playerNumber+this.points];
-    }
+    ctx.textAlign = "left";
+    ctx.font = "50px Ubuntu";
+    ctx.fillText("Original", 160, 100)
+    ctx.fillText("Maze", 160, 200)
+    ctx.fillText("Pyramid", 160, 300)
     
-    tick(){
-        this.glow=false;
-        var scoringPlayer = this.playerNumber==1?player2:player1;
-        if(scoringPlayer.x < this.x + this.w && scoringPlayer.x + scoringPlayer.w > this.x && 
-            scoringPlayer.y < this.y + this.h && scoringPlayer.y + scoringPlayer.h > this.y){
-                if(scoringPlayer.points > this.points || !(scoringPlayer.points)){
-                    scoringPlayer.points = this.points;
-                    this.glow = true;
-                }
-        }
-    }
-    
-    draw(){
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.w, this.h);
-        this.text.draw(this.glow);
-    }
+    ctx.textAlign = "center";
 }
 
-function mainLoop(){
+function mainLoop(burnScreen){
+    
+    if(paused && !burnScreen)return;
+    
     ctx.clearRect(0,0,800,600);
+    
+    if(loopMode != "playing"){
+        switch(loopMode){
+        
+        case "selectStage":
+            selectStageDraw();
+            break;
+        
+        }
+        return;
+    }
     
     ctx.font = "30px Ubuntu"
     for(var zone of zones){
@@ -219,9 +181,15 @@ function mainLoop(){
         ctx.font = "80px Ubuntu"
     }
     ctx.fillText(Math.round(ticks/6)/10, ticks<300?400:50, ticks<300?470:550);
+    
     if(ticks === 0){
-        clearInterval(mainLoopIntervalCode);
-        stopped=true;
+        if(p1points > p2points){
+            win(true);
+        }else if(p2points > p1points){
+            win(false);
+        }else{
+            tie();
+        }
     }
     
     if(rectangularCollisionTest(player1, player2)){
@@ -239,16 +207,58 @@ function mainLoop(){
                 mainLoopIntervalCode = setInterval(mainLoop, 16);
             }, 1000);
         }else if(p1In){
-            clearInterval(mainLoopIntervalCode);
-            ctx.font = "50px Ubuntu"
-            ctx.fillText("Player 2 Wins!", 400, 520)
-            stopped = true;
+            win(false);
         }else if(p2In){
-            clearInterval(mainLoopIntervalCode);
-            ctx.font = "50px Ubuntu"
-            ctx.fillText("Player 1 Wins!", 400, 520);
-            stopped = true;
+            win(true);
         }
+    }
+}
+
+class ZoneText{
+    constructor(x, y){
+        this.x = x;
+        this.y = y;
+    }
+    draw(glow){
+        ctx.fillStyle = glow?(this.zone.points>2?theme.glowText:theme.darkGlowText):theme.zoneText;
+        ctx.fillText(this.zone.points, this.x, this.y);
+    }
+}
+
+class Zone{
+    
+    constructor(x, y, w, h, playerNumber, points){
+        
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        
+        this.playerNumber = playerNumber;
+        this.points = points;
+        
+    }
+    
+    get color(){
+        return theme["color"+this.playerNumber+this.points];
+    }
+    
+    tick(){
+        this.glow=false;
+        var scoringPlayer = this.playerNumber==1?player2:player1;
+        if(scoringPlayer.x < this.x + this.w && scoringPlayer.x + scoringPlayer.w > this.x && 
+            scoringPlayer.y < this.y + this.h && scoringPlayer.y + scoringPlayer.h > this.y){
+                if(scoringPlayer.points > this.points || !(scoringPlayer.points)){
+                    scoringPlayer.points = this.points;
+                    this.glow = true;
+                }
+        }
+    }
+    
+    draw(){
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.w, this.h);
+        this.text.draw(this.glow);
     }
 }
 
@@ -257,8 +267,8 @@ class Player{
         
         this.playerNumber = playerNumber;
         
-        this.x = this.playerNumber==1?340:440;
-        this.y = 380;
+        this.x = map.startingPositions[this.playerNumber-1][0];
+        this.y = map.startingPositions[this.playerNumber-1][1];
         
         this.w = 20;
         this.h = 20;
@@ -482,26 +492,40 @@ $(document).keydown(function(e){
         break;
     case 87:
         keyboard.w=true;
+        if(loopMode == "selectStage"){
+            map = maps.original;
+            start();
+        }
         break;
     case 68:
         keyboard.d=true;
         break;
     case 65:
         keyboard.a=true;
+        if(loopMode == "selectStage"){
+            map = maps.maze;
+            start();
+        }
         break;
     case 83:
         keyboard.s=true;
+        if(loopMode == "selectStage"){
+            map = maps.pyramid;
+            start();
+        }
         break;
     case 32:
         if(stopped){
             start();
-            mainLoopIntervalCode = setInterval(mainLoop, 16);
+            console.log("Starting game...")
             paused=false;
         }else if(paused){
-            mainLoopIntervalCode = setInterval(mainLoop, 16);
+            console.log("Unpausing game...")
             paused = false;
         }else{
-            clearInterval(mainLoopIntervalCode);
+            console.log("Pausing game...")
+            ctx.font = "50px Ubuntu"
+            ctx.fillText("Paused", 400, 520);
             paused = true;
         }
     }
@@ -531,6 +555,14 @@ $(document).keyup(function(e){
         break;
     case 83:
         keyboard.s=false;
+        break;
+    case 77:
+        if(paused && !stopped && loopMode == "playing"){
+            loopMode = "selectStage";
+            mainLoop(true);
+        }else if(loopMode == "selectStage"){
+            loopMode = "playing";
+        }
         break;
     }
 });

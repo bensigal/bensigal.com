@@ -5,13 +5,25 @@
         <link rel="stylesheet" type="text/css" href="/game/style.css">
         <script src="/jquery.min.js"></script>
         <script src="script.js"></script>
+        <script src="maps.js"></script>
         <style>
             canvas{
-                background-color: #F9E9FF;
+                /*background-color: #F9E9FF;*/
+            }
+            p{
+                margin: 15px 0 0 0;
+                line-height: 0;
+                font-size: 20px;
+                padding: 0;
+                text-align: center;
+            }
+            body{
+                background-color: #F5F5F5;
             }
         </style>
     </head>
     <body>
+        <p id="score">0 - 0</p>
         <div id="canvasHolder">
             <canvas id="canvas">Your browser must be upgraded.</canvas>
         </div>
