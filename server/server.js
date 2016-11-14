@@ -7,27 +7,33 @@ var mime 	= require('mime');
 var multiparty 	= require('multiparty');
 var util      	= require('util');
 
+//Create server
+var httpServer = http.createServer(prepareLogs);
+var io = require("socket.io")(httpServer);
 //To make it easier to read console output.
 var numberOfRequests = 0;
 //Pseudorandom hex strings. 48 bytes of value, but more in string form.
 var sessionIds= [];
 //Objects. Associated array with sessionIds
 var sessions  = [];
+var root = process.argv[2];
 //Given to tunnels
 var serverInfo = {};
-//Location of localhost, which is parent of www and server, folder.
-var root = process.argv[2];
+process.argv[3] = process.argv[3] || "";
+serverInfo.life = require(root+"www/life/server.node.js")
 //Options
-var processOptions = process.argv[3] || ""
+var processOptions = process.argv[3]
 //Time of start of execution
 var startTime = new Date().getTime();
+var logging = false;
+var playingLife = Boolean(process.argv[3]);
 
-//Respond to a request.
 function prepareLogs(req, res){
 	req.serverOrder = numberOfRequests++;
 	console.log("Request "+req.serverOrder+" recieved: "+req.url)
 	req.logLocation = root+"server/logs/"+startTime+"/"+req.serverOrder+"/";
 	//Create directory for logs
+	if(logging)
 	fs.mkdir(req.logLocation,function(err){
 		if(err) throw err;
 		//Create headers.log file with the headers recieved from the client
@@ -47,6 +53,7 @@ function prepareLogs(req, res){
 				console.error(req.serverOrder+":"+next);
 			};
 			res.on('finish',function(){
+				if(logging)
 				fs.writeFile(req.logLocation+"main.log",req.logBody,function(err){
 					if(err) throw err;
 				});
@@ -55,6 +62,11 @@ function prepareLogs(req, res){
 		});
 		//else serverRespond(req, res);
 	});
+	else{
+	    req.log = function(){};
+	    req.err = function(next){console.error(req.serverOrder+":"+next)};
+	    serverRespond(req, res);
+	}
 }
 function serverRespond(req, res){
 	
@@ -105,10 +117,12 @@ function serverRespond(req, res){
 					return;
 				}
 				req.files=files;
+				if(logging)
 				fs.writeFile(req.logLocation+"files.log",benSpect(files),function(err){
 					if(err) throw err;
 				});
 				req.post=fields;
+				if(logging)
 				fs.writeFile(req.logLocation+"fields.log",benSpect(fields),function(err){
 					if(err) throw err;
 				});
@@ -124,6 +138,7 @@ function serverRespond(req, res){
 				}
 			});
 			req.on('end',function(){
+				if(logging)
 				fs.writeFile(req.logLocation+"body.log",function(err){
 					if(err) throw err;
 				});
@@ -303,9 +318,11 @@ function getFile(path,req,res,options){
 function sendString(output, req, res,options){
 	options=options||{};
 	req.log("Sending string data.");
-	fs.writeFile(req.logLocation+"responseText.log",output,function(err){
-		if(err)req.err(err)
-	});
+	if(logging){
+	    fs.writeFile(req.logLocation+"responseText.log",output,function(err){
+	    	if(err)req.err(err)
+	    });
+	}
 	res.setHeader('Content-Length',output.length);
 	res.setHeader('Content-Type',options.contentType||"text/plain");
 	res.statusCode=options.statusCode||200;
@@ -392,7 +409,7 @@ var messages = [
 //Log folder, actually start server.
 fs.mkdir("server/logs/"+startTime,function(err){
 	if(err) throw err;
-	http.createServer(prepareLogs).listen(8000, function(){
+	httpServer.listen(8000, function(){
 		console.log("Server listening on localhost:8000! Let's serve some files!");
 	});
 });
@@ -404,6 +421,27 @@ function exportRefs(){
 		serverInfo[arguments[i]]=arguments[i+1];
 	}
 }
+function startLife(){
+    playingLife = true;
+    serverInfo.life.resume();
+}
+function stopLife(){
+    playingLife = false;
+    serverInfo.life.stop();
+}
+io.on('connection', function (socket) {
+    socket.emit('news', { hello: 'world' });
+    socket.on('error console', function (data) {
+        console.error(data);
+    });
+    setInterval(function(){
+        if(playingLife)
+        socket.emit('life', {
+            board:serverInfo.life.serializeAll(),
+            ticks:serverInfo.life.ticks
+        });
+    }, 500);
+});
 exportRefs(
 	"showErrorPage",	showErrorPage,
 	"defaultTunnel",	defaultTunnel,
@@ -419,5 +457,8 @@ exportRefs(
 	"sessionIds",		sessionIds,
 	"Session",		Session,
 	"startTime",		startTime,
-	"redirect",		redirect
+	"redirect",		redirect,
+	"startLife",    startLife,
+	"stopLife",     stopLife,
+	"playingLife",  playingLife
 );

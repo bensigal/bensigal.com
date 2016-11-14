@@ -29,9 +29,11 @@ function start(){
     mainLoopIntervalCode = setInterval(mainLoop, 16);
     
     stopped=false;
+    paused =false;
 }
 $(start);
 function mainLoop(){
+    if(paused)return;
     ctx.clearRect(0,0,800,600)
     ticks++;
 }
@@ -65,6 +67,10 @@ $(document).keydown(function(e){
     case 32:
         if(stopped){
             start();
+        }else if(paused){
+            paused = false;
+        }else{
+            paused = true;
         }
     }
 });

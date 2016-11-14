@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Socket Test</title>
+        <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+        <script src="/jquery.min.js"></script>
+        <script>
+            var socket = io('http://bensigal.com');
+            socket.on('news', function (data) {
+                $("#results").append("<li>"+JSON.stringify(data)+"</li>")
+                socket.emit('error console', { my: 'data' });
+            });
+            socket.on('ping', function(data){
+                $("#results").append("<li>"+(data.time - new Date().getTime())+"</li>")
+            });
+        </script>
+    </head>
+    <body>
+        <p><ul id = "results"></ul></p>
+    </body>
+</html>

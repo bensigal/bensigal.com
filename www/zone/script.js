@@ -8,13 +8,15 @@ var theme = {
     player2Color: "#00A",
     blockColor: "black",
     color11:"#FDD",
-    color12:"#FCC",
-    color13:"#FAA",
-    color14:"#F88",
+    color12:"#FAA",
+    color13:"#F88",
+    color14:"#F66",
+    color16:"#F44",
     color21:"#DDF",
-    color22:"#CCF",
-    color23:"#AAF",
-    color24:"#88F",
+    color22:"#AAF",
+    color23:"#88F",
+    color24:"#66F",
+    color26:"#44F",
     color3: "#FFF",
     zoneText: "#000",
     glowText: "#0F0",
@@ -39,13 +41,13 @@ function win(isp1){
     
     stopped = true;
     ctx.font = "50px Ubuntu";
-    ctx.fillText((isp1?"Red":"Blue")+" Wins!", 400, 520);
+    ctx.fillText((isp1?"Red":"Blue")+" Wins!", 400, 550);
 }
 function tie(){
     paused = true;
     stopped = true;
     ctx.font = "30px Ubuntu";
-    ctx.fillText("That's odd... They're identical!!!", 400, 520);
+    ctx.fillText("That's odd... They're identical!!!", 400, 550);
 }
 
 function init(){
@@ -136,7 +138,9 @@ function mainLoop(burnScreen){
     ctx.font = "30px Ubuntu"
     for(var zone of zones){
         zone.tick();
-        zone.draw();
+    }
+    for(var i = zones.length; i--; i >=0){
+        zones[i].draw();
     }
     
     player1.tick();
@@ -180,7 +184,7 @@ function mainLoop(burnScreen){
     if(ticks < 300){
         ctx.font = "80px Ubuntu"
     }
-    ctx.fillText(Math.round(ticks/6)/10, ticks<300?400:50, ticks<300?470:550);
+    ctx.fillText(Math.round(ticks/6)/10, ticks<300?400:50, ticks<300?520:550);
     
     if(ticks === 0){
         if(p1points > p2points){
@@ -211,267 +215,6 @@ function mainLoop(burnScreen){
         }else if(p2In){
             win(true);
         }
-    }
-}
-
-class ZoneText{
-    constructor(x, y){
-        this.x = x;
-        this.y = y;
-    }
-    draw(glow){
-        ctx.fillStyle = glow?(this.zone.points>2?theme.glowText:theme.darkGlowText):theme.zoneText;
-        ctx.fillText(this.zone.points, this.x, this.y);
-    }
-}
-
-class Zone{
-    
-    constructor(x, y, w, h, playerNumber, points){
-        
-        this.x = x;
-        this.y = y;
-        this.w = w;
-        this.h = h;
-        
-        this.playerNumber = playerNumber;
-        this.points = points;
-        
-    }
-    
-    get color(){
-        return theme["color"+this.playerNumber+this.points];
-    }
-    
-    tick(){
-        this.glow=false;
-        var scoringPlayer = this.playerNumber==1?player2:player1;
-        if(scoringPlayer.x < this.x + this.w && scoringPlayer.x + scoringPlayer.w > this.x && 
-            scoringPlayer.y < this.y + this.h && scoringPlayer.y + scoringPlayer.h > this.y){
-                if(scoringPlayer.points > this.points || !(scoringPlayer.points)){
-                    scoringPlayer.points = this.points;
-                    this.glow = true;
-                }
-        }
-    }
-    
-    draw(){
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.w, this.h);
-        this.text.draw(this.glow);
-    }
-}
-
-class Player{
-    constructor(playerNumber){
-        
-        this.playerNumber = playerNumber;
-        
-        this.x = map.startingPositions[this.playerNumber-1][0];
-        this.y = map.startingPositions[this.playerNumber-1][1];
-        
-        this.w = 20;
-        this.h = 20;
-        
-        this.velocity = new Velocity(0, 0);
-        
-        this.totalPoints = 0;
-        this.points = 0;
-        
-    }
-    get color(){
-        return this.playerNumber==1?theme.player1Color:theme.player2Color;
-    }
-    get onGround(){
-        return this.y >= this.getMaximumY();
-    }
-    getMaximumY(){
-        var maximums = [];
-        if(this.velocity.y > 0)
-        for(var block of blocks){
-            if(this.x + this.w > block.x && this.x < block.x + block.w//Bottom edge could be inside block
-                && this.y < block.y //top edge isn't
-            ){
-                maximums.push(block.y - this.h);
-            }
-        }
-        var minimumMaximum = 600 - this.h;
-        maximums.forEach(function(element){
-            if(element < minimumMaximum){
-                minimumMaximum = element;
-            }
-        });
-        return minimumMaximum;
-    }
-    getMinimumY(){
-        if(this.velocity.y < 0)
-        for(var block of blocks){
-            if(this.x + this.w > block.x && this.x < block.x + block.w//Top edge could be inside block
-                && this.y + this.h > block.y + block.h //Bottom edge isn't
-            ){
-                return block.y + block.h;
-            }
-        }
-        return 0;
-    }
-    touchingWallOnLeft(){
-        if(this.x < 0){
-            return 0;
-        }
-        if(this.velocity.x < 0)
-        for(var block of blocks){
-            if(this.x < block.x + block.w && this.x > block.x && this.y + this.h > block.y && this.y < block.y + block.h //Left edge inside block
-                && this.x + this.w > block.x + block.w //Right edge isn't
-            ){
-                return block.x + block.w;
-            }
-        }
-        return false;
-    }
-    touchingWallOnRight(){
-        if(this.x > 800 - this.w){
-            return 800 - this.w;
-        }
-        if(this.velocity.x > 0)
-        for(var block of blocks){
-            if(this.x + this.w > block.x && this.x + this.w < block.x + block.w && this.y + this.h > block.y && this.y < block.y + block.h //Right edge inside block
-                && this.x < block.x //Left edge isn't
-            ){
-                return block.x - this.w;
-            }
-        }
-        return false;
-    }
-    tick(){
-        
-        if((this.playerNumber==1 && keyboard.a) || (this.playerNumber==2 && keyboard.left)){
-            this.velocity.x -= 0.3;
-        }
-        if((this.playerNumber==1 && keyboard.d) || (this.playerNumber==2 && keyboard.right)){
-            this.velocity.x += 0.3;
-        }
-        if((this.playerNumber==1 && keyboard.w) || (this.playerNumber==2 && keyboard.up)){
-            if(this.onGround){
-                this.velocity.y -= 15;
-            }
-        }
-        
-        this.futureX = this.x + this.velocity.x;
-        this.futureY = this.y + this.velocity.y;
-        
-        this.velocity.reduceAmplitude(0.95)
-        
-        var minimumMaximum = this.getMaximumY();
-        
-        if(this.touchingWallOnLeft() !== false){
-            this.futureX = this.touchingWallOnLeft() + 1;
-            this.velocity.x *= -0.5;
-        }
-        if(this.touchingWallOnRight() !== false){
-            this.futureX = this.touchingWallOnRight() - 1;
-            this.velocity.x *= -0.5;
-        }
-        
-        if(this.futureY > minimumMaximum && this.y <= minimumMaximum){
-            this.futureY = minimumMaximum;
-            this.velocity.y = 0;
-        }else if(this.futureY < minimumMaximum){
-            this.velocity.y += 0.5;
-        }
-        
-        if(this.futureY < this.getMinimumY()){
-            this.futureY = this.getMinimumY();
-            this.velocity.y = 1;
-        }
-        
-        this.x = this.futureX
-        this.y = this.futureY;
-    }
-    draw(){
-        ctx.fillStyle = this.color;
-        ctx.fillRect(this.x, this.y, this.w, this.h);
-    }
-}
-
-class Velocity{
-    constructor(amplitude, direction){
-        this._amplitude = amplitude;
-        this.direction = direction;
-    }
-    reduceAmplitude(value, minimum){
-        this.amplitude *= value;
-    }
-    get amplitude(){
-        return this._amplitude;
-    }
-    set amplitude(value){
-        if(Math.abs(value) < 0.1){
-            value = 0;
-        }
-        this._amplitude = value;
-        return value;
-    }
-    get y(){
-        return this.amplitude * Math.sin(this.direction);
-    }
-    get x(){
-        return this.amplitude * Math.cos(this.direction);
-    }
-    set x(postX){
-        if(Math.abs(postX) < 0.05){
-            this.amplitude = this.y;
-            this.direction = this.y>0?Direction.DOWN:Direction.UP;
-            return;
-        }
-        var preX = this.x;
-        var preY = this.y;
-        this.amplitude = Math.sqrt(postX*postX + preY*preY);
-        this.direction = Math.atan(preY/postX);
-        if(postX < 0){
-            this.direction += Math.PI;
-        }
-    }
-    set y(postY){
-        if(Math.abs(postY) < 0.05){
-            this.amplitude = this.x;
-            this.direction = this.x>0?Direction.RIGHT:Direction.LEFT;
-            return;
-        }
-        var preX = this.x;
-        var preY = this.y;
-        
-        //-0 can cause problems with atan
-        if(preX === 0){
-            preX = 0;
-        }
-        
-        this.amplitude = Math.sqrt(preX*preX + postY*postY);
-        this.direction = Math.atan(postY/preX);
-        if(preX < 0){
-            this.direction += Math.PI;
-        }
-    }
-}
-
-class Direction{
-    
-}
-//Thanks, trig.
-Direction.UP    = 3*Math.PI/2;
-Direction.DOWN  = Math.PI/2;
-Direction.RIGHT = 0;
-Direction.LEFT  = Math.PI;
-
-class Block{
-    constructor(x, y, w, h){
-        this.x=x;
-        this.y=y;
-        this.w=w;
-        this.h=h;
-    }
-    draw(){
-        ctx.fillStyle = theme.blockColor;
-        ctx.fillRect(this.x, this.y, this.w, this.h);
     }
 }
 
@@ -519,15 +262,25 @@ $(document).keydown(function(e){
             start();
             console.log("Starting game...")
             paused=false;
-        }else if(paused){
+        }else if(paused && loopMode == "playing"){
             console.log("Unpausing game...")
             paused = false;
-        }else{
+        }else if(loopMode == "playing"){
             console.log("Pausing game...")
             ctx.font = "50px Ubuntu"
             ctx.fillText("Paused", 400, 520);
             paused = true;
         }
+        break;
+    case 77:
+        if(paused && !stopped && loopMode == "playing"){
+            loopMode = "selectStage";
+            mainLoop(true);
+        }else if(loopMode == "selectStage"){
+            loopMode = "playing";
+            mainLoop(true);
+        }
+        break;
     }
 });
 $(document).keyup(function(e){
@@ -557,12 +310,6 @@ $(document).keyup(function(e){
         keyboard.s=false;
         break;
     case 77:
-        if(paused && !stopped && loopMode == "playing"){
-            loopMode = "selectStage";
-            mainLoop(true);
-        }else if(loopMode == "selectStage"){
-            loopMode = "playing";
-        }
         break;
     }
 });

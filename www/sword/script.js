@@ -1,25 +1,38 @@
-var canvas, ctx, mainLoopIntervalCode, player, ticks;
+var canvas, ctx, mainLoopIntervalCode, player, money, enemies, losingLife, moneySprites, steps,
+    itemsForSale, level, activeFeatureSets;
 
 var keyboard = {};
 var stopped = false;
 var lastKeys=[];
+var ticks = 0;
+var steps = 0;
+
+var heartImage = new Image(60, 60);
+var goldImage = new Image(32, 32);
+
+heartImage.src = "heart.gif";
+goldImage.src = "gold.png";
 
 var themes = {
     basic:{
-        player:"black",
         background:"white",
-        sword: "red",
+        enemy: "#900"
     }
+};
+
+var backgroundElements = [];
+for(var i = 0; i < 800; i+=10){
+    backgroundElements.push(new BackgroundElement(i));
 }
+
 var theme = themes.basic;
 
 function start(){
+    
     canvas = $("#canvas")[0];
     canvas.width = 800;
     canvas.height= 600;
-    canvas.style.background=theme.background
-    
-    ticks = 0;
+    canvas.style.background=theme.background;
     
     ctx = canvas.getContext("2d");
     
@@ -28,125 +41,140 @@ function start(){
     player = new Player();
     
     stopped=false;
+    paused =false;
+    
+    money = 0;
+    
+    activeFeatureSets = [{start: 0, length: calculateLength(levels[0])}];
+    
+    var features = generateFeatures(levels[0], 0);
+    enemies = features[0];
+    moneySprites = features[1];
+    
+    losingLife = 16;
+    
+    itemsForSale = [
+        {
+            description:["Next Level", "$5", ""],
+            cost: 5,
+            activate: () => {
+                level++;
+            }
+        },
+        tier1items[0],
+        tier1items[1],
+        tier1items[2],
+        tier1items[3],
+    ];
+    
+    level = 0;
+    steps = 0;
+    
 }
 $(start);
 
+function drawThreeLines(text, x){
+    ctx.font = "18px Ubuntu";
+    ctx.fillText(text[0], x, 150);
+    ctx.fillText(text[1], x, 170);
+    ctx.fillText(text[2], x, 190);
+}
+
 function mainLoop(){
+    if(paused)return;
     
-    ctx.clearRect(0,0,800,600)
+    steps += 2;
     
+    ctx.clearRect(0,0,800,600);
+    
+    ctx.fillStyle = "black";
+    ctx.strokeStyle = "black";
+    
+    ctx.beginPath();
+    ctx.moveTo(0, 50);
+    ctx.lineTo(300, 50);
+    ctx.stroke();
+    ctx.closePath();
+    
+    ctx.font = "50px Ubuntu";
+    ctx.textAlign = "center";
+    
+    ctx.fillText("1", 75, 100);
+    ctx.fillText("2", 225, 100);
+    ctx.fillText("3", 375, 100);
+    ctx.fillText("4", 525, 100);
+    ctx.fillText("5", 675, 100);
+    
+    itemsForSale.forEach(function(element, index){
+        drawThreeLines(element.description, index * 150 + 75);
+    });
+    
+    for(var element of backgroundElements){
+        element.tick();
+        //element.draw();
+    }
+    
+    player.tick();
     player.draw();
     
+    for(let enemy of enemies){
+        enemy.tick();
+        enemy.draw();
+    }
+    
+    for(var i = 0; i < enemies.length; i++){
+        if(enemies[i].destroy){
+            console.log(enemies[i])
+            enemies.splice(i, 1);
+            i--;
+        }
+    }
+    
+    for(var moneySprite of moneySprites){
+        moneySprite.tick();
+        moneySprite.draw();
+    }
+    
+    for(i = 0; i < moneySprites.length; i++){
+        if(moneySprites[i].destroy){
+            console.log(moneySprites[i])
+            moneySprites.splice(i, 1);
+            i--;
+        }
+    }
+    
+    ctx.fillStyle = "black";
+    ctx.font = "50px Ubuntu";
+    ctx.textAlign = "right";
+    ctx.fillText("$"+money, 780, 50)
+    
+    var i;
+    for(i = 0; i < player.lives; i++){
+        ctx.drawImage(heartImage, 10 + 40*i, 10, 32, 32);
+    }
+    if(losingLife < 16){
+        ctx.drawImage(heartImage, 10 + 40*i + losingLife, 10 + losingLife, 32 - losingLife*2, 32 - losingLife - 2);
+        losingLife+=0.75;
+    }
+    
+    if(activeFeatureSets[0].start + activeFeatureSets[0].length < steps){
+        activeFeatureSets.shift();
+    }
+    var lastElement = activeFeatureSets[activeFeatureSets.length - 1]
+    if(lastElement.start + lastElement.length < steps + 800){
+        addFeatureSet(lastElement.start + lastElement.length);
+    }
+    
     ticks++;
-    
 }
 
-class Player{
-    
-    constructor(){
-        this.x = 50;
-        this.y = 500;
-        this.w = 50;
-        this.h = 50;
-        
-        this.sword = new Sword(this);
+function loseLife(){
+    player.lives--;
+    losingLife = 0;
+    if(player.lives < 1){
+        paused = true;
+        clearInterval(mainLoopIntervalCode);
     }
-    
-    draw(){
-        this.sword.draw();
-        ctx.fillStyle = theme.player;
-        ctx.fillRect(this.x, this.y, this.w, this.h);
-    }
-    
-}
-
-class Sword{
-    
-    constructor(player){
-        this.player = player;
-        this.angle = 0;
-        this.visible = false;
-        this.behavior = "reset"
-    }
-    
-    get x(){
-        return this.player.x + this.player.w/2
-    }
-    
-    get y(){
-        return this.player.y + this.player.h/2
-    }
-    
-    draw(){
-        
-        if(!this.visible){
-            return;
-        }
-        switch(this.behavior){
-        case "down":
-            if(this.angle > Math.PI*2){
-                this.angle = 0;
-            }else if(this.angle === 0){
-                this.length -= 15;
-                if(this.length < 25){
-                    this.stroke("reset");
-                }
-            }else{
-                this.angle += 0.07;
-            }
-            break;
-        case "up":
-            if(this.angle < 0){
-                this.angle = 0;
-            }else if(this.angle === 0){
-                this.length -= 15;
-                if(this.length < 25){
-                    this.stroke("reset");
-                }
-            }else{
-                this.angle -= 0.07;
-            }
-            break;
-        }
-        
-        ctx.strokeStyle = theme.sword;
-        ctx.lineWidth = 3;
-        
-        ctx.beginPath();
-        ctx.moveTo(this.x, this.y);
-        ctx.lineTo(this.x + Math.cos(this.angle) * this.length, this.y + Math.sin(this.angle) * this.length)
-        ctx.stroke();
-        ctx.closePath();
-    }
-    
-    stroke(behavior){
-        
-        //Starting conditions
-        switch(behavior){
-        case "down":
-        case "up":
-            if(this.behavior != "reset")return;
-            break;
-        }
-        
-        this.behavior = behavior;
-        
-        switch(behavior){
-        case "down":
-            this.visible=true;
-            this.length = 100;
-            this.angle = 3*Math.PI/2;
-            break;
-        case "up":
-            this.visible=true;
-            this.length = 100;
-            this.angle = Math.PI/2;
-            break;
-        case "reset":
-            this.visible = false;
-        }
-    }
-    
 }
 
 $(document).keydown(function(e){
@@ -157,14 +185,12 @@ $(document).keydown(function(e){
         break;
     case 38:
         keyboard.up = true;
-        player.sword.stroke("up");
         break;
     case 39:
         keyboard.right = true;
         break;
     case 40:
         keyboard.down = true;
-        player.sword.stroke("down");
         break;
     case 87:
         keyboard.w=true;
@@ -178,9 +204,24 @@ $(document).keydown(function(e){
     case 83:
         keyboard.s=true
         break;
+    case 49:
+    case 50:
+    case 51:
+    case 52:
+    case 53:
+        var numberIndex = e.keyCode - 49;
+        if(money >= itemsForSale[numberIndex].cost){
+            money-= itemsForSale[numberIndex].cost;
+            itemsForSale[numberIndex].activate();
+        }
+        break;
     case 32:
         if(stopped){
             start();
+        }else if(paused){
+            paused = false;
+        }else{
+            paused = true;
         }
     }
 });

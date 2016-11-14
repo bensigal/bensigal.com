@@ -6,16 +6,6 @@
     <script>
     var tab = "    "
     $(function(){
-        $("#coup").click(function(e){
-            console.log("YO")
-            $("#data").html(`
-            {
-                "names":"ben,jakob",
-                "cards":"Banker,Reporter,Judge,Communist,Priest"
-            }
-            `);
-            $("#url").val("/coup/newGame");
-        });
         $("#restart").click(function(e){
             $("#data").html(`
             {
@@ -23,6 +13,30 @@
             }
             `)
             $("#url").val("/server/exec")
+        });
+        $("#startLife").click(function(e){
+            $("#data").html(`
+            {
+                
+            }
+            `)
+            $("#url").val("/life/start")
+        });
+        $("#tickLife").click(function(e){
+            $("#data").html(`
+            {
+                "tick": "100"
+            }
+            `)
+            $("#url").val("/life/tick")
+        });
+        $("#stopLife").click(function(e){
+            $("#data").html(`
+            {
+                
+            }
+            `)
+            $("#url").val("/life/stop")
         });
     });
     document.onkeydown = function(e){
@@ -84,8 +98,10 @@
 </head>
 <body>
     <input id=restart type=submit value="restart server">
+    <input id=startLife type=submit value="start /life server">
     <input id=url value="/">
-    <input id=coup type=submit value='restart coup'>
+    <input id=tickLife type=submit value="tick /life server">
+    <input id=stopLife type=submit value="stop /life server">
     <br><a href="/server/login.html">Login</a><br>
     <textarea id=data>{}</textarea>
     <p id=response></p>
