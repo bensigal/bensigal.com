@@ -9,7 +9,6 @@ class Map{
 
 var maps = {
     
-    //Original map
     original: new Map(
     
     [
@@ -21,23 +20,26 @@ var maps = {
         //Bottom left/right square
         new Block(  0, 500, 100, 100),
         new Block(700, 500, 100, 100),
+        //Small squares above the corners
+        new Block(  0, 425,  25,  25),
+        new Block(775, 425,  25,  25),
         //Floor of 2 zone
         new Block(100, 400, 100, 200),
         new Block(600, 400, 100, 200),
         //Center floor
         new Block(300, 400, 200, 200),
-        //Platforms above 4 zone
-        new Platform(  0, 400, 100),
-        new Platform(700, 400, 100),
+        //"Flag" in corners
+        new Block(100, 375,  25,  25),
+        new Block(675, 375,  25,  25),
+        //"Flagpole" in corners
+        new Block( 75, 350,  50,  25),
+        new Block(675, 350,  50,  25),
         //Floor of 1 zone
         new Block(200, 300, 100, 300),
         new Block(500, 300, 100, 300),
-        //Platforms above 2 zone
-        new Platform(  0, 300, 200),
-        new Platform(600, 300, 200),
         //Floor of 3 zone
-        new Block(  0, 200, 100,  25),
-        new Block(700, 200, 100,  25),
+        new Block(  0, 200, 100,  50),
+        new Block(700, 200, 100,  50),
         //Center platform
         new Block(350, 200, 100,  50),
         //Inner wall of 3 zone
@@ -48,26 +50,90 @@ var maps = {
         new Block(515, 125,  70,  25),
     ], 
     [
+        new ZoneText(250, 220),
+        new ZoneText(150, 220),
         new ZoneText( 50, 120),
-        new ZoneText( 50, 445),
-        new ZoneText(100, 360),
-        new ZoneText(200, 205),
+        new ZoneText( 50, 485),
         
+        new ZoneText(550, 220),
+        new ZoneText(650, 220),
         new ZoneText(750, 120),
+        new ZoneText(750, 485),
+    ],
+    [
+        new Zone(200, 0, 100, 500, 1, 1),
+        new Zone(100, 0, 100, 500, 1, 2),
+        new Zone(0, 0, 100, 200, 1, 3),
+        new Zone(0, 450, 100, 50, 1, 4),
+        
+        new Zone(500, 0, 100, 500, 2, 1),
+        new Zone(600, 0, 100, 500, 2, 2),
+        new Zone(700, 0, 100, 200, 2, 3),
+        new Zone(700, 450, 100, 50, 2, 4),
+    ]),
+    //Platforms map
+    modified: new Map(
+    
+    [
+        [340, 280],
+        [440, 280],
+    ],
+    
+    [
+        //Bottom left/right square
+        new Block(  0, 500, 100, 100),
+        new Block(700, 500, 100, 100),
+        //Floor of 2 zone
+        new Block(100, 400, 100, 200),
+        new Block(600, 400, 100, 200),
+        //Platforms above 4 zone
+        new Platform(  0, 400, 100),
+        new Platform(700, 400, 100),
+        //Platforms above 2 zone
+        new Platform(  0, 300, 200),
+        new Platform(600, 300, 200),
+        //Floor of 3 zone
+        new Platform(  0, 150, 100),
+        new Platform(700, 150, 100),
+        //Center platform
+        new Platform(300, 200, 200),
+        //Center floor
+        new Block(200, 300, 400, 400),
+        //Floor under 3 zone
+        new Block(  0, 220, 100,  15),
+        new Block(700, 220, 100,  15),
+        //Inner wall of 3 zone
+        new Block(100,   0,  25, 153),
+        new Block(675,   0,  25, 153),
+        //1 zone platform
+        new Block(125, 125, 125,  28),
+        new Block(550, 125, 125,  28),
+    ], 
+    [
+        new ZoneText( 50, 445),
+        new ZoneText( 50, 100),
+        new ZoneText(100, 360),
+        new ZoneText(190, 60),
+        new ZoneText(190, 205),
+        
         new ZoneText(750, 445),
+        new ZoneText(750, 100),
         new ZoneText(700, 360),
+        new ZoneText(600, 60),
         new ZoneText(600, 205),
     ],
     [
-        new Zone(  0,   0, 100, 200, 1, 4),
         new Zone(  0, 400, 100, 100, 1, 3),
+        new Zone(  0,   0, 100, 150, 1, 4),
         new Zone(  0, 300, 200, 100, 1, 2),
-        new Zone(  0,   0, 300, 300, 1, 1),
+        new Zone(125,   0, 125, 125, 1, 2),
+        new Zone(  0, 150, 250, 150, 1, 1),
         
-        new Zone(700,   0, 100, 200, 2, 4),
         new Zone(700, 400, 100, 100, 2, 3),
+        new Zone(700,   0, 100, 150, 2, 4),
         new Zone(600, 300, 200, 100, 2, 2),
-        new Zone(500,   0, 300, 300, 2, 1),
+        new Zone(550,   0, 125, 125, 2, 2),
+        new Zone(550, 150, 250, 150, 2, 1),
     ]),
     
     //Pyramid

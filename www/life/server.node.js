@@ -12,7 +12,14 @@ server.serializeAll = function(server){
         return server.board.map(
             (element) => {
                 return element.map(
-                    (square) => {return square.initial()}
+                    function(square){
+                        if(typeof square.initial != "function"){
+                            console.error(JSON.stringify(square));
+                            console.error(square.initial);
+                            return "u";
+                        }
+                        return square.initial();
+                    }
                 ).join("");
             }
         ).join("\n");
@@ -21,8 +28,10 @@ server.serializeAll = function(server){
 
 server.stop = function(server){
     return function(){
-        delete server.board;
-        clearInterval(server.intervalCode);
+        server.playingLife = false;
+        console.log("Stopping life....")
+        //delete server.board;
+        //clearInterval(server.intervalCode);
     }
 }(server);
 
@@ -33,7 +42,7 @@ var templates = {
             this.food = 0;
         },
         serialize: () => {return "b0"}, 
-        initial: () => {return "b"}
+        initial: function(){return "b"}
     },
     carnivore: {
         tick: function(){
@@ -42,22 +51,22 @@ var templates = {
             var randomAdjacent = this.randomAdjacent();
             this.getAllAdjacent().forEach(function(element){
                 if(element.type == "hungry"){
-                    this.food += element.food;
+                    this.food += element.food * 2;
                     element.setType("blank");
                 }
             }, this);
             randomAdjacent = this.randomAdjacent();
-            if(this.food > 1000){
+            if(this.food > 20){
                 if(randomAdjacent.type == "blank"){
                     randomAdjacent.setType("carnivore");
-                    this.food -= 750;
                 }
+                this.food -= 15
             }else if(randomAdjacent.type == "blank"){
                 this.moveTo(randomAdjacent);
                 this.universalTick();
             }
         },
-        create: function(){this.food = 250},
+        create: function(){this.food = 15},
         serialize: function(){
             return "c"+this.food;
         },
@@ -76,7 +85,7 @@ var templates = {
                     this.food-=25;
                 }
             }
-            if(Math.random() < 0.0005){
+            if(Math.random() < 0.0001){
                 this.setType("hungry");
             }
         },
@@ -87,7 +96,7 @@ var templates = {
     hungry: {
         tick: function(){
             if(this.movedOn == server.ticks)return;
-            this.food--;
+            this.food-=2;
             var randomAdjacent = this.randomAdjacent();
             this.getAllAdjacent().forEach(function(element){
                 if(element.type == "phyto"){
@@ -105,7 +114,7 @@ var templates = {
                 this.moveTo(randomAdjacent);
                 this.universalTick();
             }
-            if(Math.random() < 0.0005){
+            if(Math.random() < 0.00015){
                 this.setType("carnivore");
             }
         },
@@ -113,6 +122,30 @@ var templates = {
         serialize: function(){return "h"+this.food},
         initial: () => {return "h"}
     }
+}
+
+class LargeEntity{
+    
+    constructor(row, col, w, h){
+        this.row = row;
+        this.col = col;
+        this.w = w;
+        this.h = h;
+    }
+    getAllSquares(){
+        var result = [];
+        for(var i = this.row; i < this.row + this.h; i++){
+            for(var j = this.col; j < this.col + this.w; j++){
+                result.push(server.board[i][j]);
+            }
+        }
+    }
+    tick(){
+        this.getAllSquares().forEach(function(element){
+            element.setType("largeEntity");
+        }, this);
+    }
+    
 }
 
 class Square{
@@ -128,6 +161,8 @@ class Square{
         this.tick = templates[requestedType].tick;
         this.create = templates[requestedType].create;
         this.serialize = templates[requestedType].serialize;
+        
+        this.initial = templates[requestedType].initial;
         
         this.create();
         
@@ -198,38 +233,50 @@ class Square{
     
 }
 
-for(var row = 0; row < boardHeight; row++){
-    
-    server.board.push([]);
-    for(var col = 0; col < boardLength; col++){
-        server.board[row].push(new Square(row, col));
-    }
-}
-
 server.createBoard = function(server){
+
     return function(){
+
+        server.board = [];
+    
+        for(var row = 0; row < boardHeight; row++){
+            console.log("addrow");
+            server.board.push([]);
+            for(var col = 0; col < boardLength; col++){
+                server.board[row].push(new Square(row, col));
+            }
+            
+        }
         server.board.forEach(function(element, index){
             element.forEach(function(element, index){
                 element.setType("blank");
             });
         });
     };
+    
 }(server);
 
 server.tick = function(server){
     return function(){
-    	server.ticks++;
-        server.board.forEach(function(row, index){
-            row.forEach(function(square, index){
-                square.tick();
-                square.universalTick();
+        try{
+        	server.ticks++;
+            server.board.forEach(function(row, index){
+                row.forEach(function(square, index){
+                    square.tick();
+                    square.universalTick();
+                });
             });
-        });
+        }catch(e){
+            console.error("Life error: "+e.stack);
+            server.stop();
+        }
     };
 }(server);
 
 server.start = function(server){
     return function(){
+        server.playingLife = true;
+        console.log("Starting life...")
         server.createBoard();
         
         for(var i = 0; i < 400; i++){
@@ -237,5 +284,15 @@ server.start = function(server){
         }
         
         server.intervalCode = setInterval(server.tick, 500);
+    };
+}(server);
+
+
+server.resume = function(server){
+    return function(){
+        
+        server.playingLife = true;
+        server.intervalCode = setInterval(server.tick, 500);
+        
     };
 }(server);

@@ -12,7 +12,16 @@ module.exports = function(req, res, server, whereis){
         break;
     case "cantina":
         server.redirect("https://www.youtube.com/watch?v=FWO5Ai_a80M", req, res);
-	break;
+        break;
+    case "jedisteps":
+        server.redirect("https://www.dropbox.com/s/l2zzuyr1e964ilh/The%20Jedi%20Steps%20-%20sheet%20music.pdf?dl=0", req, res);
+        break;
+    case "ia-armies":
+        server.getFile("includes/ia-armies.html", req, res);
+        break;
+    case "meep":
+        server.getFile("meep.html", req, res);
+        break;
     default:
         server.defaultTunnel(req, res, "/");
         break;

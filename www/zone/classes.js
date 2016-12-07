@@ -108,6 +108,7 @@ class Player{
         }
         if(this.velocity.x < 0)
         for(var block of blocks){
+            if(block.passThrough)continue;
             if(this.futureX < block.x + block.w && this.futureX > block.x && this.y + this.h > block.y && this.y < block.y + block.h //Left edge inside block
                 && this.futureX + this.w > block.x + block.w //Right edge isn't
             ){
@@ -122,6 +123,7 @@ class Player{
         }
         if(this.velocity.x > 0)
         for(var block of blocks){
+            if(block.passThrough)continue;
             if(this.futureX + this.w > block.x && this.futureX + this.w < block.x + block.w && this.y + this.h > block.y && this.y < block.y + block.h //Right edge inside block
                 && this.futureX < block.x //Left edge isn't
             ){
@@ -160,11 +162,11 @@ class Player{
         
         if(this.touchingWallOnLeft() !== false){
             this.futureX = this.touchingWallOnLeft() + 1;
-            if(this.futureX - this.x < -0.01)this.velocity.x *= -0.5;
+            if(this.futureX - this.x < -0.02)this.velocity.x *= -0.5;
         }
         if(this.touchingWallOnRight() !== false){
             this.futureX = this.touchingWallOnRight() - 1;
-            if(this.futureX - this.x > 0.01)this.velocity.x *= -0.5;
+            if(this.futureX - this.x > 0.02)this.velocity.x *= -0.5;
         }
         
         if(this.futureY > minimumMaximum && this.y <= minimumMaximum){

@@ -20,17 +20,19 @@ var root = process.argv[2];
 //Given to tunnels
 var serverInfo = {};
 process.argv[3] = process.argv[3] || "";
-serverInfo.life = require(root+"www/life/server.node.js")
+serverInfo.life = require(root+"www/life/server.node.js");
 //Options
-var processOptions = process.argv[3]
+var processOptions = process.argv[3];
 //Time of start of execution
 var startTime = new Date().getTime();
 var logging = false;
 var playingLife = Boolean(process.argv[3]);
+var sockets = [];
+console.log("Playing life: "+playingLife);
 
 function prepareLogs(req, res){
 	req.serverOrder = numberOfRequests++;
-	console.log("Request "+req.serverOrder+" recieved: "+req.url)
+	console.log("Request "+req.serverOrder+" recieved: "+req.url);
 	req.logLocation = root+"server/logs/"+startTime+"/"+req.serverOrder+"/";
 	//Create directory for logs
 	if(logging)
@@ -81,10 +83,9 @@ function serverRespond(req, res){
 		//Do not send redirect; most browsers redirect example.com/ to example.com
 	}
 	if(req.path=="/index.html.var"){//Proxy index from .htaccess
-        req.log("Request is for index.html.var, redirecting to /")
+        req.log("Request is for index.html.var, redirecting to /");
 		req.path="/";
-		//Signal to defaultTunnel that a redirect should be given.
-		//Ommiting this means to get the file at req.path, but to maintain the url the client asked for
+		//Do not send redirect; most browsers redirect example.com/ to example.com
 	}
 	req.log(req.path);
 	
@@ -96,7 +97,7 @@ function serverRespond(req, res){
 		req.session=sessions[index];
 		req.log(benSpect(req.session));
 	}else{
-		req.log("\nNo session found. Sending cookie header.")
+		req.log("\nNo session found. Sending cookie header.");
 		req.session=new Session();
 		res.setHeader('Set-Cookie','sessid='+req.session.id);
 	}
@@ -108,8 +109,8 @@ function serverRespond(req, res){
 		}
 		//If there is data, and it's multipart
 		else if(req.headers["content-type"].startsWith("multipart/form-data")){
-			req.log("POST multipart/form-data")
-			req.log("Waiting for body before sending through tunnel...")
+			req.log("POST multipart/form-data");
+			req.log("Waiting for body before sending through tunnel...");
 			new multiparty.Form().parse(req,function(err,fields,files){
 				if(err){
 					req.err(err.stack);
@@ -144,15 +145,15 @@ function serverRespond(req, res){
 				});
 				req.log(body);
 				req.post=qs.parse(body);
-				sendThroughTunnel(req,res,"/")
+				sendThroughTunnel(req,res,"/");
 			});
-			req.log("POST, not multipart. Assuming querystring. Actual: "+req.headers["content-type"])
-			req.log("Waiting for body before sending through tunnel...")
+			req.log("POST, not multipart. Assuming querystring. Actual: "+req.headers["content-type"]);
+			req.log("Waiting for body before sending through tunnel...");
 		}
 	}
 	if(req.method!="POST"){
 		req.log(req.method);
-		sendThroughTunnel(req,res,"/")
+		sendThroughTunnel(req,res,"/");
 	}
 }
 //What to do when encountering a folder without a "tunnel.node.js" file.
@@ -185,7 +186,7 @@ function defaultTunnel(req, res, whereis, options){
 			relativeUrl=req.path.substring(whereis.length);
 			nextDir = relativeUrl.substring(0,relativeUrl.indexOf("/")+1);
 			//Go through the next folder's tunnel.
-			req.log("Found another supposed folder. Sending through tunnel.")
+			req.log("Found another supposed folder. Sending through tunnel.");
 			sendThroughTunnel(req, res, whereis+nextDir);
 		//If this is the requested destination...
 		}else if(req.path==whereis){
@@ -205,8 +206,8 @@ function defaultTunnel(req, res, whereis, options){
 			req.log("Searching for "+req.path);
 			
 			if(options.links){
-                req.log("Searching for a link from "+req.path.substring(req.path.lastIndexOf("/")+1))
-                var linkEnd = options.links[req.path.substring(req.path.lastIndexOf("/")+1)]
+                req.log("Searching for a link from "+req.path.substring(req.path.lastIndexOf("/")+1));
+                var linkEnd = options.links[req.path.substring(req.path.lastIndexOf("/")+1)];
                 req.log("Found "+linkEnd);
                 if(linkEnd){
                     req.path=req.path.substring(0,req.path.lastIndexOf("/")+1) + linkEnd;
@@ -228,7 +229,7 @@ function defaultTunnel(req, res, whereis, options){
 					req.path=req.path+"/";
 					//If request is bensigal.com, do not redirect client to bensigal.com/
 					if(req.path != "/"){
-					    console.log("Redirecting to trailing slash url.")
+					    console.log("Redirecting to trailing slash url.");
                         req.redirectPath = req.path;
                         req.redirectStatusCode = 301;
 					}
@@ -320,7 +321,7 @@ function sendString(output, req, res,options){
 	req.log("Sending string data.");
 	if(logging){
 	    fs.writeFile(req.logLocation+"responseText.log",output,function(err){
-	    	if(err)req.err(err)
+	    	if(err)req.err(err);
 	    });
 	}
 	res.setHeader('Content-Length',output.length);
@@ -339,8 +340,12 @@ function redirect(path, req, res, options){
 }
 function sendThroughTunnel(req, res, path){
 	req.log("Sending through tunnel "+path);
+	var nextTunnel = null;
 	try{
-		var nextTunnel = require(root+"www"+path+"tunnel.node.js");
+		nextTunnel = require(root+"www"+path+"tunnel.node.js");
+		if(nextTunnel.needsToInit){
+		    nextTunnel.init(serverInfo);
+		}
 	}catch(e){
 		if(e.code=="MODULE_NOT_FOUND"){
 			req.log("Tunnel not found at "+root+"www"+path+"tunnel.node.js");
@@ -352,10 +357,8 @@ function sendThroughTunnel(req, res, path){
 		}
 		defaultTunnel(req, res, path);
 		return;
-
 	}
-	if(typeof nextTunnel == "function"){
-	
+    if(typeof nextTunnel == "function"){
 		try{
 			var tunnelResponse = nextTunnel(req, res, serverInfo, path);
 		}catch(e){
@@ -423,17 +426,15 @@ function exportRefs(){
 }
 function startLife(){
     playingLife = true;
-    serverInfo.life.resume();
+    serverInfo.life.start();
 }
 function stopLife(){
     playingLife = false;
+    console.log("life server stop from server.js")
     serverInfo.life.stop();
 }
+/*
 io.on('connection', function (socket) {
-    socket.emit('news', { hello: 'world' });
-    socket.on('error console', function (data) {
-        console.error(data);
-    });
     setInterval(function(){
         if(playingLife)
         socket.emit('life', {
@@ -441,7 +442,8 @@ io.on('connection', function (socket) {
             ticks:serverInfo.life.ticks
         });
     }, 500);
-});
+});*/
+//Now handled by tunnels
 exportRefs(
 	"showErrorPage",	showErrorPage,
 	"defaultTunnel",	defaultTunnel,
@@ -460,5 +462,10 @@ exportRefs(
 	"redirect",		redirect,
 	"startLife",    startLife,
 	"stopLife",     stopLife,
-	"playingLife",  playingLife
+	"playingLife",  playingLife,
+	"io"        ,  io
 );
+
+if(playingLife){
+    startLife();
+}

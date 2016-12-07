@@ -5,6 +5,7 @@ var stopped = false;
 var lastKeys=[];
 var lastData = "";
 var lastTime = new Date().getTime();
+var ticks = 0;
 
 var s = 4
 
@@ -17,6 +18,8 @@ var theme = themes.basic;
 
 var socket = io("http://bensigal.com");
 socket.on('life', function(data){
+    console.log("recieved data")
+    lastTime = new Date().getTime();
     lastData = data.board;
     ticks = data.ticks;
 });
@@ -39,7 +42,6 @@ function mainLoop(){
     ctx.clearRect(0,0,800,600);
     
     console.log(new Date().getTime() - lastTime);
-    lastTime = new Date().getTime();
     
     ctx.fillStyle = "black";
     ctx.font = "30px Arial";

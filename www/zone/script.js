@@ -41,13 +41,13 @@ function win(isp1){
     
     stopped = true;
     ctx.font = "50px Ubuntu";
-    ctx.fillText((isp1?"Red":"Blue")+" Wins!", 400, 550);
+    ctx.fillText((isp1?"Red":"Blue")+" Wins!", 400, 555);
 }
 function tie(){
     paused = true;
     stopped = true;
     ctx.font = "30px Ubuntu";
-    ctx.fillText("That's odd... They're identical!!!", 400, 550);
+    ctx.fillText("That's odd... They're identical!!!", 400, 555);
 }
 
 function init(){
@@ -105,15 +105,17 @@ function selectStageDraw(){
     
     ctx.textAlign = "right";
     ctx.font = "90px Ubuntu";
-    ctx.fillText("W: ", 160, 100)
-    ctx.fillText("A: ", 160, 200)
-    ctx.fillText("S: ", 160, 300)
+    ctx.fillText("W: ", 160, 100);
+    ctx.fillText("S: ", 160, 200);
+    ctx.fillText("A: ", 160, 300);
+    ctx.fillText("D: ", 160, 400);
     
     ctx.textAlign = "left";
     ctx.font = "50px Ubuntu";
-    ctx.fillText("Original", 160, 100)
-    ctx.fillText("Maze", 160, 200)
-    ctx.fillText("Pyramid", 160, 300)
+    ctx.fillText("Original", 160, 100);
+    ctx.fillText("Modified", 160, 200);
+    ctx.fillText("Pyramid", 160, 300);
+    ctx.fillText("Maze", 160, 400);
     
     ctx.textAlign = "center";
 }
@@ -184,7 +186,7 @@ function mainLoop(burnScreen){
     if(ticks < 300){
         ctx.font = "80px Ubuntu"
     }
-    ctx.fillText(Math.round(ticks/6)/10, ticks<300?400:50, ticks<300?520:550);
+    ctx.fillText(Math.round(ticks/6)/10, ticks<300?400:50, ticks<300?510:550);
     
     if(ticks === 0){
         if(p1points > p2points){
@@ -242,18 +244,22 @@ $(document).keydown(function(e){
         break;
     case 68:
         keyboard.d=true;
+        if(loopMode == "selectStage"){
+            map = maps.maze;
+            start();
+        }
         break;
     case 65:
         keyboard.a=true;
         if(loopMode == "selectStage"){
-            map = maps.maze;
+            map = maps.pyramid;
             start();
         }
         break;
     case 83:
         keyboard.s=true;
         if(loopMode == "selectStage"){
-            map = maps.pyramid;
+            map = maps.modified;
             start();
         }
         break;
