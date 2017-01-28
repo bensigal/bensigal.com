@@ -144,8 +144,11 @@ class Player{
         if(this.movingRight){
             this.velocity.x += 0.3;
         }
+        if(map.w100SlowZones && (this.x < 100 || this.x > 700 - this.w) && this.velocity.y > 3.6){
+            this.velocity.y = 3.6;
+        }
         if(this.falling){
-            this.velocity.y += 0.5;
+            this.velocity.y += 0.8;
         }
         if((this.playerNumber==1 && keyboard.w) || (this.playerNumber==2 && keyboard.up)){
             if(this.onGround){

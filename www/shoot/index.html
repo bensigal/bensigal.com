@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Zone</title>
+        <link rel="stylesheet" type="text/css" href="/game/style.css">
+        <script src="/jquery.min.js"></script>
+        <script src="script.js"></script>
+        <script src="classes.js"></script>
+        <style>
+            canvas{
+                /*background-color: #F9E9FF;*/
+            }
+            p{
+                margin: 15px 0 0 0;
+                line-height: 0;
+                font-size: 20px;
+                padding: 0;
+                text-align: center;
+            }
+            body{
+                background-color: #F5F5F5;
+            }
+        </style>
+    </head>
+    <body>
+        <p id="score">0 - 0</p>
+        <div id="canvasHolder">
+            <canvas id="canvas">Your browser must be upgraded.</canvas>
+                This is a two player game. One person uses the arrow keys, <br>
+                the other person uses WASD. For every second you're on your opponent's <br>
+                side, you get a number of points, but if they tag you on their side you lose.
+        </div>
+    </body>
+</html>

@@ -12,11 +12,13 @@ var theme = {
     color13:"#F88",
     color14:"#F66",
     color16:"#F44",
+    color19:"#F00",
     color21:"#DDF",
     color22:"#AAF",
     color23:"#88F",
     color24:"#66F",
     color26:"#44F",
+    color29:"#00F",
     color3: "#FFF",
     zoneText: "#000",
     glowText: "#0F0",
@@ -88,7 +90,7 @@ function start(){
     p1points = 400;
     p2points = 400;
     
-    ticks = 1801;
+    ticks = 1201;
     
     ctx.textAlign = "center";
     
@@ -114,7 +116,7 @@ function selectStageDraw(){
     ctx.font = "50px Ubuntu";
     ctx.fillText("Original", 160, 100);
     ctx.fillText("Modified", 160, 200);
-    ctx.fillText("Pyramid", 160, 300);
+    ctx.fillText("Payoff", 160, 300);
     ctx.fillText("Maze", 160, 400);
     
     ctx.textAlign = "center";
@@ -218,6 +220,19 @@ function mainLoop(burnScreen){
             win(true);
         }
     }
+    
+    if(map.w100SlowZones){
+        ctx.strokeStyle = "#0F3";
+        ctx.beginPath();
+        var x = 50+Math.sin(ticks/15)*50
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, 450);
+        ctx.moveTo(800-x, 0);
+        ctx.lineTo(800-x, 450);
+        ctx.closePath();
+        ctx.stroke();
+    }
+    
 }
 
 $(document).keydown(function(e){
@@ -252,7 +267,7 @@ $(document).keydown(function(e){
     case 65:
         keyboard.a=true;
         if(loopMode == "selectStage"){
-            map = maps.pyramid;
+            map = maps.bigMoney;
             start();
         }
         break;
@@ -279,7 +294,7 @@ $(document).keydown(function(e){
         }
         break;
     case 77:
-        if(paused && !stopped && loopMode == "playing"){
+        if(paused || stopped){
             loopMode = "selectStage";
             mainLoop(true);
         }else if(loopMode == "selectStage"){

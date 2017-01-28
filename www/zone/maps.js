@@ -1,14 +1,98 @@
 class Map{
-    constructor(startingPositions, blocks, zoneTexts, zones){
+    constructor(startingPositions, blocks, zoneTexts, zones, options){
         this.startingPositions = startingPositions;
         this.blocks = blocks;
         this.zoneTexts = zoneTexts;
         this.zones = zones;
+        if(options)
+        this.w100SlowZones = options.w100SlowZones;
     }
 }
 
 var maps = {
     
+    bigMoney: new Map(
+        [
+            [340, 430],
+            [440, 430]
+        ],
+        
+        [
+            //Bottom Floor
+            new Block(0,450,800,150),
+            //Center Platform
+            new Platform(120, 350, 560),
+            //Center Top Divider
+            new Block(390, 0, 20, 250),
+            //Middle zone platform
+            new Platform(100, 247, 600),
+            //Middle zone outer walls
+            new Block(200, 0, 20, 250),
+            new Block(580, 0, 20, 250),
+            //Middle upper zone platform
+            new Platform(100, 147, 600),
+            //Outer zone first floor
+            new Platform(0, 350, 100),
+            new Platform(700, 350, 100),
+            //Outer zone second floor
+            new Platform(0, 250, 100),
+            new Platform(700, 250, 100),
+            //Outer zone third floor
+            new Platform(0, 150, 100),
+            new Platform(700, 150, 100),
+            //Outer zone fourth floor
+            new Platform(0, 50, 100),
+            new Platform(700, 50, 100),
+            //Outer zone wall
+            new Block(100, 0, 20, 353),
+            new Block(680, 0, 20, 353),
+        ],
+        [
+            new ZoneText(50,30),
+            new ZoneText(50,100),
+            new ZoneText(50,200),
+            new ZoneText(50,300),
+            new ZoneText(200, 400),
+            new ZoneText(310, 70),
+            new ZoneText(310, 200),
+            new ZoneText(160, 70),
+            new ZoneText(160, 200),
+            
+            new ZoneText(750,30),
+            new ZoneText(750,100),
+            new ZoneText(750,200),
+            new ZoneText(750,300),
+            new ZoneText(600, 400),
+            new ZoneText(490, 70),
+            new ZoneText(490, 200),
+            new ZoneText(640, 70),
+            new ZoneText(640, 200),
+        ],
+        [
+            new Zone(0,0,100,50,1,9),
+            new Zone(0,51,100,100,1,6),
+            new Zone(0,51,100,200,1,4),
+            new Zone(0,51,100,300,1,3),
+            new Zone(0,351,400,100,1,1),
+            new Zone(220,0,180,150,1,2),
+            new Zone(220,150,180,100,1,1),
+            new Zone(120,0,80,150,1,3),
+            new Zone(120,150,80,100,1,2),
+            
+            new Zone(700,0,100,50,2,9),
+            new Zone(700,51,100,100,2,6),
+            new Zone(700,51,100,200,2,4),
+            new Zone(700,51,100,300,2,3),
+            new Zone(400,351,400,100,2,1),
+            new Zone(410,0,180,150,2,2),
+            new Zone(410,150,180,100,2,1),
+            new Zone(600,0,80,150,2,3),
+            new Zone(600,150,80,100,2,2),
+        ],
+        {
+            w100SlowZones: true
+        }
+    ),
     original: new Map(
     
     [
