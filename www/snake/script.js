@@ -46,7 +46,7 @@ function start(){
         squares.push(squareArray);
     }
     
-    mainLoopIntervalCode = setInterval(mainLoop, 50);
+    mainLoopIntervalCode = setInterval(mainLoop, 16);
     
     stopped=false;
 }
