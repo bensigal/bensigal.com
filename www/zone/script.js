@@ -1,6 +1,9 @@
 var canvas, ctx, ticks, topLeft, mainLoopIntervalCode;
 
-var player1;
+var player1, player2;
+
+var player1Handicap = 0;
+var player2Handicap = 0;
 
 var keyboard = {};
 var theme = {
@@ -160,6 +163,9 @@ function mainLoop(burnScreen){
     player1.draw();
     player2.draw();
     
+    p1points += player1Handicap/5
+    p1points -= player2Handicap/5
+    
     p1points += player1.points/5;
     p1points -= player2.points/5;
     
@@ -255,6 +261,25 @@ $(document).keydown(function(e){
         if(loopMode == "selectStage"){
             map = maps.original;
             start();
+        }
+        break;
+    case 81:
+        keyboard.q = true;
+        if(loopMode == "selectStage" && e.altKey){
+            var response = prompt("Enter a code");
+            response = response.split("-");
+            if(response[0] == "handicap"){
+                if(response[1]=="left"){
+                    player1Handicap = response[2];
+                }
+                else if(response[1]=="right"){
+                    player2Handicap = response[2];
+                }
+            }
+            if(response[0] == "reset"){
+                player1Handicap = 0;
+                player2Handicap = 0;
+            }
         }
         break;
     case 68:

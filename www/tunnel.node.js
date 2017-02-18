@@ -30,6 +30,9 @@ module.exports = function(req, res, server, whereis){
         case "meep":
             server.getFile("meep.html", req, res);
             break;
+        case "psa":
+            server.redirect("https://www.youtube.com/watch?v=1E237KJhlCE", req, res);
+            break;
         default:
             server.defaultTunnel(req, res, "/");
             break;

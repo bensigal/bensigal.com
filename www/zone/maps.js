@@ -23,7 +23,7 @@ var maps = {
             //Center Platform
             new Platform(120, 350, 560),
             //Center Top Divider
-            new Block(390, 0, 20, 250),
+            new Block(390, 0, 20, 150),
             //Middle zone platform
             new Platform(100, 247, 600),
             //Middle zone outer walls
@@ -76,8 +76,8 @@ var maps = {
             new Zone(0,351,400,100,1,1),
             new Zone(220,0,180,150,1,2),
             new Zone(220,150,180,100,1,1),
-            new Zone(120,0,80,150,1,3),
-            new Zone(120,150,80,100,1,2),
+            new Zone(120,0,80,150,1,4),
+            new Zone(120,150,80,100,1,3),
             
             new Zone(700,0,100,50,2,9),
             new Zone(700,51,100,100,2,6),
@@ -85,12 +85,12 @@ var maps = {
             new Zone(700,51,100,300,2,3),
             new Zone(400,351,400,100,2,1),
             new Zone(410,0,180,150,2,2),
-            new Zone(410,150,180,100,2,1),
-            new Zone(600,0,80,150,2,3),
-            new Zone(600,150,80,100,2,2),
+            new Zone(400,150,180,100,2,1),
+            new Zone(600,0,80,150,2,4),
+            new Zone(600,150,80,100,2,3),
         ],
         {
-            w100SlowZones: true
+            w100SlowZones: false
         }
     ),
     original: new Map(

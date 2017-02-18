@@ -31,7 +31,7 @@ module.exports=function(req,res,server){
             
             server.getFile("server/post.html",req,res);
             
-        }else if(/throwError.*/.test(req.path)){
+        }else if(/throwerror.*/.test(req.path)){
             
         	server.showErrorPage(Number(req.path.substring(req.path.lastIndexOf("/")+1)),req,res);
         	
@@ -62,7 +62,7 @@ module.exports=function(req,res,server){
             req.log("Logging out.");
             req.session.on=false;
             return "false";
-        }else if(/siteMap\/?/.test(req.path)){
+        }else if(/sitemap\/?/.test(req.path)){
             if(!req.post || !req.post.dir)
             	server.sendString("No sitemap location sent.",req,res);
             //Not allowed to go up a directory. The server doesn't like that.
@@ -142,15 +142,7 @@ module.exports=function(req,res,server){
                 }
             });
         }
-    	else if(/ssh\/?/.test(req.path)){ 
-    		exec(["C:\\Program Files (x86)\\freeSSHd\\FreeSSHDService.exe"],function(err,out,code){
-    			if(err instanceof Error){
-    				req.err(err.stack);
-    			}
-    			process.stdout.write(out);
-    		});
-    		return "Attempted successfully.";
-    	}else if(/getFileContents\/?/.test(req.path)){
+    	else if(/getFileContents\/?/.test(req.path)){
     		req.log("Reading file contents for "+req.post.edit);
     		server.getFile(req.post.edit,req,res,{
     			pathNotFromWww:true,

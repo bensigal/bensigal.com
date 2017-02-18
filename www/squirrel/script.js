@@ -292,7 +292,7 @@ sprite.Enemy = function(pos,xpos){
     this.pos = 0;
     this.setPos(pos);
     this.x = 790 - xpos*100
-    this.w = 60;
+    this.w = 90;
     this.h = 60;
     this.tick = function(){
         this.x-=speed;
@@ -303,7 +303,7 @@ sprite.Enemy = function(pos,xpos){
     }
     this.draw = function(hit){
         
-        ctx.drawImage($("#broccoli")[0],this.x,this.y,this.w,this.h);
+        ctx.drawImage($("#broccoli")[0],this.x,this.y + 5,this.w,this.h - 10);
         
     }
 }

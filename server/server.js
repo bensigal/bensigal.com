@@ -30,6 +30,8 @@ var playingLife = Boolean(process.argv[3]);
 var sockets = [];
 console.log("Playing life: "+playingLife);
 
+//Called for each request, calls serverRespond at end
+//Should really be part of serverRespond
 function prepareLogs(req, res){
 	req.serverOrder = numberOfRequests++;
 	console.log("Request "+req.serverOrder+" recieved: "+req.url);
@@ -72,7 +74,7 @@ function prepareLogs(req, res){
 }
 function serverRespond(req, res){
 	
-	req.path=url.parse(req.url).pathname;
+	req.path=url.parse(req.url).pathname.toLowerCase();
 	
 	req.lastPath = req.path;
 	if(req.lastPath.endsWith("/"))req.lastPath = req.lastPath.substring(0, req.lastPath.length - 1);
