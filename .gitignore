@@ -4,7 +4,7 @@
 !/www/
 !README
 !.gitignore
-
+*.mp4
 /www/homework.txt
 
 
