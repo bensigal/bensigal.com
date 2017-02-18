@@ -5,19 +5,19 @@ var passwords	= require("../../passwords.js");
 //NOTE: THIS FILE CONTAINS ALL OF THE INTENTIONALLY DANGEROUS FUNCTIONS OF THE SERVER. 
 var openFunctions = [
     "login",
-    "throwError",
+    "throwerror",
     "login.html",
     "post"
 ];
 var authorizationRequired = [
     "logout",
-    "siteMap"
+    "sitemap"
 ];
 var adminRequired = [
     "exit",
     "delete",
     "ssh",
-    "getFileContents",
+    "getfilecontents",
     "javac",
     "save",
     "exec",
@@ -27,15 +27,15 @@ var adminRequired = [
 module.exports=function(req,res,server){
     if(new RegExp(openFunctions.join("|")).test(req.path)){
         
-        if (/post/.test(req.path)){
+        if (/post/i.test(req.path)){
             
             server.getFile("server/post.html",req,res);
             
-        }else if(/throwerror.*/.test(req.path)){
+        }else if(/throwerror.*/i.test(req.path)){
             
         	server.showErrorPage(Number(req.path.substring(req.path.lastIndexOf("/")+1)),req,res);
         	
-        }else if(/login\/?/.test(req.path)){
+        }else if(/login\/?/i.test(req.path)){
             
             if(req.method=="POST"){
                 req.log("Login attempt");
@@ -58,11 +58,11 @@ module.exports=function(req,res,server){
                 pathNotFromWww:true
             });
         }
-        if(/logout\/?/.test(req.path)){
+        if(/logout\/?/i.test(req.path)){
             req.log("Logging out.");
             req.session.on=false;
             return "false";
-        }else if(/sitemap\/?/.test(req.path)){
+        }else if(/sitemap\/?/i.test(req.path)){
             if(!req.post || !req.post.dir)
             	server.sendString("No sitemap location sent.",req,res);
             //Not allowed to go up a directory. The server doesn't like that.
@@ -128,10 +128,10 @@ module.exports=function(req,res,server){
         
         	server.sendString("Admin permissions required", req,res);
         	
-        }else if(/exit\/?/.test(req.path)){
+        }else if(/exit\/?/i.test(req.path)){
             server.process.exit();
             return;
-        }else if(/delete\/?/.test(req.path)){
+        }else if(/delete\/?/i.test(req.path)){
             req.log("Attempting to delete file "+req.post.path);
             fs.unlink(req.post.path, function(err){
                 if(err){
@@ -142,7 +142,7 @@ module.exports=function(req,res,server){
                 }
             });
         }
-    	else if(/getFileContents\/?/.test(req.path)){
+    	else if(/getfilecontents\/?/i.test(req.path)){
     		req.log("Reading file contents for "+req.post.edit);
     		server.getFile(req.post.edit,req,res,{
     			pathNotFromWww:true,
@@ -151,7 +151,7 @@ module.exports=function(req,res,server){
     			},
     			encoding:"binary"
     		});
-    	}else if(/save\/?/.test(req.path)){
+    	}else if(/save\/?/i.test(req.path)){
     		req.log("Saving to file "+req.post.file);
     		var is = fs.createReadStream(req.files.contents[0].path);
     		var os = fs.createWriteStream(String(req.post.file));
@@ -163,10 +163,10 @@ module.exports=function(req,res,server){
     				server.sendString("Success!",req,res);
     			});
     		});
-    	}else if (/delete\/?/.test(req.path)){
+    	}else if (/delete\/?/i.test(req.path)){
     	    req.log("Deleting "+req.post.file);
     	    return "";
-    	}else if (/javac\/?/.test(req.path)){
+    	}else if (/javac\/?/i.test(req.path)){
     	    exec("javac "+req.post.args+" "+req.post.file, function(error, stdout, stderr){
                 if(error){
                     server.sendString(error.stack,req,res);
@@ -175,7 +175,7 @@ module.exports=function(req,res,server){
                 }
     	    });
     	}
-    	else if (/exec\/?/.test(req.path)){
+    	else if (/exec\/?/i.test(req.path)){
     		var process = exec(req.post.command, function(err){
     			if(err) throw err;
     			res.end();
@@ -187,7 +187,7 @@ module.exports=function(req,res,server){
     		process.stdout.on("data",respondToData)
     		process.stderr.on("data",respondToData)
     	}
-        else if(/mkdir\/?/.test(req.path)){
+        else if(/mkdir\/?/i.test(req.path)){
             req.log("Attempting to make directory at "+req.post.path);
             fs.mkdir(req.post.path, function(err){
                 if(err){
@@ -198,7 +198,7 @@ module.exports=function(req,res,server){
                 }
             });
         }
-        else if(/rmdir\/?/.test(req.path)){
+        else if(/rmdir\/?/i.test(req.path)){
             req.log("Attempting to remove (hopefully empty) directory at "+req.post.path);
             fs.rmdir(req.post.path, function(err){
                 if(err){
