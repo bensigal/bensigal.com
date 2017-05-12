@@ -120,9 +120,54 @@ sprite.Player = function(isp1){
         }else{
             this.yVel = 0;
         }
+        
+        //Test for bounce against p2
+        if(this.isp1){
+            var xDiff = this.x - player2.x;
+            var yDiff = this.y - player2.y;
+            //pythagorean
+            var distanceBetween = Math.sqrt(xDiff*xDiff + yDiff*yDiff);
+            //if touching
+            if(distanceBetween <= this.r + player2.r){
+                
+                console.log("COLLISION");
+                
+                var angleToP2 = (Math.PI + getAngleFromLegs(yDiff, xDiff))%(Math.PI*2);
+                var bounceAngle = (angleToP2 + Math.PI/2)%(Math.PI*2)
+                var eachAmplitude = (this.getAmplitude() + player2.getAmplitude())/3;
+                
+                var p1AngleDiff = this.getDirection() - bounceAngle;
+                var p2AngleDiff = player2.getDirection() - bounceAngle;
+                
+                var p1NewAngle = (this.getDirection()+p1AngleDiff*2)%(Math.PI*2);
+                var p2NewAngle = (player2.getDirection()+p2AngleDiff*2)%(Math.PI*2);
+                
+                console.log(printAngle(p1NewAngle) + " - " + eachAmplitude);
+                
+                this.xVel = Math.cos(p1NewAngle)*eachAmplitude;
+                this.yVel = Math.sin(p1NewAngle)*eachAmplitude;
+                
+                player2.xVel = Math.cos(p2NewAngle)*eachAmplitude;
+                player2.yVel = Math.sin(p2NewAngle)*eachAmplitude;
+                
+                while(this.distanceTo(player2) < this.r + player2.r){
+                    this.x+=this.xVel;
+                    this.y+=this.yVel;
+                    player2.x+=player2.xVel;
+                    player2.y+=player2.yVel;
+                    console.log("CYCLE: "+[this.xVel, player2.xVel])
+                }
+                
+            }else{
+                this.x+=this.xVel;
+                this.y+=this.yVel;
+            }
+        }else{
+            this.x+=this.xVel;
+            this.y+=this.yVel;
+        }
+        
         //Move based on velocity;
-        this.x+=this.xVel;
-        this.y+=this.yVel;
         
         //If on edge, bounce
         if(this.x > 800 - this.r){
@@ -131,24 +176,56 @@ sprite.Player = function(isp1){
         }
         if(this.x < this.r){
             this.x=this.r;
-            this.xVel = - this.xVel
+            this.xVel = - this.xVel;
         }
         if(this.y > 600 - this.r){
             this.y=600 - this.r;
-            this.yVel = - this.yVel
+            this.yVel = - this.yVel;
         }
         if(this.y < this.r){
             this.y=this.r;
-            this.yVel = - this.yVel
+            this.yVel = - this.yVel;
         }
-    }
+    };
+    this.distanceTo = function(other){
+        return Math.sqrt((this.x-other.x)*(this.x-other.x)+(this.y-other.y)*(this.y-other.y));
+    };
+    //Get amplitude of velocity vector. Stored as xVel and yVel.
+    this.getAmplitude = function(){
+        return Math.sqrt(this.xVel*this.xVel + this.yVel*this.yVel);
+    };
+    this.getDirection = function(){
+        return getAngleFromLegs(this.yVel, this.xVel, true);
+    };
     this.draw = function(){
-        ctx.fillStyle=this.isp1?theme.player1:theme.player2
+        ctx.fillStyle=this.isp1?theme.player1:theme.player2;
         ctx.beginPath();
         ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
         ctx.fill();
         ctx.closePath();
+    };
+};
+function printAngle(angle){
+    var result = "";
+    if(angle<0)angle+=Math.PI*2;
+    if(angle < Math.PI/8 || angle > Math.PI*15/8){
+        result = ("RIGHT");
+    }else if(angle < Math.PI*3/8){
+        result = ("DOWNRIGHT");
+    }else if(angle < Math.PI*5/8){
+        result = ("DOWN");
+    }else if(angle < Math.PI*7/8){
+        result = ("DOWNLEFT");
+    }else if(angle < Math.PI*9/8){
+        result = ("LEFT");
+    }else if(angle < Math.PI*11/8){
+        result = ("LEFTUP");
+    }else if(angle < Math.PI*13/8){
+        result = ("UP");
+    }else if(angle < Math.PI*15/8){
+        result = ("UPRIGHT");
     }
+    return result;
 }
 $(document).keydown(function(e){
     var didntMatter = false;
@@ -175,7 +252,7 @@ $(document).keydown(function(e){
         keyboard.a=true;
         break;
     case 83:
-        keyboard.s=true
+        keyboard.s=true;
         break;
     default:
         didntMatter = true;
@@ -190,6 +267,14 @@ $(document).keydown(function(e){
         stopped = false;
     }
 });
+function getAngleFromLegs(y,x,catchNaN){
+    if(catchNaN && x===0){
+        x=0.0001;
+    }
+    var result = Math.atan(y/x);
+    if(x<0)result+=Math.PI;
+    return result;
+}
 $(document).keyup(function(e){
     switch(e.keyCode){
     case 37:

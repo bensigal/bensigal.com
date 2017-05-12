@@ -21,17 +21,33 @@ module.exports = function(req, res, server, whereis){
         case "ia-armies":
             server.getFile("includes/ia-armies.html", req, res);
             break;
-        case "epic":
-            server.redirect("epic.mp4", req, res);
-            break;
         case "bicicleta":
             server.redirect("https://www.youtube.com/watch?v=-UV0QGLmYys", req, res);
             break;
         case "meep":
-            server.getFile("meep.html", req, res);
+            server.getFile("includes/meep.html", req, res);
             break;
-        case "psa":
-            server.redirect("https://www.youtube.com/watch?v=1E237KJhlCE", req, res);
+        case "henri":
+            server.getFile("includes/henri.html", req, res);
+            break;
+        case "luca":
+            server.getFile("includes/luca.html", req, res);
+            break;
+        case "weimar":
+            server.redirect("https://www.youtube.com/watch?v=V2dZBa69Hv0", req, res);
+            break;
+        case "dday":
+        case "d-day":
+        case "d_day":
+        case "d day":
+        case "d%20day":
+            server.redirect("https://sites.google.com/piedmont.k12.ca.us/d-day", req, res);
+            break;
+        case "robots":
+            server.redirect("https://www.fantasyflightgames.com/en/news/2017/3/21/programmed-for-destruction/", req, res);
+            break;
+        case "sidon":
+            server.redirect("https://www.youtube.com/watch?v=66coX4HCZmo", req, res);
             break;
         default:
             server.defaultTunnel(req, res, "/");

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Henri</title>
+        <style>
+            #canvas{
+                width: 1000;
+                height: 600;
+                border: 1px solid black;
+            }
+        </style>
+    </head>
+    <body>
+        <canvas id="canvas">Canvas not supported.</canvas>
+    </body>
+        <script>
+            var text = [
+                "Murderer",
+                "What a cruel person",
+                "ur bad",
+                "it'll get revenge",
+                "Terrorist",
+                "Go roll a nat 1",
+                "Truly chaotic evil",
+                "Doogsam disapproves",
+                "Please cry",
+                "Why would you destroy perfection",
+                "I hope all your knights are in corners",
+                "you once lost chess in one move",
+                "pure evil",
+                "rude",
+                "que lastima",
+                "alignment infraction right there",
+                "you make everyone sad",
+                "you make me sad",
+                "i eat you for breakfast",
+                "my leg hurts",
+                "the whole nation is in tears",
+                "it was innocent",
+                "it deserved to live"]
+            canvas = document.getElementById("canvas");
+            canvas.width = 1000;
+            canvas.height = 600;
+            ctx = canvas.getContext("2d");
+            setInterval(function(){
+                ctx.font = Math.floor(Math.random()*25+10) + "px Arial"
+                var letters = ["1", "2", "3", "4", "5", "6", "7", "8"];
+                ctx.fillStyle = "#"+
+                    letters[Math.floor(Math.random()*8)] +
+                    letters[Math.floor(Math.random()*8)] +
+                    letters[Math.floor(Math.random()*8)];
+                ctx.fillText(text[Math.floor(Math.random()*text.length)], Math.random()*700-50, Math.random()*500+20);
+            }, 1000);
+        </script>
+</html>

@@ -1,5 +1,4 @@
 var canvas, ctx, topLeft, mainLoopIntervalCode, head, snakeSquares, previousDirection, growing, food, stewart=false;
-//LOL
 var keyboard = {};
 var sprite = {};
 var enemies;
@@ -46,13 +45,12 @@ function start(){
         squares.push(squareArray);
     }
     
-    mainLoopIntervalCode = setInterval(mainLoop, 16);
+    mainLoopIntervalCode = setInterval(mainLoop, 33);
     
     stopped=false;
 }
 $(start);
 function mainLoop(){
-    if(stewart && Math.random()>0.5)return;
     ctx.clearRect(0,0,800,600)
     
     for(var i = 0; i < 60; i++){
@@ -97,12 +95,12 @@ function mainLoop(){
         ctx.fillStyle = "red";
         ctx.font="100px impact"
         ctx.fillText("SNAKE!",220,200)
-        setTimeout(()=>{
+        setTimeout(function(){
             ctx.font="100px impact";
             ctx.fillStyle = "red";
             ctx.fillText("SNAKE!",220,300)
         },750);
-        setTimeout(()=>{
+        setTimeout(function(){
             ctx.font="100px impact";
             ctx.fillStyle = "red";
             ctx.fillText("SNAAAAAKE!",80,400)

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Kerryton</title>
+        <script src="/jquery.min.js"></script>
+        <script>
+            var text = ["Kerryton", "Kerryton", "3", "4", "5"];
+            var nextIndex = 0;
+            var ticks = 0;
+            var canvas, ctx;
+            $(function(){
+                canvas = $("#canvas")[0];
+                canvas.width = 1450;
+                canvas.height= 600;
+                ctx=canvas.getContext("2d");
+                setInterval(function(){
+                    ticks++;
+                    ctx.clearRect(0,0,1450,600);
+                    ctx.drawImage($("#image")[0], 675+675*Math.sin(Math.pow(ticks/300, 1.1)), 250+250*Math.sin(Math.pow(ticks/100, 1.041)), 100, 100)
+                })
+                $.get("/kerrytonlyrics", function(data){
+                    text=data.split("\n");
+                })
+            });
+            document.onkeydown=function(e){
+                if(e.keyCode==32){
+                    $("#text").text(text[nextIndex++]);
+                }else if(e.keyCode==8){
+                    $("#text").text(text[(--nextIndex)-1]);
+                }
+                if(nextIndex<0)nextIndex=0;
+                if(nextIndex>=text.length)nextIndex=text.length-1;
+            }
+        </script>
+        <style>
+            img{
+                display: none;
+            }
+            canvas{
+                position: absolute;
+                width: 1300px;
+                height: 600px;
+                z-index: -999;
+            }
+            #text{
+                font-size: 72px;
+                text-align: center;
+                padding: 200px 50px;
+            }
+            body{
+                overflow: hidden;
+            }
+        </style>
+    </head>
+    <body>
+        <img id="image" src="http://dhsh.sfgov.org/wp-content/uploads/2016/12/Kerry-274x300.jpg">
+        <canvas id="canvas"></canvas>
+        <p id="text">Kerryton</p>
+    </body>
+</html>
