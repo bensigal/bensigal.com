@@ -6,25 +6,48 @@ var stopped = false;
 var lastKeys=[];
 var enemies;
 var level = 120;
-var nextEnemy, killed, players, menuTicks, menuLoopInterval, gameType, scene;
-var options = ["easy", "classic", "hard"];
-var optionSelected = 1;
+var nextEnemy, killed, originalPlayers, players, menuTicks, menuLoopInterval, gameType, scene, enemyBaseSpeed;
+var options = [
+    ["singleplayer", "multiplayer"],
+    ["easy", "classic", "impossible", "back"]
+];
+var onMenu = true;
+var optionSelected = 0;
+var depth = 0;
 
 function resetGame(){
     
+    enemyBaseSpeed = 1;
     switch(scene){
-    case "hard":
-    case "classic":
-    case "easy":
-        players = [new Player(0)];
+    case "singleplayer":
+        originalPlayers = [new Player(0)];
+        break;
+    case "multiplayer":
+        originalPlayers = [new Player(1), new Player(2)];
         break;
     }
+    players = originalPlayers.slice(0);
     
     ticks = -1;//game finishes loop, this is asynchronous really. make sure the first enemy spawns
     enemies = [];
     nextEnemy = 0;
     killed = 0;
     
+}
+function selectMenuOption(index){
+    optionSelected = 0;
+    if(options[depth][index]=="back")return depth--;
+    switch(depth){
+    case 0:
+        scene=options[0][index];
+        depth++;
+        break;
+    case 1:
+        difficulty = options[1][index];
+        resetGame();
+        onMenu = false;
+        break;
+    }
 }
 $(function(){
     canvas = $("#canvas")[0];
@@ -58,7 +81,7 @@ function menuLoop(){
     ctx.fillStyle = "black";
     ctx.font = "12px Arial"
     
-    options.forEach(function(element, index){
+    options[depth].forEach(function(element, index){
         ctx.fillStyle = index == optionSelected ? "black" : "#BBB";
         ctx.textAlign = "center";
         ctx.font = "italic bold 24px Arial";
@@ -67,18 +90,23 @@ function menuLoop(){
 }
 function mainLoop(){
     if(paused)return;
-    if(scene == "menu")return menuLoop();
+    if(onMenu)return menuLoop();
+    if(scene == "multiplayer" && players.length == 1 && enemyBaseSpeed < 2)enemyBaseSpeed+=0.001;
     ctx.clearRect(0,0,800,600)
     
-    switch(scene){
+    switch(difficulty){
     case "classic":
         level = Math.round( 15 + 60 * Math.pow(1.1, (ticks + 120)/-300) );
         break;
-    case "hard":
-        level = 15;
-        break;
     case "easy":
         level = Math.round( 20 + 120* Math.pow(1.1, (ticks + 120)/-200) );
+        break;
+    case "impossible":
+        level = Math.round( 10 + 30 * Math.pow(1.1, (ticks + 120)/-100) );
+        break;
+    }
+    if(scene == "multiplayer"){
+        level = Math.round(level/2);
     }
     if(ticks==nextEnemy){
         enemies.push(new Enemy());
@@ -98,7 +126,7 @@ function mainLoop(){
     
     ctx.fillText("Arrow keys to move you (the large circle). Hold space to extend. P to pause. Avoid the lines, destroy them with your moon.", 20, 580)
     
-    players.forEach(function(player){
+    originalPlayers.forEach(function(player){
         player.tick();
         player.draw();
     });
@@ -107,11 +135,7 @@ function mainLoop(){
         element.tick();
         element.draw();
     });
-    var playerAlive = false;
-    players.forEach(function(player){
-        if(!player.dead)playerAlive = true;
-    })
-    if(!playerAlive){
+    if(players.length === 0){
         resetGame(gameType);
         paused=true;
     }
@@ -120,6 +144,25 @@ function mainLoop(){
             enemies.splice(i, 1);
             i--;
             killed++;
+        }
+    }
+    if(players[0].dead){
+        players.splice(0,1);
+        if(players[0]){
+            enemies.forEach(function(enemy){
+                enemy.player = players[0];
+            });
+        }
+    }else if(players[1] && players[1].dead){
+        players.splice(1,1);
+        enemies.forEach(function(enemy){
+            enemy.player = players[0];
+        });
+    }
+    for(i = 0; i < players.length; i++){
+        if(players[i].dead){
+            players.splice(i, 1);
+            i--;
         }
     }
     
@@ -134,7 +177,7 @@ $(document).keydown(function(e){
         break;
     case 38:
         keyboard.up = true;
-        if(scene == "menu"){
+        if(onMenu){
             optionSelected = Math.max(0, optionSelected-1);
         }
         break;
@@ -143,8 +186,8 @@ $(document).keydown(function(e){
         break;
     case 40:
         keyboard.down = true;
-        if(scene == "menu"){
-            optionSelected = Math.min(options.length-1, optionSelected+1);
+        if(onMenu){
+            optionSelected = Math.min(options[depth].length-1, optionSelected+1);
         }
         break;
     case 87:
@@ -167,9 +210,8 @@ $(document).keydown(function(e){
         }else if(paused){
             paused = false;
         }
-        if(scene=="menu"){
-            scene=options[optionSelected];
-            resetGame();
+        if(onMenu){
+            selectMenuOption(optionSelected);
         }
         break;
     case 80:
@@ -177,7 +219,7 @@ $(document).keydown(function(e){
             break;
         }else if(paused){
             paused = false;
-        }else if(scene != "menu"){
+        }else if(!onMenu){
             paused = true;
         }
         break;
