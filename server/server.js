@@ -471,3 +471,6 @@ exportRefs(
 if(playingLife){
     startLife();
 }
+console.error("MEEP");
+
+require(root+"www/trailblazer/tunnel.node.js").init(serverInfo);//tunnel has to load a couple files, do this before first time is called

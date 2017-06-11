@@ -1,0 +1,407 @@
+{
+    "numberGoodTypesProduced":{
+        "B":{
+            "2" :2,
+            "3" :2,
+            "4" :2,
+            "5" :2,
+            "6" :3,
+            "7" :3,
+            "8" :3,
+            "9" :3,
+            "10":4,
+            "11":4,
+            "12":5
+        },
+        "C":{
+            "2" :1,
+            "3" :1,
+            "4" :1,
+            "5" :2,
+            "6" :2,
+            "7" :2,
+            "8" :2,
+            "9" :3,
+            "10":3,
+            "11":3,
+            "12":3
+        },
+        "D":{
+            "2" :1,
+            "3" :1,
+            "4" :1,
+            "5" :1,
+            "6" :2,
+            "7" :2,
+            "8" :2,
+            "9" :2,
+            "10":2,
+            "11":3,
+            "12":3
+        },
+        "E":{
+            "2" :1,
+            "3" :1,
+            "4" :1,
+            "5" :1,
+            "6" :1,
+            "7" :1,
+            "8" :1,
+            "9" :2,
+            "10":2,
+            "11":2,
+            "12":2
+        },
+        "F":{
+            "2" :1,
+            "3" :1,
+            "4" :1,
+            "5" :1,
+            "6" :1,
+            "7" :1,
+            "8" :1,
+            "9" :1,
+            "10":2,
+            "11":2,
+            "12":2
+        }
+    },
+    "goodTypeProduced":{
+        "B":{
+            "2" :"Spices",
+            "3" :"Drugs",
+            "4" :"Wines",
+            "5" :"Fissionables",
+            "6" :"Weapons",
+            "7" :"Industrial Tech",
+            "8" :"Medical Tech",
+            "9" :"Medicines",
+            "10":"Liquors",
+            "11":"Beasts",
+            "12":"Spices"
+        },
+        "C":{
+            "2" :"Spices",
+            "3" :"Liquors",
+            "4" :"Medicines",
+            "5" :"Liquors",
+            "6" :"Drugs",
+            "7" :"Wines",
+            "8" :"Spices",
+            "9" :"Medicines",
+            "10":"Beasts",
+            "11":"Fissionables",
+            "12":"Boosterspice"
+        },
+        "D":{
+            "2" :"Spices",
+            "3" :"Liquors",
+            "4" :"Medicines",
+            "5" :"Liquors",
+            "6" :"Drugs",
+            "7" :"Wines",
+            "8" :"Spices",
+            "9" :"Medicines",
+            "10":"Beasts",
+            "11":"Fissionables",
+            "12":"Boosterspice"
+        },
+        "E":{
+            "2" :"Spices",
+            "3" :"Liquors",
+            "4" :"Medicines",
+            "5" :"Liquors",
+            "6" :"Drugs",
+            "7" :"Wines",
+            "8" :"Spices",
+            "9" :"Medicines",
+            "10":"Beasts",
+            "11":"Fissionables",
+            "12":"Boosterspice"
+        },
+        "F":{
+            "2" :"Fissionables",
+            "3" :"Fissionables",
+            "4" :"Spices",
+            "5" :"Medicines",
+            "6" :"Fissionables",
+            "7" :"Fissionables",
+            "8" :"Drugs",
+            "9" :"Fissionables",
+            "10":"Fissionables",
+            "11":"Superheavy Metals",
+            "12":"Superheavy Metals"
+        }
+    },
+    "priceMultiple":{
+        "3": "1/5",
+        "4": "1/4",
+        "5": "1/3",
+        "6": "1/2",
+        "7": "2/3",
+        "8": "3/4",
+        "9": "1",
+        "10":"5/4",
+        "11":"4/3",
+        "12":"3/2",
+        "13":"5/3",
+        "14":"7/4",
+        "15":"2",
+        "16":"3",
+        "17":"4",
+        "18":"5"
+    },
+    "numberGoodsConsumed":{
+        "B":{
+            "2" :2,
+            "3" :2,
+            "4" :2,
+            "5" :3,
+            "6" :3,
+            "7" :4,
+            "8" :4,
+            "9" :5,
+            "10":6,
+            "11":7,
+            "12":8
+        },
+        "C":{
+            "2" :1,
+            "3" :1,
+            "4" :2,
+            "5" :2,
+            "6" :2,
+            "7" :3,
+            "8" :3,
+            "9" :4,
+            "10":4,
+            "11":5,
+            "12":6
+        },
+        "D":{
+            "2" :0,
+            "3" :0,
+            "4" :0,
+            "5" :0,
+            "6" :0,
+            "7" :0,
+            "8" :0,
+            "9" :0,
+            "10":0,
+            "11":0,
+            "12":0
+        },
+        "E":{
+            "2" :0,
+            "3" :0,
+            "4" :0,
+            "5" :0,
+            "6" :0,
+            "7" :1,
+            "8" :1,
+            "9" :2,
+            "10":2,
+            "11":3,
+            "12":4
+        },
+        "F":{
+            "2" :0,
+            "3" :0,
+            "4" :0,
+            "5" :0,
+            "6" :0,
+            "7" :0,
+            "8" :0,
+            "9" :0,
+            "10":0,
+            "11":0,
+            "12":0
+        }
+    },
+    "goodTypeConsumed":{
+        "B":{
+            "2" :"Beasts",
+            "3" :"Medicines",
+            "4" :"Fissionables",
+            "5" :"Medical Tech",
+            "6" :"Boosterspice",
+            "7" :"Weapons",
+            "8" :"Superheavy Metals",
+            "9" :"Industrial Tech",
+            "10":"Germ Plasm",
+            "11":"Drugs",
+            "12":"Spices"
+        },
+        "C":{
+            "2" :"Fissionables",
+            "3" :"Wines",
+            "4" :"Spices",
+            "5" :"Spices",
+            "6" :"Weapons",
+            "7" :"Boosterspice",
+            "8" :"Medical Tech",
+            "9" :"Medicines",
+            "10":"Drugs",
+            "11":"Beasts",
+            "12":"Wines"
+        },
+        "E":{
+            "2" :"Liquors",
+            "3" :"Wines",
+            "4" :"Drugs",
+            "5" :"Industrial Tech",
+            "6" :"Industrial Tech",
+            "7" :"Fissionables",
+            "8" :"Weapons",
+            "9" :"Meidcal Tech",
+            "10":"Superheavy Metals",
+            "11":"Spices",
+            "12":"Medical Tech"
+        }
+    },
+    "demandLetter":{
+        "2":"C",
+        "3":"D",
+        "4":"B",
+        "5":"A",
+        "6":"B",
+        "7":"A",
+        "8":"C",
+        "9":"D",
+        "10":"E",
+        "11":"E",
+        "12":"F"
+    },
+    "demandModifierModifier":{
+        "Beasts": 1,
+        "Boosterspice": 6,
+        "Drugs": 2,
+        "Fissionables": 2,
+        "Germ Plasm": 1,
+        "Industrial Tech": 2,
+        "Liquors": 1,
+        "Medical Tech": 3,
+        "Medicines": 2,
+        "Spices": 2,
+        "Superheavy Metals": 4,
+        "Weapons": 2,
+        "Wines": 3
+    },
+    "defaultBoardAdvanced":{
+        "stars":[
+            {"name":"Sol",
+            "type":"A",
+            "goodsSupply":[
+                {"name":"Ships", "priceMultiple":"1/5", "production":"2"},
+                {"name":"Germ Plasm", "priceMultiple":"4", "production":"4"},
+                {"name":"Weapons", "priceMultiple":"3/4", "production":"2"},
+                {"name":"Industrial Tech", "priceMultiple":"2", "production":"3"},
+                {"name":"Medical Tech", "priceMultiple":"4/3", "production":"2"}
+            ],
+            "goodsDemand":[
+                {"name":"Liquors", "demandLetter":"B", "demandModifier":"4", "demandNumber":"4"},
+                {"name":"Wines", "demandLetter":"C", "demandModifier":"5", "demandNumber":"3"},
+                {"name":"Beasts", "demandLetter":"F", "demandModifier":"2", "demandNumber":"4"},
+                {"name":"Drugs", "demandLetter":"E", "demandModifier":"5", "demandNumber":"5"},
+                {"name":"Fissionables", "demandLetter":"A", "demandModifier":"6", "demandNumber":"6"},
+                {"name":"Boosterspice", "demandLetter":"B", "demandModifier":"12", "demandNumber":"8"},
+                {"name":"Medicines", "demandLetter":"A", "demandModifier":"6", "demandNumber":"6"},
+                {"name":"Superheavy Metals", "demandLetter":"D", "demandModifier":"8", "demandNumber":"6"},
+                {"name":"Spices", "demandLetter":"C", "demandModifier":"6", "demandNumber":"5"},
+                {"name":"D-Class Worlds", "demandLetter":"F", "demandModifier":"12", "demandNumber":"12"}
+            ]
+            }
+        ]
+    },
+    "defaultBoardOther":{
+        "stars":[
+            {"name":"Sol",
+            "type":"A",
+            "goodsSupply":[
+                {"name":"Ships", "priceMultiple":"1/5", "production":"2"},
+                {"name":"Germ Plasm", "priceMultiple":"4", "production":"4"},
+                {"name":"Weapons", "priceMultiple":"3/4", "production":"2"},
+                {"name":"Industrial Tech", "priceMultiple":"2", "production":"3"},
+                {"name":"Medical Tech", "priceMultiple":"4/3", "production":"2"}
+            ],
+            "goodsDemand":[
+                {"name":"Liquors", "demandLetter":"B", "demandModifier":"4", "demandNumber":"4"},
+                {"name":"Wines", "demandLetter":"C", "demandModifier":"5", "demandNumber":"3"},
+                {"name":"Beasts", "demandLetter":"F", "demandModifier":"2", "demandNumber":"4"},
+                {"name":"Drugs", "demandLetter":"E", "demandModifier":"5", "demandNumber":"5"},
+                {"name":"Fissionables", "demandLetter":"A", "demandModifier":"6", "demandNumber":"6"},
+                {"name":"Boosterspice", "demandLetter":"B", "demandModifier":"12", "demandNumber":"8"},
+                {"name":"Medicines", "demandLetter":"A", "demandModifier":"6", "demandNumber":"6"},
+                {"name":"Superheavy Metals", "demandLetter":"D", "demandModifier":"8", "demandNumber":"6"},
+                {"name":"Spices", "demandLetter":"C", "demandModifier":"6", "demandNumber":"5"},
+                {"name":"D-Class Worlds", "demandLetter":"F", "demandModifier":"12", "demandNumber":"12"}
+            ]
+            },
+            {"name":"Alpha C",
+            "type":"B",
+            "goodsSupply":[
+                {"name":"Fissionables", "priceMultiple":"5/4", "production":"3"},
+                {"name":"Spices", "priceMultiple":"1/2", "production":"1"}
+            ],
+            "goodsDemand":[
+                {"name":"Boosterspice", "demandLetter":"F", "demandModifier":"5"},
+                {"name":"Medicines", "demandLetter":"C", "demandModifier":"2"},
+                {"name":"Superheavy Metals", "demandLetter":"C", "demandModifier":"4"},
+                {"name":"Germ Plasm", "demandLetter":"A", "demandModifier":"2"},
+                {"name":"Weapons", "demandLetter":"B", "demandModifier":"3"},
+                {"name":"Industrial Tech", "demandLetter":"D", "demandModifier":"5"},
+                {"name":"Medical Tech", "demandLetter":"C", "demandModifier":"6"}
+            ]
+            },
+            {"name":"Jahsworld",
+            "type":"B",
+            "goodsSupply":[
+                {"name":"Medicines", "priceMultiple":"5/2", "production":"3"},
+                {"name":"Liquors", "priceMultiple":"3/2", "production":"2"}
+            ],
+            "goodsDemand":[
+                {"name":"Beasts", "demandLetter":"A", "demandModifier":"3"},
+                {"name":"Drugs", "demandLetter":"B", "demandModifier":"4"},
+                {"name":"Boosterspice", "demandLetter":"D", "demandModifier":"6"},
+                {"name":"Superheavy Metals", "demandLetter":"A", "demandModifier":"3"},
+                {"name":"Spices", "demandLetter":"B", "demandModifier":"5"},
+                {"name":"Germ Plasm", "demandLetter":"B", "demandModifier":"3"},
+                {"name":"Industrial Tech", "demandLetter":"C", "demandModifier":"6"}
+            ]
+            },
+            {"name":"Kimberly",
+            "type":"B",
+            "goodsSupply":[
+                {"name":"Beasts", "priceMultiple":"1/5", "production":"1"},
+                {"name":"Drugs", "priceMultiple":"1", "production":"2"}
+            ],
+            "goodsDemand":[
+                {"name":"Boosterspice", "demandLetter":"A", "demandModifier":"8"},
+                {"name":"Fissionables", "demandLetter":"F", "demandModifier":"4"},
+                {"name":"Germ Plasm", "demandLetter":"A", "demandModifier":"4"},
+                {"name":"Weapons", "demandLetter":"C", "demandModifier":"8"},
+                {"name":"Industrial Tech", "demandLetter":"A", "demandModifier":"6"},
+                {"name":"Medical Tech", "demandLetter":"A", "demandModifier":"2"}
+            ]
+            },
+            {"name":"Libertas",
+            "type":"B",
+            "goodsSupply":[
+                {"name":"Industrial Tech", "priceMultiple":"7/4", "production":"1"},
+                {"name":"Weapons", "priceMultiple":"1", "production":"2"},
+                {"name":"Wines", "priceMultiple":"1", "production":"2"}
+            ],
+            "goodsDemand":[
+                {"name":"Boosterspice", "demandLetter":"B", "demandModifier":"8", "demandNumber":"8"},
+                {"name":"Drugs", "demandLetter":"A", "demandModifier":"4", "demandNumber":"4"},
+                {"name":"Fissionables", "demandLetter":"C", "demandModifier":"4", "demandNumber":"2"},
+                {"name":"Germ Plaasm", "demandLetter":"D", "demandModifier":"3", "demandNumber":"5"},
+                {"name":"Liquors", "demandLetter":"A", "demandModifier":"4", "demandNumber":"2"},
+                {"name":"Medical Tech", "demandLetter":"B", "demandModifier":"3", "demandNumber":"4"},
+                {"name":"Medicines", "demandLetter":"B", "demandModifier":"4", "demandNumber":"2"},
+                {"name":"Superheavy Metals", "demandLetter":"C", "demandModifier":"6", "demandNumber":"4"}
+            ]
+            }
+        ]
+    }
+}

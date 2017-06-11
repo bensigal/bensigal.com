@@ -123,6 +123,7 @@ class Enemy{
         this.x = Math.cos(startingAngle)*500 + 400;
         this.y = Math.sin(startingAngle)*500 + 400;
         this.dead = false;
+        if(players.length===0)return;
         this.player = players[Math.floor(Math.random()*players.length)];
         if(difficulty == "impossible" && Math.random() < 0.03)this.fast=true;
         switch(this.player.index){
