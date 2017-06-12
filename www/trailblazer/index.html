@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Trailblazer</title>
+        <style>
+            p{
+                font-size: 20px;
+            }
+            table{
+                border-collapse: collapse;
+                margin: 20px 0;
+            }
+            td, th{
+                padding: 10px;
+                font-size: 20px;
+                border: 1px solid black;
+            }
+        </style>
+        <script src="/jquery.min.js"></script>
+        <script src="script.js"></script>
+    </head>
+    <body>
+        <a href="starchart">Star Chart</a>
+        <h1>Purchase</h1>
+        Everyone gets to bid as much as they want. This is in the format "3 at 4," which means 
+        3 are being bought for $4 each. Once everyone is done bidding, goods are bought 
+        according to the bids, in order from highest unit price to lowest. Tie goes to whoever 
+        said it first. If there are not enough to be purchased, buy as many as possible.<br>
+        Next, adjust the production according to this table:<br>
+        <table id="supplyTable">
+            <tr><th colspan=2>2d6<br>+ (Price Multiple * Average Sale Price)<br>- Total Produced</th></tr>
+            <tr><td>5 or less</td><td>-1</td></tr>
+            <tr><td>6-8</td><td>No Change</td></tr>
+            <tr><td>9-20</td><td>+1</td></tr>
+            <tr><td>21 or more</td><td>+2</td></tr>
+        </table>
+        <h1>Movement</h1>
+        Roll off to see who goes first. Highest roller moves all their fleets, then player to 
+        their right, etc. Determine distance from fleet to destination. Moving to an adjacent 
+        space is 2 points, a "diagonal" one is 3. Remember this number. Roll a number of dice: 
+        2 for a fleet of transports, 3 for mixed or all scouts. If your result is <b>over</b> 
+        the distance number, you succeed. Otherwise, you are randomized, and move as far as possible 
+        in the given direction using the following tool:<br>
+        <table>
+            <tr><td><button onclick='calculateRandomization()'>Roll</button></td><td id="randomizationResult"></td></tr>
+        </table>
+        Note that if a fleet of entirely transports is randomized and ends up <b>over</b> 5 
+        points away from the nearest star, it is destroyed.
+        <h1>Exploration</h1>
+        Exploration is not included in an Introductory game.
+        <h1>Selling Goods</h1>
+        Later demand letters mean that number sold vs. demand number matters more. For example, 
+        say a world demands with a number of 8, and 3 units are being sold. A demand letter of 
+        "A" would get you the least money, because the lack of supply doesn't matter as much. 
+        To contrast, if 10 units were being sold, a demand letter of "F" would get you the 
+        least money, as the oversupply matters much more.<br><br>
+        Price Determination:<br>
+        <table>
+            <tr>
+                <th>Demand Letter</th>
+                <th>Number Sold</th>
+                <th>Demand Number</th>
+                <th>Price for Each</th>
+            </tr>
+            <tr>
+                <td>
+                    <select>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                        <option value="E">E</option>
+                        <option value="F">F</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="number" id="numberSold" min="1" max="12" value="1">
+                    <button onclick='$("#numberSold").val(Number($("#numberSold").val())-1)'>-</button>
+                    <button onclick='$("#numberSold").val(Number($("#numberSold").val())+1)'>+</button>
+                </td>
+                <td>
+                    <input type="number" id="demandNumber" min="1" max="12" value="1">
+                    <button onclick='$("#demandNumber").val(Number($("#demandNumber").val())-1)'>-</button>
+                    <button onclick='$("#demandNumber").val(Number($("#demandNumber").val())+1)'>+</button>
+                </td>
+                <td id="result"></td>
+            </tr>
+        </table>
+        <br>
+        Demand Number Fluctuation - After something is bought. Demand Number will tend towards the 
+        Demand Modifier. You can add to this roll by Advertising before actually rolling the dice. Advertising costs Round(
+        Demand Number / 3) for one point. Advertising is illegal on Alpha C, and advertising 
+        Drugs is illegal on Sol.
+        <table>
+            <tr><th colspan=2>2d6<br>- Demand Number<br>+ Demand Modifier<br>+ Advertisement Bonus</th></tr>
+            <tr><td>5 or less</td><td>-1</td></tr>
+            <tr><td>6-8</td><td>>No Change</td></tr>
+            <tr><td>9-20</td><td>+1</td></tr>
+            <tr><td>21 or mroe</td><td>>+2</td></tr>
+        </table>
+        <h1>Maintenance</h1>
+        Each player must spend $5 per ship, factor, and home office, or it is destroyed. You may also buy factors during this 
+        phase for $10 each. You do not have to pay maintenance for a factor on the turn it is created. After this, calculate 
+        Sales Tax. This is 10% of the money you made selling on Sol only, rounded up.
+        <h1>End of Game</h1>
+        Before the game starts, the player agree on the number of game turns to be completed. Once the final turn is over, 
+        everybody gains $10 oer ship, $10 per factor or Home Office, and $2 per unsold unit of goods. The player with the 
+        most points wins. Ties are not broken.
+    </body>
+</html>
