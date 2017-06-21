@@ -20,15 +20,12 @@ var root = process.argv[2];
 //Given to tunnels
 var serverInfo = {};
 process.argv[3] = process.argv[3] || "";
-serverInfo.life = require(root+"www/life/server.node.js");
 //Options
 var processOptions = process.argv[3];
 //Time of start of execution
 var startTime = new Date().getTime();
-var logging = false;
-var playingLife = Boolean(process.argv[3]);
+var logging = true;
 var sockets = [];
-console.log("Playing life: "+playingLife);
 
 //Called for each request, calls serverRespond at end
 //Should really be part of serverRespond
@@ -345,8 +342,9 @@ function sendThroughTunnel(req, res, path){
 	var nextTunnel = null;
 	try{
 		nextTunnel = require(root+"www"+path+"tunnel.node.js");
-		if(nextTunnel.needsToInit){
+		if(nextTunnel.init && !nextTunnel.didInit){
 		    nextTunnel.init(serverInfo);
+		    nextTunnel.didInit = true;
 		}
 	}catch(e){
 		if(e.code=="MODULE_NOT_FOUND"){
@@ -426,25 +424,9 @@ function exportRefs(){
 		serverInfo[arguments[i]]=arguments[i+1];
 	}
 }
-function startLife(){
-    playingLife = true;
-    serverInfo.life.start();
+function purgeCache(path){
+    delete require.cache[path];
 }
-function stopLife(){
-    playingLife = false;
-    console.log("life server stop from server.js")
-    serverInfo.life.stop();
-}
-/*
-io.on('connection', function (socket) {
-    setInterval(function(){
-        if(playingLife)
-        socket.emit('life', {
-            board:serverInfo.life.serializeAll(),
-            ticks:serverInfo.life.ticks
-        });
-    }, 500);
-});*/
 //Now handled by tunnels
 exportRefs(
 	"showErrorPage",	showErrorPage,
@@ -462,15 +444,8 @@ exportRefs(
 	"Session",		Session,
 	"startTime",		startTime,
 	"redirect",		redirect,
-	"startLife",    startLife,
-	"stopLife",     stopLife,
-	"playingLife",  playingLife,
-	"io"        ,  io
+	"io"        ,  io,
+	"purgeCache", purgeCache
 );
-
-if(playingLife){
-    startLife();
-}
-console.error("MEEP");
 
 require(root+"www/trailblazer/tunnel.node.js").init(serverInfo);//tunnel has to load a couple files, do this before first time is called

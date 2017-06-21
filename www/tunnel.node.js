@@ -49,6 +49,8 @@ module.exports = function(req, res, server, whereis){
         case "sidon":
             server.redirect("https://www.youtube.com/watch?v=66coX4HCZmo", req, res);
             break;
+        case "stolensettler":
+            return "rip nick 1000bc"
         default:
             server.defaultTunnel(req, res, "/");
             break;

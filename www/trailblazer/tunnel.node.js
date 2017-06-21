@@ -5,11 +5,19 @@ var server;
 module.exports = function(req, res, server){
     switch(req.path.split("/")[2]){
         
-    case "starchart":
+    case "starchartonline":
+        //Require login for board-affecting operations
+        var deniedOperations = ["set", "init", "newstar", "reloadtables", "backup", "deletestar"]
+        if(!req.session.on && deniedOperations.includes(req.path.split("/")[3])){
+            req.log("Not logged in, insufficient permissions for operation "+req.path.split("/")[3]);
+            server.redirect("/login?trailblazer/starchartonline", req, res, 403);
+            return;
+        }
         switch(req.path.split("/")[3]){
         case "set":
             board = JSON.parse(req.post.data);
             saveBoard();
+            return JSON.stringify(board);
         case "get":
             return JSON.stringify(board);
         case "init":
@@ -18,8 +26,25 @@ module.exports = function(req, res, server){
             else
                 constructDefaultBoardOther();
             return JSON.stringify(board);
+        case "newstar":
+            board.stars.push(Star.createRandom(req.post.name, req.post.type));
+            saveBoard();
+            return JSON.stringify(board);
+        case "reloadtables":
+            fs.readFile(server.root + "www/trailblazer/tables.json", "utf8", function(err, data){
+                tables = JSON.parse(data);
+                server.sendString("Success", req, res);
+            });
+            break;
+        case "backup":
+            fs.writeFile("backups/"+(new Date().getTime())+".json", JSON.stringify(board), function(err){if(err)console.error(err.message)});
+            break;
+        case "deletestar":
+            board.stars.splice(req.post.index, 1);
+            saveBoard();
+            return JSON.stringify(board);
         default:
-            server.defaultTunnel(req,res,"/trailblazer/starchart/");
+            server.defaultTunnel(req,res,"/trailblazer/starchartonline/");
             break;
         }
         break;
@@ -48,7 +73,7 @@ class Star{
         this.goodsSupply = goodsSupply;
         this.goodsDemand = goodsDemand;
         this.type = type;
-        this.discovery = discovery;
+        this.discovery = discovery || 0;
     }
 }
 Star.createRandom = function(name, type, discovery){
@@ -56,16 +81,16 @@ Star.createRandom = function(name, type, discovery){
     var goodsSupply = [];
     var goodsDemand = [];
     
-    var numberGoodsProduced = 
-        tables.numberGoodsProduced[this.type][d6()+d6()];
-    for(var i = 0; i < numberGoodsProduced; i++){
+    var numberGoodTypesProduced = 
+        tables.numberGoodTypesProduced[type][d6()+d6()];
+    for(var i = 0; i < numberGoodTypesProduced; i++){
         goodsSupply.push(SuppliedGood.createRandom(type));
     }
     
     var numberGoodsConsumed =
-        tables.numberGoodsConsumed[this.type][d6()+d6()];
+        tables.numberGoodsConsumed[type][d6()+d6()];
     for(i = 0; i < numberGoodsConsumed; i++){
-        goodsDemand.push(ConsumedGood.createRandom(type));
+        goodsDemand.push(DemandedGood.createRandom(type));
     }
     
     return new Star(
@@ -82,7 +107,7 @@ class SuppliedGood{
 SuppliedGood.createRandom = function(planetType){
     return new SuppliedGood(
         tables.goodTypeProduced[planetType][d6()+d6()],
-        tables.priceMultiple(d6()+d6()+d6())
+        tables.priceMultiple[d6()+d6()+d6()]
     );
 };
 class DemandedGood{
@@ -92,6 +117,14 @@ class DemandedGood{
         this.demandModifier = demandModifier;
         this.demandNumber = demandNumber || demandModifier;
     }
+}
+DemandedGood.createRandom = function(planetType){
+    var type =tables.goodTypeConsumed[planetType][d6()+d6()] 
+    return new DemandedGood(
+        type,
+        tables.demandLetter[d6()+d6()],
+        tables.demandModifierModifier[type]+d6()
+    )
 }
 function constructDefaultBoardAdvanced(){
     board = {stars:[]};
@@ -109,28 +142,7 @@ function constructDefaultBoardOther(){
     board = {stars:[]};
     board.stars = tables.defaultBoardOther.stars.map(createStarFromJSON);
     saveBoard();
-}/* now using tables.json
-var defaultBoard = {
-    stars:[
-        new Star("Sol","A", [
-            new SuppliedGood("Ships", "1/5", 2),
-            new SuppliedGood("Germ Plasm", "4", 4),
-            new SuppliedGood("Industrial Tech", "2", 2),
-            new SuppliedGood("Medical Tech", "4/3", 3),
-            new SuppliedGood("Weapons", "3/4", 2)
-        ], [
-            new DemandedGood("Beasts", "F", "2"),
-            new DemandedGood("Boostspice", "B", "12"),
-            new DemandedGood("Drugs", "E", "5"),
-            new DemandedGood("Fissionables", "A", "6"),
-            new DemandedGood("Liquors", "B", "4"),
-            new DemandedGood("Medicines", "A", "6"),
-            new DemandedGood("Spices", "C", "6"),
-            new DemandedGood("Superheavy Metals", "D", "8"),
-            new DemandedGood("Wines", "C", "5"),
-            new DemandedGood("D-Class Worlds", "F", "12")
-        ], 0),
-        new Star("Alpha C", "B", [
-            new SuppliedGood("")])
-    ]
-};*/
+}
+function d6(){
+    return Math.ceil(Math.random()*6);
+}

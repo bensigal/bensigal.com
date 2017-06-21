@@ -15,6 +15,7 @@ var authorizationRequired = [
 ];
 var adminRequired = [
     "exit",
+    "purgecache",
     "delete",
     "ssh",
     "getfilecontents",
@@ -163,7 +164,12 @@ module.exports=function(req,res,server){
     				server.sendString("Success!",req,res);
     			});
     		});
-    	}else if (/delete\/?/i.test(req.path)){
+    	}
+        else if(/purgecache\/?/i.test(req.path)){
+            req.log("Deleting cached tunnel "+req.post.path);
+            server.purgeCache(req.post.path);
+            server.sendString(req.post.path+" uncached", req, res);
+        }else if (/delete\/?/i.test(req.path)){
     	    req.log("Deleting "+req.post.file);
     	    return "";
     	}else if (/javac\/?/i.test(req.path)){
@@ -217,7 +223,8 @@ module.exports=function(req,res,server){
 //Should be all lowercase.
 var users=[
 	"ben",
-	"jakob"
+	"jakob",
+	"nick"
 ];
 
 module.exports.initialized=0;

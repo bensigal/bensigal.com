@@ -1,18 +1,29 @@
-var tables, board;
-var oldLength = 0;
-var editMode = 1;
-if(typeof(Storage)===undefined){
-    alert("This page requires HTML5 Local Storage, which your browser does not support.");
-    history.back();
-}
-$.get("/trailblazer/tables.json", function(data){
-    tables = data;
-    if(localStorage.board){
-        board = JSON.parse(localStorage.board);
+var out = {val:"", log:function(toLog){this.val+=toLog;}};
+var board;
+var newBoard;
+var layoutGenerated = false; 
+var editMode =1;
+var oldLength=0;
+
+$.ajaxSetup({error: function(xhr, status, error){
+    if(xhr.status == 403){
+        alert("You must be logged in to edit the starchart.");
+        $(document.body).prepend("<h3>Note: Editing the starchart requires a <a href='/login?trailblazer/starchart'>login</a>. You can keep looking at it though.</h3>");
+        $("button:not(.noLoginRequired)").prop("disabled", true);
     }else{
-        constructDefaultBoardOther();
+        alert("Error "+xhr.status+": "+error);
     }
-    chartData();
+}});
+$(function(){
+    $.get("/server/login", function(data){
+        if(data != "true"){
+            $(document.body).prepend("<h3>Note: Editing the starchart requires a <a href='/login?trailblazer/starchart'>login</a>. You can keep looking at it though.</h3>");
+            $("button:not(.noLoginRequired)").prop("disabled", true);
+        }
+    });
+});
+$.get("/trailblazer/tables.json", function(data){
+    tables=data;
 });
 setInterval(function(){
     var expectedValue = tables.priceDetermination[$("option:selected").val()][$("#numberSold").val()][$("#demandNumber").val()];
@@ -34,26 +45,9 @@ function calculateRandomization(){
     if(direction=="Remain Still")return $("#randomizationResult").text(direction);
     $("#randomizationResult").text("Move "+Math.ceil(Math.random()*6)+" points to the "+direction);
 }
-function saveBoard(){
-    localStorage.board = JSON.stringify(board);
-}
-function constructDefaultBoardAdvanced(){
-    board = {stars:[]};
-    board.stars = tables.defaultBoardAdvanced.stars.map(createStarFromJSON);
-}
-function constructDefaultBoardOther(){
-    board = {stars:[]};
-    board.stars = tables.defaultBoardOther.stars.map(createStarFromJSON);
-}
+//Random integer from 1-6
 function d6(){
     return Math.ceil(Math.random()*6);
-}
-function createStarFromJSON(element){
-    return new Star(element.name, element.type, element.goodsSupply.map(
-        (element) => new SuppliedGood(element.name, element.priceMultiple, element.production)
-    ), element.goodsDemand.map(
-        (element) => new DemandedGood(element.name, element.demandLetter, element.demandModifier, element.demandNumber||element.demandModifier)
-    ));
 }
 function rollProduction(starIndex, goodIndex){
     
@@ -85,7 +79,7 @@ function rollProduction(starIndex, goodIndex){
         change = 1;
     }
     good.production = Number(good.production) + change;
-    chartData();
+    postData();
     alert("Rolled a "+roll+", production changed by "+change+".");
 }
 function rollDemand(starIndex, goodIndex){
@@ -116,8 +110,8 @@ function rollDemand(starIndex, goodIndex){
     }
     
     good.demandNumber = Number(good.demandNumber) + change;
+    postData();
     alert("Rolled a "+roll+", demand number changed by "+change+".")
-    chartData();
 }
 function changeEditMode(){
     editMode++;
@@ -125,14 +119,24 @@ function changeEditMode(){
     generateLayout();
 }
 //Generate tabs if necessary, replace tables if necessary
-function chartData(){
+function chartData(data){
+    console.log("chart");
+    board = JSON.parse(data);
+    var startTime = new Date().getTime();
     if(oldLength != board.stars.length)generateLayout();
     else{ 
         board.stars.forEach(function(element, index){
             $("#"+element.name+" .starChart").html(starRows(element, index));
         });
     }
-    saveBoard();
+    console.log(new Date().getTime() - startTime)
+}
+function starsEqual(s1, s2){
+    if(s1.name != s2.name)return;
+    if(s1.type != s2.type)return;
+    if(s1.goodsSupply.length != s2.goodsSupply.length)return;
+    if(s1.goodsDemand.length != s2.goodsSupply.length)return;
+    s1.goodsSupply.forEach
 }
 function generateLayout(){
     var html="<div id='tabs'><ul>";
@@ -197,44 +201,4 @@ function chartAllStars(){
     });
     html+="</table>";
     $("#main").html(html);
-}
-function generateStar(){
-    var name = prompt("What is the new star's name?");
-    if(name === null)return;
-    var type = prompt("What type is the new star?");
-    if(type === null)return;
-    type = type.toUpperCase();
-    board.stars.push(Star.createRandom(name, type))
-    chartData();
-}
-function resetAdvanced(){
-    if(!confirm("Are you sure? This will destroy the current save game."))return;
-    constructDefaultBoardAdvanced();
-    chartData();
-}
-function resetNormal(){
-    if(!confirm("Are you sure? This will destroy the current save game."))return;
-    constructDefaultBoardOther();
-    chartData();
-}
-function takeProductionFrom(starIndex, goodIndex){
-    board.stars[starIndex].goodsSupply[goodIndex].production--;
-    chartData();
-}
-function addProductionTo(starIndex, goodIndex){
-    board.stars[starIndex].goodsSupply[goodIndex].production++;
-    chartData();
-}
-function takeDemandFrom(starIndex, goodIndex){
-    board.stars[starIndex].goodsDemand[goodIndex].demandNumber--;
-    chartData();
-}
-function addDemandTo(starIndex, goodIndex){
-    board.stars[starIndex].goodsDemand[goodIndex].demandNumber++;
-    chartData();
-}
-function deleteStar(index){
-    if(!confirm("Are you sure you would like to delete this star? This decision is not reversible."))return;
-    board.stars.splice(index, 1);
-    chartData();
 }

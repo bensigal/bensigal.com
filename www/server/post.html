@@ -14,30 +14,22 @@
             `)
             $("#url").val("/server/exec")
         });
-        $("#startLife").click(function(e){
+        $("#runCommand").click(function(e){
             $("#data").html(`
             {
-                
+                "command":""
             }
             `)
-            $("#url").val("/life/start")
+            $("#url").val("/server/exec")
         });
-        $("#tickLife").click(function(e){
+        $("#deleteCachedTunnel").click(function(e){
             $("#data").html(`
             {
-                "tick": "100"
+                "path":"/home/bensigal/www//tunnel.node.js"
             }
             `)
-            $("#url").val("/life/tick")
-        });
-        $("#stopLife").click(function(e){
-            $("#data").html(`
-            {
-                
-            }
-            `)
-            $("#url").val("/life/stop")
-        });
+            $("#url").val("/server/purgecache");
+        })
     });
     document.onkeydown = function(e){
         if(e.keyCode == 13 && e.ctrlKey){
@@ -97,11 +89,10 @@
     </style>
 </head>
 <body>
-    <input id=restart type=submit value="restart server">
-    <input id=startLife type=submit value="start /life server">
+    <input id="restart" type=submit value="Restart Server">
+    <input id="runCommand" type=submit value="Enter Command">
+    <input id="deleteCachedTunnel" type=submit value="Delete Cacehd TUnnel">
     <input id=url value="/">
-    <input id=tickLife type=submit value="tick /life server">
-    <input id=stopLife type=submit value="stop /life server">
     <br><a href="/server/login.html">Login</a><br>
     <textarea id=data>{}</textarea>
     <p id=response></p>
