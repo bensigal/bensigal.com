@@ -1,24 +1,32 @@
 var tables, board;
 var oldLength = 0;
 var editMode = 1;
+
 if(typeof(Storage)===undefined){
     alert("This page requires HTML5 Local Storage, which your browser does not support.");
     history.back();
 }
+
+//Get the tables from the back of the rules
 $.get("/trailblazer/tables.json", function(data){
     tables = data;
     if(localStorage.board){
+        //If game already exists, load that
         board = JSON.parse(localStorage.board);
     }else{
+        //Otherwise set up default
         constructDefaultBoardOther();
     }
     chartData();
 });
+//This is hilariously stupid. Instead of spending 5 seconds to look up the event, just update
+//the result every 1/10th of a second.
 setInterval(function(){
     var expectedValue = tables.priceDetermination[$("option:selected").val()][$("#numberSold").val()][$("#demandNumber").val()];
     if(expectedValue!=$("#result").text())
         $("#result").text(expectedValue);
 }, 100);
+//For when randomized movement happens. Result is set to something like "Move 6 points to the Southeast"
 function calculateRandomization(){
     var direction = [
         "Northwest",
@@ -34,20 +42,25 @@ function calculateRandomization(){
     if(direction=="Remain Still")return $("#randomizationResult").text(direction);
     $("#randomizationResult").text("Move "+Math.ceil(Math.random()*6)+" points to the "+direction);
 }
+//Put the string version of the board into local storage
 function saveBoard(){
     localStorage.board = JSON.stringify(board);
 }
+//Sol only
 function constructDefaultBoardAdvanced(){
     board = {stars:[]};
     board.stars = tables.defaultBoardAdvanced.stars.map(createStarFromJSON);
 }
+//Sol and the 4 other planets with default values
 function constructDefaultBoardOther(){
     board = {stars:[]};
     board.stars = tables.defaultBoardOther.stars.map(createStarFromJSON);
 }
+//Random integer 1-6
 function d6(){
     return Math.ceil(Math.random()*6);
 }
+//Create star from object. Slight misnomer, does not expect a string value.
 function createStarFromJSON(element){
     return new Star(element.name, element.type, element.goodsSupply.map(
         (element) => new SuppliedGood(element.name, element.priceMultiple, element.production)
@@ -55,6 +68,9 @@ function createStarFromJSON(element){
         (element) => new DemandedGood(element.name, element.demandLetter, element.demandModifier, element.demandNumber||element.demandModifier)
     ));
 }
+//Roll production based on index of star and good. Average price
+//will be prompted for, something like "9/4" is fine if you don't
+//want to calculate the decimal
 function rollProduction(starIndex, goodIndex){
     
     var good = board.stars[starIndex].goodsSupply[goodIndex];
@@ -88,6 +104,7 @@ function rollProduction(starIndex, goodIndex){
     chartData();
     alert("Rolled a "+roll+", production changed by "+change+".");
 }
+//Change demand of given star and good
 function rollDemand(starIndex, goodIndex){
     var good = board.stars[starIndex].goodsDemand[goodIndex];
     
@@ -119,6 +136,7 @@ function rollDemand(starIndex, goodIndex){
     alert("Rolled a "+roll+", demand number changed by "+change+".")
     chartData();
 }
+//Switch from roll for number changes to manual +1 or -1.
 function changeEditMode(){
     editMode++;
     editMode%=2;
@@ -134,6 +152,7 @@ function chartData(){
     }
     saveBoard();
 }
+//Add all the stars to tables, add stuff to tabs
 function generateLayout(){
     var html="<div id='tabs'><ul>";
     board.stars.forEach(function(element, index){
@@ -143,7 +162,8 @@ function generateLayout(){
     board.stars.forEach(function(element, starIndex){
         html+="<div id='"+element.name+"' class='tab-aim'><table class='starChart'>"
         html+=starRows(element, starIndex);
-        html+="</table><button onclick='deleteStar("+starIndex+")'>Delete Star</button></div>";
+        html+="</table><button onclick='deleteStar("+starIndex+")'>Delete Star</button>";
+        html+="<button onclick='addShipProduction("+starIndex+")'>Add Ship Production</button></div>";
     });
     html+="<div id='options'>"
     html+="</div>"
@@ -153,6 +173,7 @@ function generateLayout(){
     layoutGenerated = true;
     oldLength = board.stars.length;
 }
+//Return the html for the rows in a star. <tr> elements only, this is later inserted into more html.
 function starRows(element, starIndex){
     var html = "";
     //html+="<tr><th colspan=5 class=starName>"+element.name+" ("+element.type+")</th></tr>";
@@ -190,14 +211,7 @@ function starRows(element, starIndex){
     }
     return html;
 }
-function chartAllStars(){
-    var html="<table class='starChart'>";
-    board.stars.forEach(function(element, index){
-        html+=starRows(element, index);
-    });
-    html+="</table>";
-    $("#main").html(html);
-}
+//Generate a random star based on name and type. You still need to draw a random tile from the cup.
 function generateStar(){
     var name = prompt("What is the new star's name?");
     if(name === null)return;
@@ -231,6 +245,13 @@ function takeDemandFrom(starIndex, goodIndex){
 }
 function addDemandTo(starIndex, goodIndex){
     board.stars[starIndex].goodsDemand[goodIndex].demandNumber++;
+    chartData();
+}
+function addShipProduction(starIndex){
+    var response = prompt("What will the price multiple be?");
+    if(!response)return;
+    var priceMultiple = Math.round(eval(response)*1000)/1000;
+    board.stars[starIndex].goodsSupply.push(new SuppliedGood("Ships", priceMultiple, 1));
     chartData();
 }
 function deleteStar(index){

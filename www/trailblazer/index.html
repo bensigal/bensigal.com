@@ -46,6 +46,7 @@
             }
             #hidden{
                 visibility: hidden;
+                position: absolute;
             }
             #backLink{
                 padding: 5px 0 15px 0;
@@ -70,10 +71,10 @@
         <title>Star Chart - Trailblazer</title>
     </head>
     <body>
-        <div id='backLink'><a href="../">Back to bensigal.com/trailblazer</a></div>
         <div id="main">
             <table id="starChart"></table>
         </div>
+        <div id='backLink'><a href="starchartonline">Online Version of Starchart - Requires Login</a></div>
         <div id="hidden">
             <button onclick="generateStar()">Generate Random Star</button><br>
             <button onclick="resetAdvanced()">Generate Advanced Setup</button><br>
