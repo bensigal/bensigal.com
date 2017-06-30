@@ -2,7 +2,7 @@ var canvas, ctx, ticks, start, lastTime;
 var deltaTimes = [0,0,0,0,0,0,0,0,0,0];
 var hexes = [];
 
-var numberOfRows = 7
+var numberOfRows = 7;
 var numberOfColumns = 17;
 var mapTopOffset = 40;
 var mapLeftOffset = 23;
@@ -42,8 +42,8 @@ function display(timestamp){
         start = timestamp;
         lastTime = start;
     }
-    var deltaTime = timestamp - lastTime;
-    deltaTimes.push(deltaTime);
+    var dt = timestamp - lastTime;
+    deltaTimes.push(dt);
     deltaTimes.shift();
     lastTime = timestamp;
     ctx.clearRect(0,0,1300,700);
