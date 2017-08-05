@@ -33,6 +33,9 @@ module.exports = function(req, res, server, whereis){
         case "luca":
             server.getFile("includes/luca.html", req, res);
             break;
+        case "seconds":
+            server.getFile("includes/seconds.html", req, res);
+            break;
         case "weimar":
             server.redirect("https://www.youtube.com/watch?v=V2dZBa69Hv0", req, res);
             break;

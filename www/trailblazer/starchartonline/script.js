@@ -8,7 +8,7 @@ var oldLength=0;
 $.ajaxSetup({error: function(xhr, status, error){
     if(xhr.status == 403){
         alert("You must be logged in to edit the starchart.");
-        $(document.body).prepend("<h3>Note: Editing the starchart requires a <a href='/login?trailblazer/starchart'>login</a>. You can keep looking at it though.</h3>");
+        $(document.body).prepend("<h3>Note: Editing the starchart requires a <a href='/login?trailblazer/starchartonline'>login</a>. You can keep looking at it though.</h3>");
         $("button:not(.noLoginRequired)").prop("disabled", true);
     }else{
         alert("Error "+xhr.status+": "+error);
@@ -17,7 +17,7 @@ $.ajaxSetup({error: function(xhr, status, error){
 $(function(){
     $.get("/server/login", function(data){
         if(data != "true"){
-            $(document.body).prepend("<h3>Note: Editing the starchart requires a <a href='/login?trailblazer/starchart'>login</a>. You can keep looking at it though.</h3>");
+            $(document.body).prepend("<h3>Note: Editing the starchart requires a <a href='/login?trailblazer/starchartonline'>login</a>. You can keep looking at it though.</h3>");
             $("button:not(.noLoginRequired)").prop("disabled", true);
         }
     });
@@ -120,7 +120,7 @@ function changeEditMode(){
 }
 //Generate tabs if necessary, replace tables if necessary
 function chartData(data){
-    console.log("chart");
+    //console.log("chart");
     board = JSON.parse(data);
     var startTime = new Date().getTime();
     if(oldLength != board.stars.length)generateLayout();
@@ -129,7 +129,7 @@ function chartData(data){
             $("#"+element.name+" .starChart").html(starRows(element, index));
         });
     }
-    console.log(new Date().getTime() - startTime)
+    //console.log(new Date().getTime() - startTime)
 }
 function starsEqual(s1, s2){
     if(s1.name != s2.name)return;
@@ -151,9 +151,11 @@ function generateLayout(){
     });
     html+="<div id='options'>"
     html+="</div>"
+    console.log(html);
     $("#main").html(html);
     $("#options").html($("#hidden").html());
     $("#tabs").tabs();
+    $("#tabs").tabs("refresh");
     layoutGenerated = true;
     oldLength = board.stars.length;
 }

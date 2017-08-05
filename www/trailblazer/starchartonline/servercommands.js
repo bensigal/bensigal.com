@@ -1,8 +1,10 @@
 function getData(){
-    $.get("get", chartData);
+    $.get("http://bensigal.com/trailblazer/starchartonline/get", function(data){
+        chartData(data);
+    });
 }
 getData();
-//getDataInterval = setInterval(getData, 500);
+getDataInterval = setInterval(function(){getData()}, 1000);
 function generateStar(){
     $.post("newstar", 
         {name:prompt("What is the new star's name?"), type:prompt("What type is the new star?")}, chartData

@@ -224,7 +224,8 @@ module.exports=function(req,res,server){
 var users=[
 	"ben",
 	"jakob",
-	"nick"
+	"nick",
+	"trailblazer"
 ];
 
 module.exports.initialized=0;

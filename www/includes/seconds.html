@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+            h1{
+                padding: 200px;
+                font-size: 100px;
+                text-align: center;
+            }
+        </style>
+        <script>
+            window.onload = function(){
+                setInterval(function(){
+                    document.getElementById("seconds").innerHTML = Math.floor(new Date().getTime()/1000)
+                }, 100);
+            }
+            
+        </script>
+    </head>
+    <body>
+        <h1 id="seconds"></h1>
+    </body>
+</html>
