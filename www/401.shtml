@@ -1,1 +1,15 @@
-You only have the permissions to edit: /home/bensigal/www/bensigal/
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>401 Unauthorized</title>
+        <link rel="stylesheet" type="text/css" href="/style.css">
+    </head>
+    <body>
+        <header id="error">
+            <h1>Error 400 - Unauthorized</h1> 
+        </header>
+        <nav>
+            <a href="/index.html"><div>Home</div></a>
+        </nav>
+    </body>
+</html>
