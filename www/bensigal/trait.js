@@ -12,7 +12,7 @@ var traits = {
     courage:{
         name:"Courage",
         key: "courage",
-        description:'You have a strong sense of valor and a willingness to push through adversity (some may choose to call this foolhardyness). When fighting for long periods of time, you can regain some of your vigor from your bravery.'
+        description:'You have a strong sense of valor and bravery to push through adversity, to the point where you are well known as very stubborn. Fighting for a long time will temporarily increase your stats.'
     }
 }
 function gainTrait(choice){
