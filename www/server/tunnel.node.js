@@ -11,8 +11,12 @@ var openFunctions = [
 ];
 var authorizationRequired = [
     "logout",
-    "sitemap"
+    "sitemap",
 ];
+var partialPermissions = [
+    "save",
+    "getfilecontents",
+]
 var adminRequired = [
     "exit",
     "purgecache",
@@ -119,13 +123,40 @@ module.exports=function(req,res,server){
             });
         }
     }
+    else if(new RegExp(partialPermissions.join("|")).test(req.path) && req.session.un.toLowerCase() == "nick"){ //Nick permissions
+        if(/getfilecontents\/?/i.test(req.path)){
+            if(!req.post.edit.startsWith("/home/bensigal/www/bensigal") || req.post.edit.indexOf("..") > -1)
+                return server.sendString("You only have the permissions to edit: /home/bensigal/www/bensigal/", req, res);
+            req.log("Reading file contents for "+req.post.edit);
+            server.getFile(req.post.edit,req,res,{
+                pathNotFromWww:true,
+                notFoundCallback:function(){
+                    server.sendString("Error: File not found.",req,res);
+                },
+                encoding:"binary"
+            });
+        }else if(/save\/?/i.test(req.path)){
+            var file = String(req.post.file);
+            console.error(file);
+            if(!file.startsWith("/home/bensigal/www/bensigal") || file.indexOf("..") > -1)
+                return server.sendString("You only have the permissions to edit: /home/bensigal/www/bensigal/", req, res);
+            req.log("Saving to file "+file);
+            var is = fs.createReadStream(req.files.contents[0].path);
+            var os = fs.createWriteStream(file);
+            is.pipe(os);
+            is.on('end',function(err){
+                if(err)throw err;
+                fs.unlink(req.files.contents[0].path,function(err){
+                    if(err)throw err;
+                    server.sendString("Success!",req,res);
+                });
+            });
+        }
+    }
     else if(new RegExp(adminRequired.join("|")).test(req.path)){
-    	if(!req.session.on){
-    	
-    		server.sendString("Not logged on", req, res);
-    		
-    	}
-        else if(req.session.un.toLowerCase() != "ben"){
+        if(!req.session.on){
+            server.sendString("Not logged on", req, res);
+        }else if(req.session.un.toLowerCase() != "ben"){
         
         	server.sendString("Admin permissions required", req,res);
         	
@@ -143,28 +174,28 @@ module.exports=function(req,res,server){
                 }
             });
         }
-    	else if(/getfilecontents\/?/i.test(req.path)){
-    		req.log("Reading file contents for "+req.post.edit);
-    		server.getFile(req.post.edit,req,res,{
-    			pathNotFromWww:true,
-    			notFoundCallback:function(){
-    				server.sendString("Error: File not found.",req,res);
-    			},
-    			encoding:"binary"
-    		});
-    	}else if(/save\/?/i.test(req.path)){
-    		req.log("Saving to file "+req.post.file);
-    		var is = fs.createReadStream(req.files.contents[0].path);
-    		var os = fs.createWriteStream(String(req.post.file));
-    		is.pipe(os);
-    		is.on('end',function(err){
-    			if(err)throw err;
-    			fs.unlink(req.files.contents[0].path,function(err){
-    				if(err)throw err;
-    				server.sendString("Success!",req,res);
-    			});
-    		});
-    	}
+        else if(/getfilecontents\/?/i.test(req.path)){
+            req.log("Reading file contents for "+req.post.edit);
+            server.getFile(req.post.edit,req,res,{
+                pathNotFromWww:true,
+                notFoundCallback:function(){
+                    server.sendString("Error: File not found.",req,res);
+                },
+                encoding:"binary"
+            });
+        }else if(/save\/?/i.test(req.path)){
+            req.log("Saving to file "+req.post.file);
+            var is = fs.createReadStream(req.files.contents[0].path);
+            var os = fs.createWriteStream(String(req.post.file));
+            is.pipe(os);
+            is.on('end',function(err){
+                if(err)throw err;
+                fs.unlink(req.files.contents[0].path,function(err){
+                    if(err)throw err;
+                    server.sendString("Success!",req,res);
+                });
+            });
+        }
         else if(/purgecache\/?/i.test(req.path)){
             req.log("Deleting cached tunnel "+req.post.path);
             server.purgeCache(req.post.path);

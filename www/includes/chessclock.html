@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Chess Clock</title>
+        <script src="/jquery.min.js"></script>
+        <style>
+            h1{text-align: center;font-size: 144px;}
+            #selected{
+                background-color: #FF0;
+            }
+        </style>
+        <script>
+            var firstTimeRemaining = 0;
+            var secondTimeRemaining = 0;//seconds
+            var firstPlayerSelected = false;
+            var interval;
+            function start(){
+                if(interval)clearInterval(interval);
+                firstTimeRemaining = Number($("#timeForEach").val());
+                secondTimeRemaining= firstTimeRemaining;
+                interval = setInterval(check, 16)
+            }
+            function check(){
+                if(firstPlayerSelected)firstTimeRemaining-=0.016;
+                else secondTimeRemaining-=0.016;
+                $("#output").html(prettify(firstTimeRemaining, firstPlayerSelected)+
+                    " --- "+prettify(secondTimeRemaining, !firstPlayerSelected));
+            }
+            function prettify(seconds, selected){
+                minutes = Math.floor(seconds/60);
+                seconds = (Math.floor(seconds)%60);
+                if((seconds+"").length < 2)seconds = "0"+seconds;
+                var result = minutes+":"+seconds;
+                if(selected){
+                    result = "<span id='selected'>"+result+"</span>";
+                }
+                return result;
+            }
+            document.onkeydown = function(e){
+                switch(e.keyCode){
+                case 32:
+                    firstPlayerSelected = !firstPlayerSelected;
+                    e.preventDefault();
+                    break;
+                case 80:
+                    if(interval){
+                        clearInterval(interval);
+                        interval = false;
+                        $("#output").css("color","#F00");
+                    }else{
+                        interval = setInterval(check, 16);
+                        $("#output").css("color", "#000");
+                    }
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <h1 id="output"></h1>
+        <div id="settings">
+            Time for Each, in seconds: <input type="number" id="timeForEach" value="300">
+            <button id="start" onclick="start()">Start</button>
+            Space to switch, p to pause. The player on the right's clock will start.
+        </div>
+    </body>
+</html>
