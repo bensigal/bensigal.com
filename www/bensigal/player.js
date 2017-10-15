@@ -1,7 +1,7 @@
 class Player extends Creature{
     
     constructor(){
-        super([10,10,10,10,10,10]);
+        super();
         this.traits = [];
     }
     

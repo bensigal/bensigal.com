@@ -73,12 +73,29 @@ class ThreeDoorsRoom extends Room{
     command(words){
         var choice = words[0];
         console.log("recieving command "+choice);
-        if(["1", "2", "3"].indexOf(choice) < 0){
+        if(["1", "2", "3", "door"].indexOf(choice) < 0){
             return false;
         }
+        if(choice == "door")choice = words[1];
         enterRoom(this.rooms[Number(choice)-1]);
         return true;
     }
+}
+class IntroStatBalancingRoom extends Room{
+    
+    constructor(index){
+        this.index = index;
+        this.stat1Index = this.index * 2;
+        this.stat2Index = this.index * 2 + 1;
+        this.stat1Name = statAbbreviations[this.stat1Index];
+        this.stat2Name = statAbbreviations[this.stat2Index];
+    }
+    init(){
+        println("You may now balance your "+this.stat1Name+" and your "+this.stat2Name);
+        println("Enter a whole number less than 20 that you want your "+this.stat1Name+" to be. Your "+this.stat2Name+" will be 20 - whatever you enter.");
+        println("Enter &quot;info stats&quot; to see a description of the stats.");
+    }
+    
 }
 function randomNoun(){
     var nouns = ["laptop", "bed", "table", "head", "corpse", "statue", "painting", "periodic table of the elements", "philosophy textbook", "psat answer key", "dead pikachu", "dead squirrel", "dead koala", "dead horse", "half of a fedora", "footpath", "welcome mat", "keyboard", "copy of Trailblazer", "board game"];
