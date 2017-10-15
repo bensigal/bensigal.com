@@ -28,7 +28,7 @@ $(function(){
         if(specialKey)e.preventDefault();
         
     });
-    startEvent(new IntroRoom());
+    enterRoom(new IntroRoom());
     
 });
 
@@ -42,7 +42,7 @@ function submit(command){
         var op = commands[words.shift()];
         op.trigger(words);
     }else{
-        var result = ce.command(words);
+        var result = room.command(words);
         if(result === false){
             $("#results").append("<p>Command '"+words[0]+"' not found. Enter 'help' for a list of commands.")
         }
