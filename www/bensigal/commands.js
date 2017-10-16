@@ -61,5 +61,13 @@ commands = {
                 println(element.description);
             });
         }
+    },
+    look:{
+        description: 'You look around some more.',
+        trigger: function(){
+            println(room.interiorDescription);
+        }
     }
+
+    
 };
