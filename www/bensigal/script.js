@@ -49,6 +49,10 @@ function submit(command){
     }
 }
 
+function capitalize(string){
+    return string.charAt(0).toUpperCase() + string.substring(1);
+}
+
 function span(name, text){
     return "<span class='"+name+"'>"+text+"</span>";
 }

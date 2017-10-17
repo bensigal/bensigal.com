@@ -1,5 +1,6 @@
 var info = {
-    stats: "STR: Strength. Affects damage dealt with physical weapons, how much you can carry, and the strength of your immune system - the health you recover each room.<br><br>"+
+    stats: 
+        "STR: Strength. Affects damage dealt with physical weapons, how much you can carry, and the strength of your immune system - the health you recover each room.<br><br>"+
         "SPD: Speed. Affects your dodge and initiative. If it is significantly higher than your opponent, you might get extra actions.<br><br>"+
         "DEX: Dexterity. Affects your dodge and your chance to hit.<br><br>"+
         "CON: Constitution. Affects your health total and your chance to resist effects such as poison.<br><br>"+
@@ -53,13 +54,21 @@ commands = {
             });
         }
     },
-    traitlist: {
-        description: "traitlist<br>Prints a list of your traits.",
+    traits: {
+        description: "traits<br>Prints a list of your traits.",
         trigger: function(){
             player.traits.forEach(function(element){
                 println(span("attr", element.name));
                 println(element.description);
             });
+        }
+    },
+    skills: {
+        description: "skills<br>Prints a list of your skills and their values.",
+        trigger: function(){
+            for(var key in player.skills){
+                println(capitalize(key) + ": "+player.skills[key]);
+            }
         }
     },
     look:{
@@ -71,3 +80,4 @@ commands = {
 
     
 };
+console.log("MEEP");

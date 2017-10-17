@@ -1,6 +1,7 @@
 var room;
+var level = 0;
 function enterRoom(newRoom){
-    println("<hr>")
+    println("<hr>");
     room = newRoom;
     room.generateInteriorDescription();
     if(!newRoom.hideDescription)println(room.interiorDescription);
@@ -13,12 +14,11 @@ function threeDoors(){
     enterRoom(new ThreeDoorsRoom());
 }
 class Room{
-    constructor(){
-        
-    }
+    constructor(){}
     init(){}
     command(words){}
     generateInteriorDescription(){
+        if(this.interiorDescription)return this.interiorDescription;
         this.interiorDescription = "This room has a "+randomNoun()+" made of "+randomMaterial()+" hidden under a "+randomNoun()+" made of "+randomMaterial()+". These don't seem useful.";
     }
     getExteriorDescription(){
@@ -62,8 +62,14 @@ class ThreeDoorsRoom extends Room{
         this.hideDescription = true;
     }
     init(){
+        level++;
+        println("Level "+level);
         println("You find yourself in a dark room.");
         println("The room is triangular, with a low ceiling. Each wall has a door.");
+        if(player.hp < player.maxHp){
+            println("Your natural regenration (STR) kicks in.");
+            player.heal(player.stat("str"));
+        }
         this.rooms = [];
         for(var i = 1; i <= 3; i++){
             var newRoom = generateRandomRoom();
@@ -108,15 +114,39 @@ class IntroStatBalancingRoom extends Room{
         if(!(0 < choice && choice < 20) || Math.floor(choice) != choice){
             return println("Please enter an integer less than 20 and more than 1.");
         }
-        player.setStat(this.stat1Index, choice);
-        player.setStat(this.stat2Index, 20 - choice);
+        player.stat(this.stat1Index, choice);
+        player.stat(this.stat2Index, 20 - choice);
         if(this.index < 2)
             enterRoom(new IntroStatBalancingRoom(this.index + 1));
-        else
+        else{
+            player.hp = player.maxHp;
             threeDoors();
-        
+        }
     }
     
+}
+class TrapRoom extends Room{
+    constructor(){
+        super();
+        this.interiorDescription = "There are STAIRS in this room!";
+    }
+    getExteriorDescription(perception){
+        if(perception > 45){
+            return "This room contains stairs.";
+        }
+        if(perception > 35){
+            return "This room smells like a useless waste of time.";
+        }
+        if(perception > 25){
+            return "This room smells like it can hurt.";
+        }
+    }
+    init(){
+        println("Even just looking at the stairs causes you great psychological trauma.");
+        player.damage(level);
+        println("You leave this room as quickly as you can.");
+        threeDoors();
+    }
 }
 function randomNoun(){
     var nouns = ["laptop", "bed", "table", "head", "corpse", "statue", "painting", "periodic table of the elements", "philosophy textbook", "psat answer key", "dead pikachu", "dead squirrel", "dead koala", "dead horse", "half of a fedora", "footpath", "welcome mat", "keyboard", "copy of Trailblazer", "board game",'copy of Squad Leader'];
@@ -124,92 +154,5 @@ function randomNoun(){
 }
 function randomMaterial(){
     var materials = ["denim", "hopes and dreams", "death", "intangible concepts", "vegetables", "old laptop parts", "unstrustworthy construction components", "paint", "corpses", "trees", "amoeba", "plastic", "vomit", "spit", "blood", "diabolical runes", "chalk", "pure magic", "darkness", "light", "orange juice", "board games", "older"]
-    return materials[Math.floor(Math.random()*materials.length)];
-}
-
-86
-87
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
-98
-99
-100
-101
-102
-103
-104
-105
-106
-107
-108
-109
-110
-111
-112
-113
-114
-115
-116
-117
-118
-119
-120
-121
-122
-123
-124
-125
-126
-127
-128
-    
-    constructor(index){
-        super();
-        this.hideDescription = true;
-        this.index = index;
-        this.stat1Index = this.index * 2;
-        this.stat2Index = this.index * 2 + 1;
-        this.stat1Name = statAbbreviations[this.stat1Index];
-        this.stat2Name = statAbbreviations[this.stat2Index];
-    }
-    init(){
-        println("You enter a new room and have an urge to change yourself.");
-        println("You may now balance your "+this.stat1Name+" and your "+this.stat2Name);
-        println("Enter an integer less than 20 and more than 1 that you want your "+this.stat1Name+" to be. Your "+this.stat2Name+" will be 20 - whatever you enter.");
-        println("Enter &quot;info stats&quot; to see a description of the stats.");
-    }
-    command(words){
-        var choice = words[0];
-        if(choice != Number(choice)){
-            return false;
-        }
-        choice = Math.floor(choice);
-        if(!(0 < choice && choice < 20) || Math.floor(choice) != choice){
-            return println("Please enter an integer less than 20 and more than 1.");
-        }
-        player.setStat(this.stat1Index, choice);
-        player.setStat(this.stat2Index, 20 - choice);
-        if(this.index < 2)
-            enterRoom(new IntroStatBalancingRoom(this.index + 1));
-        else
-            threeDoors();
-        
-    }
-    
-}
-function randomNoun(){
-    var nouns = ["laptop", "bed", "table", "head", "corpse", "statue", "painting", "periodic table of the elements", "philosophy textbook", "psat answer key", "dead pikachu", "dead squirrel", "dead koala", "dead horse", "half of a fedora", "footpath", "welcome mat", "keyboard", "copy of Trailblazer", "board game",'copy of Squad Leader', "guitars",];
-    return nouns[Math.floor(Math.random()*nouns.length)];
-}
-function randomMaterial(){
-    var materials = ["denim", "hopes and dreams", "death", "intangible concepts", "vegetables", "old laptop parts", "unstrustworthy construction components", "paint", "corpses", "trees", "amoeba", "plastic", "vomit", "spit", "blood", "diabolical runes", "chalk", "pure magic", "darkness", "light", "orange juice", "board games", "dogs","squares", ]
     return materials[Math.floor(Math.random()*materials.length)];
 }
