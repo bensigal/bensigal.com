@@ -8,7 +8,13 @@ function enterRoom(newRoom){
     room.init();
 }
 function generateRandomRoom(){
-    return new EmptyRoom();
+    var index = Math.random()*100;
+    if(index < 30){
+        return new EmptyRoom();
+    }
+    if(index < 100){
+        return new TrapRoom();
+    }
 }
 function threeDoors(){
     enterRoom(new ThreeDoorsRoom());
@@ -16,7 +22,11 @@ function threeDoors(){
 class Room{
     constructor(){}
     init(){}
-    command(words){}
+    command(words){
+        if(words[0] == "leave" && this.allowLeaving){
+            threeDoors();
+        }
+    }
     generateInteriorDescription(){
         if(this.interiorDescription)return this.interiorDescription;
         this.interiorDescription = "This room has a "+randomNoun()+" made of "+randomMaterial()+" hidden under a "+randomNoun()+" made of "+randomMaterial()+". These don't seem useful.";
@@ -24,11 +34,15 @@ class Room{
     getExteriorDescription(){
         return "This door seems pretty average.";
     }
+    allowLeaving(){
+        this.allowLeaving = true;
+        if(level < 10)println("Enter &quot;leave&quot; to leave.");
+    }
 }
 class EmptyRoom extends Room{
     init(){
         println("Seeing nothing interesting in this room, you decide to move on.");
-        threeDoors();
+        this.allowLeaving();
     }
 }
 class IntroRoom extends Room{
@@ -66,16 +80,20 @@ class ThreeDoorsRoom extends Room{
         println("Level "+level);
         println("You find yourself in a dark room.");
         println("The room is triangular, with a low ceiling. Each wall has a door.");
-        if(player.hp < player.maxHp){
+        if(player.health < player.maxHealth){
             println("Your natural regenration (STR) kicks in.");
             player.heal(player.stat("str"));
         }
+        var roll = d20();
+        var perception = roll + player.skills.perception;
+        println("You examine your options. Your perception is "+player.skills.perception+", you rolled a "+roll+", for a total of "+perception);
         this.rooms = [];
         for(var i = 1; i <= 3; i++){
             var newRoom = generateRandomRoom();
             this.rooms.push(newRoom);
-            println("Door "+i+": "+newRoom.getExteriorDescription());
+            println("Door "+i+": "+newRoom.getExteriorDescription(perception));
         }
+        println("Enter &quot;1&quot;, &quot;2&quot;, or &quot;3&quot; to choose.");
     }
     command(words){
         var choice = words[0];
@@ -120,10 +138,27 @@ class IntroStatBalancingRoom extends Room{
             enterRoom(new IntroStatBalancingRoom(this.index + 1));
         else{
             player.hp = player.maxHp;
-            threeDoors();
+            enterRoom(new IntroItemsRoom());
         }
     }
     
+}
+class IntroItemsRoom extends Room{
+    constructor(){
+        super();
+        this.interiorDescription = "This room has several items lying conveniently on a silver platter. Unfortunately, the silver platter is a hologram.";
+    }
+    init(){
+        println("You take the items.");
+        if(player.stat("str") < items[0].length){
+            println("Unfortunately, you're hella weak, so you drop some of them.");
+        }
+        items[0].forEach(function(element, index){
+            inventory.add(element);
+        });
+        println("You see nothing else interesting, and decide to leave as quickly as possible.");
+        this.allowLeaving();
+    }
 }
 class TrapRoom extends Room{
     constructor(){
@@ -140,12 +175,13 @@ class TrapRoom extends Room{
         if(perception > 25){
             return "This room smells like it can hurt.";
         }
+        return super.getExteriorDescription();
     }
     init(){
         println("Even just looking at the stairs causes you great psychological trauma.");
         player.damage(level);
         println("You leave this room as quickly as you can.");
-        threeDoors();
+        this.allowLeaving();
     }
 }
 function randomNoun(){

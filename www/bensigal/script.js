@@ -61,3 +61,24 @@ function println(line){
     $("#results").append("<p>"+line+"</p>");
     $("#results")[0].scrollTop = $("#results")[0].scrollHeight;
 }
+
+function camelCaseToWords(string){
+    string = string.replace(/[A-Z]/g, " $&");
+    return string.charAt(0).toUpperCase() + string.substring(1);
+}
+
+function d20(){
+    return Math.ceil(Math.random()*20);
+}
+
+function generateTable(){
+    var html = "<table class='generatedTable'>";
+    Array.from(arguments).forEach(function(row){
+        html+="<tr>";
+        row.forEach(function(column){
+            html+="<td>"+column+"</td>";
+        });
+        html+="</tr>";
+    });
+    return html + "</table>";
+}

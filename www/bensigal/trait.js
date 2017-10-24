@@ -3,6 +3,9 @@ var traits = {
         name:"Honorable",
         key:"honor",
         description:"People and creatures can easily recognize your honor. Some effects are that enemies can never sneak up on you, and NPCs will be more likely to trust you. Certain actions may cause you to lose this trait.",
+        init: function(){
+            player.bonuses.stealth = -100;
+        }
     },
     faith:{
         name:"Faithful",

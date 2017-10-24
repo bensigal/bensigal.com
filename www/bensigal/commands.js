@@ -10,25 +10,36 @@ var info = {
 };
 commands = {
     help: {
-        description: "help x<br>Prints description of given command x.<br><br>help<br>Prints list of commands.<br><br>help all<br>Prints all commands with descriptions.",
+        description: "help x<br>Prints description of given command x.<br><br>help names<br>Prints list of commands.<br><br>help<br>Prints all commands with descriptions.",
         trigger: function(words){
             if(!words.length){
-                let result = "";
-                console.log("BASIC HELP");
-                for(let key in commands){
-                    result+= key+" ";
-                }
-                println(result);
-            }
-            else if(words[0] == "all"){
                 let result = "";
                 for(let key in commands){
                     result+= "<p>"+commands[key].description+"</p>";
                 }
                 println(result);
             }
+            else if(words[0] == "names"){
+                let result = "";
+                for(let key in commands){
+                    result+= key+" ";
+                }
+                println(result);
+            }
             else if(commands[words[0]]){
                 println("<p>"+commands[words[0]].description+"</p>");
+            }
+        }
+    },
+    info: {
+        description: "info &lt;topic&gt;<br>Show info on the given topic. Available topics: stats",
+        trigger: function(words){
+            if(!words[0]){
+                println(commands.info.description);
+            }else if(info[words[0]]){
+                println(info[words[0]]);
+            }else{
+                println("No information on topic &quot;"+words[0]+"&quot;. Available topics: stats");
             }
         }
     },
@@ -67,17 +78,51 @@ commands = {
         description: "skills<br>Prints a list of your skills and their values.",
         trigger: function(){
             for(var key in player.skills){
-                println(capitalize(key) + ": "+player.skills[key]);
+                println(camelCaseToWords(key) + ": "+player.skills[key]);
             }
         }
     },
     look:{
-        description: 'You look around some more.',
+        description: 'look<br>You look around some more.',
         trigger: function(){
             println(room.interiorDescription);
         }
-    }
+    },
+    status:{
+        description: "status<br>Prints information about your current status.",
+        trigger: function(){
+            println(generateTable(
+                ["Health:", player.health+"/"+player.maxHealth, "Health Regen:", player.skills.healthRegen, "Mana:", player.mana + "/" + player.maxMana, "Mana Regen:", player.skills.manaRegen]
+            ));
+        }
+    },
+    inventory:{
+        description: "inventory<br>Lists your items. 'inv' is synonymous.<br>inventory description<br>Lists all your items and their descriptions.<br>inventory &lt;index&lt;<br>Gives a description of the item in your inventory at index &lt;index&gt;",
+        trigger: function(words){
+            if(!words[0]){
+                inventory.items.forEach(function(element, index){
+                    println(index+": "+element.name);
+                });
+            }else if(words[0] == "description"){
+                inventory.items.forEach(function(element, index){
+                    println(index+": "+element.name+"<br>"+element.description);
+                });
+            }else if(words[0].match(/$\d^/)){
+                var index = Math.floor(Number(words[0]));
+                if(index < 0 || index >= inventory.items.length){
+                    println("Invalid index.");
+                }else{
+                    var item = inventory.get(Number(words[0]));
+                    println(item.name+"<br>"+item.description);
+                }
+            }
+        }
+    },
 
     
 };
+commands.inv = {
+    description: commands.inventory.description,
+    trigger: commands.inventory.trigger
+},
 console.log("MEEP");
