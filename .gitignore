@@ -7,5 +7,5 @@
 *.mp4
 /www/homework.txt
 /www/.codetasty
-
+/www/.codetasty/*
 
