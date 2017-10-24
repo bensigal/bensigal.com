@@ -146,7 +146,7 @@ class IntroStatBalancingRoom extends Room{
 class IntroItemsRoom extends Room{
     constructor(){
         super();
-        this.interiorDescription = "This room has several items lying conveniently on a silver platter. Unfortunately, the silver platter is a hologram.";
+        this.interiorDescription = "This room has several items lying conveniently on a silver platter. Unfortunately, the silver platter is a hologram. Or maybe a metaphor.";
     }
     init(){
         println("You take the items.");
@@ -181,7 +181,7 @@ class TrapRoom extends Room{
         println("Even just looking at the stairs causes you great psychological trauma.");
         player.damage(level);
         println("You leave this room as quickly as you can.");
-        this.allowLeaving();
+        threeDoors();
     }
 }
 function randomNoun(){

@@ -1,4 +1,13 @@
 var statAbbreviations = ["STR", "SPD", "DEX", "CON", "WIL", "CHA", "ANA"];
+
+var noWeaponObject = {
+    name: "Bare Hands",
+    description: "You are fighting with your bare hands. Unfortunately, these do not function as Bear Hands. No damage bonus, no hit bonus, crits do not multiply damage.",
+    toHit:0,
+    damage:0,
+    critMultiplier:1
+}
+
 class Creature{
     
     constructor(stats){
@@ -17,7 +26,8 @@ class Creature{
             "physicalResistance":0,
             "manaRegen": 0,
             "maxMana":0,
-            
+            "inventorySize":0,
+            "physicalDamage":0,
         };
         this.bonuses = {};
         for(var key in this.skills){
@@ -27,7 +37,12 @@ class Creature{
         this.health = this.skills.maxHealth;
         this.mana = this.skills.maxMana;
     }
-    
+    get weapon(){
+        return this._weapon || noWeaponObject
+    }
+    set weapon(val){
+        this._weapon = val;
+    }
     get maxHealth(){return this.skills.maxHealth;}
     get maxMana(){return this.skills.maxMana;}
     
@@ -54,6 +69,12 @@ class Creature{
         this.skills.physicalResistance  = this.stat("con") + this.bonuses.physicalResistance;
         this.skills.manaRegen   = this.stat("cha") + this.bonuses.manaRegen;
         this.skills.maxMana     = this.stat("cha") + this.bonuses.maxMana;
+        this.skills.inventorySize       = this.stat("str") + this.bonuses.inventorySize;
+        this.skills.physicalDamage      = this.stat("str") + this.bonuses.physicalDamage;
+        
+        if(this instanceof Player && inventory){
+            inventory.setMaxSize(player.stat("str"));
+        }
         
         this.checkMaxHealthAndMana()
         
@@ -76,6 +97,43 @@ class Creature{
         if(damage < 0)return;
         this.health += damage;
         this.checkMaxHealthAndMana()
+    }
+    takeAction(){
+        this.attack(player);
+    }
+    attack(target){
+        if(this instanceof Player) println("You attack " + target.name + " with your "+this.weapon.name);
+        else println(this.name + " attacks " + target.name + " with its "+this.weapon.name+".");
+        console.log("to hit: "+ this.skills.toHit + this.weapon.toHit);
+        var roll = d20();
+        var total = roll + this.skills.toHit + this.weapon.toHit;
+        console.log("roll: "+roll+" for a total of "+total);
+        if(this instanceof Player){
+            println("You have a "+(this.skills.toHit + this.weapon.toHit) + " to hit.");
+            println("You rolled a "+span("roll", roll)+", for a total of "+span("roll", total));
+        }
+        if(total >= target){
+            if(total - target < 1){
+                println("It barely manages to hit.");
+            }else if(total - target < 4){
+                println("It hits.");
+            }else if(total - target < 10){
+                println("It hits easily.");
+            }else if(total - target < 20){
+                println("It hits quite easily.");
+            }else{
+                println("It hits with ridiculous ease.");
+            }
+            var damage = this.skills.physicalDamage + this.weapon.damage;
+            println("It deals "+damage+" damage!");
+            target.damage(damage);
+        }else{
+            if(target - total < 2){
+                println("It barely misses.");
+            }else{
+                println("It misses.");
+            }
+        }
     }
     
 }

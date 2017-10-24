@@ -10,6 +10,13 @@ var previousCommands = {
     }
 };
 
+var enemies = [];
+function afterPlayerAction(){
+    enemies.forEach(function(enemy, index){
+        enemy.takeAction();
+    });
+}
+
 $(function(){
     
     $("#command").keypress(function(e){

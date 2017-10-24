@@ -118,7 +118,12 @@ commands = {
             }
         }
     },
-
+    health:{
+        description:"Prints your current health.",
+        trigger: function(){
+            player.printCurrentHealth();
+        }
+    },
     
 };
 commands.inv = {

@@ -25,14 +25,6 @@ class Player extends Creature{
 }
 var player = new Player();
 
-var noWeaponObject = {
-    name: "Bare Hands",
-    description: "You are fighting with your bare hands. Unfortunately, these do not function as Bear Hands. No damage bonus, no hit bonus, crits do not multiply damage.",
-    toHit:0,
-    damage:0,
-    critMultiplier:1
-}
-
 var inventory = {
     items: [],
     maxSize: 10,
@@ -52,7 +44,7 @@ var inventory = {
             this.items.push(item);
             item.onObtain();
         }else{
-            println(item.name + "However, your inventory is full, so it fell to the ground.");
+            println("However, your inventory is full, so it fell to the ground.");
             floorInventory.push(item);
         }
     }
