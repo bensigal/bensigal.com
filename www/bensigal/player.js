@@ -1,7 +1,7 @@
 class Player extends Creature{
     
     constructor(){
-        super();
+        super(false, "You", "You look at yourself in a mirror. You look exactly the same as always.");
         this.traits = [];
     }
     heal(damage){

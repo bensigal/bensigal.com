@@ -10,7 +10,7 @@ var noWeaponObject = {
 
 class Creature{
     
-    constructor(stats){
+    constructor(stats, name, description){
         if(!stats){
             stats = [10,10,10,10,10,10,10];
         }
@@ -36,6 +36,8 @@ class Creature{
         this.reloadSkills();
         this.health = this.skills.maxHealth;
         this.mana = this.skills.maxMana;
+        this.name = name || "A Nameless Creature";
+        this.description = description || "This creature is a boring, unremarkable thing."
     }
     get weapon(){
         return this._weapon || noWeaponObject
@@ -104,7 +106,9 @@ class Creature{
     attack(target){
         if(this instanceof Player) println("You attack " + target.name + " with your "+this.weapon.name);
         else println(this.name + " attacks " + target.name + " with its "+this.weapon.name+".");
-        console.log("to hit: "+ this.skills.toHit + this.weapon.toHit);
+        var tDodge = target.skills.dodge;
+        console.log("To hit bonus: "+ (this.skills.toHit + this.weapon.toHit));
+        console.log("Target's dodge: "+target.skills.dodge);
         var roll = d20();
         var total = roll + this.skills.toHit + this.weapon.toHit;
         console.log("roll: "+roll+" for a total of "+total);
@@ -112,28 +116,35 @@ class Creature{
             println("You have a "+(this.skills.toHit + this.weapon.toHit) + " to hit.");
             println("You rolled a "+span("roll", roll)+", for a total of "+span("roll", total));
         }
-        if(total >= target){
-            if(total - target < 1){
+        if(total >= tDodge){
+            if(total - tDodge < 1){
                 println("It barely manages to hit.");
-            }else if(total - target < 4){
+            }else if(total - tDodge < 4){
                 println("It hits.");
-            }else if(total - target < 10){
+            }else if(total - tDodge < 10){
                 println("It hits easily.");
-            }else if(total - target < 20){
+            }else if(total - tDodge < 20){
                 println("It hits quite easily.");
             }else{
                 println("It hits with ridiculous ease.");
             }
             var damage = this.skills.physicalDamage + this.weapon.damage;
-            println("It deals "+damage+" damage!");
+            console.log("It deals "+damage+" damage!");
             target.damage(damage);
         }else{
-            if(target - total < 2){
+            if(tDodge - total < 2){
                 println("It barely misses.");
             }else{
                 println("It misses.");
             }
         }
     }
-    
+}
+
+class Saiyan extends Creature{
+    constructor(){
+        super([level,level,level,level,level,level,level], "Saiyan", "This creature starts out weak, but grows far more powerful as time goes on.");
+        var names = ["Goku", "Vegeta", "Gohan"];
+        this.name = names[Math.floor(Math.random()*names.length)];
+    }
 }

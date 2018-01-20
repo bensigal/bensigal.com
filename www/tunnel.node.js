@@ -18,6 +18,9 @@ module.exports = function(req, res, server, whereis){
         case "seconds":
             server.getFile("includes/seconds.html", req, res);
             break;
+        case "elo":
+            server.redirect("https://wismuth.com/elo/calculator.html", req, res);
+            break;
         default:
             server.defaultTunnel(req, res, "/");
             break;
