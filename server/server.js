@@ -315,7 +315,7 @@ function getFile(path,req,res,options){
 		}
 	});
 }
-function sendString(output, req, res,options){
+function sendString(output, req, res, options){
 	options=options||{};
 	req.log("Sending string data.");
 	if(logging){

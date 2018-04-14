@@ -4,17 +4,26 @@ var keyboard = {};
 var mouse = {};
 var stopped = false;
 var lastKeys=[];
+var waitingForAttackChoice = true;
+const PSTC = " Press space to continue.";
 
 function resetGame(){
     timePassed = 0;
+    level = 1;
+    player.init();
+    enemy.init();
 }
 
 $(function(){
+    window.onerror = function(message, source, lineno, colno, error){
+        alert(message+"Found in "+source+" at line "+lineno+", column "+colno+". "+error);
+        return true;
+    };
     lastTime = new Date().getTime();
     canvas = $("#canvas")[0];
     canvas.width = 800;
     canvas.height= 600;
-    canvas.style.background="white"
+    canvas.style.background="white";
     
     ctx = canvas.getContext("2d");
     
@@ -27,11 +36,15 @@ $(function(){
     $("#canvas").click(function(e){
         mouse.x = e.pageX - canvas.offsetLeft;
         mouse.y = e.pageY - canvas.offsetTop;
-    })
+    });
     
     resetGame();
     window.requestAnimationFrame(animationFrame);
 });
+function finishAttack(){
+    shadow.show = false;
+    message.message += " Press space to continue.";
+}
 function animationFrame(timestamp){
     var dt = timestamp - lastTime;
     lastTime = timestamp;
@@ -43,15 +56,35 @@ function animationFrame(timestamp){
             break;
         }
     }catch(e){
-        console.error(e.message)
-        console.log(e.stack)
+        console.error(e.message);
+        console.log(e.stack);
     }
     window.requestAnimationFrame(animationFrame);
 }
 function mainLoop(dt, timestamp){
     
     timePassed += dt;
+    player.tick(dt);
     
+    message.draw();
+    shadow.draw();
+    player.draw();
+    enemy.draw();
+    
+    ctx.font = "20px 'Ubuntu Mono'";
+    ctx.fillStyle = "black";
+    ctx.fillText("Player health: "+player.health, 40, 40);
+    ctx.fillText("Enemy health: "+enemy.health, 40, 80);
+    
+}
+function activateAttack(key){
+    if(player.moving || !waitingForAttackChoice)return;
+    waitingForAttackChoice = false;
+    player.adoptPattern(movementPatterns.test);
+}
+function nextTurn(){
+    message.create("Choose an attack! W: Jump, A: Charge, S: Backstab, D: Do nothing");
+    waitingForAttackChoice = true;
 }
 $(document).keydown(function(e){
     var preventDefault = true;
@@ -70,6 +103,7 @@ $(document).keydown(function(e){
         break;
     case 87:
         keyboard.w=true;
+        activateAttack("w");
         break;
     case 68:
         keyboard.d=true;
@@ -78,10 +112,16 @@ $(document).keydown(function(e){
         keyboard.a=true;
         break;
     case 83:
-        keyboard.s=true
+        keyboard.s=true;
         break;
     case 32:
         keyboard.space = true;
+        if(player.moving){
+            player.hit();
+        }else if(message.callback){
+            message.callback();
+        }
+        break;
     default:
         preventDefault = false;
     }

@@ -54,6 +54,7 @@ function changeLanguage(str, editor){
 	case "php":
 		str="php";
 		break;
+	case "dart":
 	case "java":
 	case "json":
 	case "css":

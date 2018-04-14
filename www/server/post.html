@@ -14,6 +14,14 @@
             `)
             $("#url").val("/server/exec")
         });
+        $("#dart2js").click(function(e){
+            $("#data").html(`
+            {
+                "command":"dart2js ~/www/ -o ~/www/"
+            }
+            `)
+            $("#url").val("/server/exec")
+        })
         $("#runCommand").click(function(e){
             $("#data").html(`
             {
@@ -33,8 +41,14 @@
     });
     document.onkeydown = function(e){
         if(e.keyCode == 13 && e.ctrlKey){
-            
-            $.post($("#url").val(),JSON.parse($("#data").val()),function(data){$("#response").text(data)});
+            $("#response").text("Waiting for response...");
+            $.post(
+                $("#url").val(),
+                JSON.parse($("#data").val()),
+                function(data){
+                    $("#response").text(data);
+                }
+            );
             
         }else if (e.keyCode == 9) {
             
@@ -90,6 +104,7 @@
 </head>
 <body>
     <input id="restart" type=submit value="Restart Server">
+    <input id="dart2js" type=submit value="dart2js">
     <input id="runCommand" type=submit value="Enter Command">
     <input id="deleteCachedTunnel" type=submit value="Delete Cacehd TUnnel">
     <input id=url value="/">

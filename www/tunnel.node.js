@@ -21,6 +21,9 @@ module.exports = function(req, res, server, whereis){
         case "elo":
             server.redirect("https://wismuth.com/elo/calculator.html", req, res);
             break;
+        case "graveyard":
+            server.getFile("includes/graveyard.html");
+            break;
         default:
             server.defaultTunnel(req, res, "/");
             break;
