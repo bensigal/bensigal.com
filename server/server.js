@@ -318,7 +318,7 @@ function sendString(output, req, res, options){
 	    options = {statusCode: options};
 	}
 	req.log("Sending string data.");
-	if(logging){
+	if(logging == 2){
 	    fs.writeFile(req.logLocation+"responseText.log",output,function(err){
 	    	if(err)req.err(err);
 	    });
