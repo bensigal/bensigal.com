@@ -123,15 +123,8 @@ function serverRespond(req, res){
 					return;
 				}
 				req.files=files;
-				if(logging)
-				fs.writeFile(req.logLocation+"files.log",benSpect(files),function(err){
-					if(err) throw err;
-				});
+				req.log(files);
 				req.post=fields;
-				if(logging)
-				fs.writeFile(req.logLocation+"fields.log",benSpect(fields),function(err){
-					if(err) throw err;
-				});
 				req.log(req.post);
 				sendThroughTunnel(req,res,"/");
 			});
@@ -144,10 +137,6 @@ function serverRespond(req, res){
 				}
 			});
 			req.on('end',function(){
-				if(logging)
-				fs.writeFile(req.logLocation+"body.log",function(err){
-					if(err) throw err;
-				});
 				req.log(body);
 				req.post=qs.parse(body);
 				sendThroughTunnel(req,res,"/");
