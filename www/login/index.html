@@ -156,17 +156,22 @@
 			}
 			function amILoggedIn(){
                 $.get("/server/login", function(data){
-                    if(data == "true"){console.log("loggedIn");
+                    if(data == "true"){
+						console.log("loggedIn");
 						if(location.href.indexOf("?")>-1){
                             location.href="/" + location.href.substring(location.href.indexOf("?")+1)
 						}else{
                             location.href = "/"
 						}
-                    }
+                    }else if(data == "false"){
+						alert("Login failed!");
+					}else{
+						alert("Login failed: "+data);
+					}
                 });
 			}
 			amILoggedIn();
-			setInterval(amILoggedIn, 500);
+			setInterval(amILoggedIn, 10000);
 		</script>
 		<title>Log In</title>
 	</head>
