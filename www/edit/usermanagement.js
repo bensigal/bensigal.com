@@ -22,7 +22,7 @@ var loginCheckInterval = setInterval(function(){
             successfulLogin();
         console.log("Login: "+data+". Time: "+new Date());
     });
-}, 10000);
+}, 100000);
 
 function successfulLogout(){
     location.reload(true);

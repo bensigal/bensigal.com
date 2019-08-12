@@ -1,4 +1,4 @@
-var canvas, ctx, topLeft, mainLoopIntervalCode, head, snakeSquares, previousDirection, growing, food, stewart=false;
+var canvas, ctx, topLeft, mainLoopIntervalCode, head, snakeSquares, previousDirection, growing, food, stewart=false, paused=false;
 var keyboard = {};
 var sprite = {};
 var enemies;
@@ -51,17 +51,18 @@ function start(){
 }
 $(start);
 function mainLoop(){
-    ctx.clearRect(0,0,800,600)
+    ctx.clearRect(0,0,800,600);
+    if(paused)return;
     
     for(var i = 0; i < 60; i++){
         squares[0][i].state = "wall";
         squares[79][i].state = "wall";
     }
-    for(var i = 1; i < 79; i++){
+    for(i = 1; i < 79; i++){
         squares[i][0].state = "wall";
         squares[i][59].state = "wall";
         for(var j = 1; j < 59; j++){
-            squares[i][j].state = "empty"
+            squares[i][j].state = "empty";
         }
     }
     squares[food.x][food.y].state = "food";
@@ -114,7 +115,9 @@ function mainLoop(){
                 break;
             }
         }
-        growing+=11;
+        if(!growing)growing++;
+        growing+=10;
+        
     }
     snakeSquares[0].state = "head"
     ticks++;
@@ -175,6 +178,8 @@ $(document).keydown(function(e){
     }
     if(e.keyCode==32 && stopped){
         start();
+    }else if(e.keyCode==32){
+        paused = !paused;
     }
 });
 $(document).mousedown(function(e){

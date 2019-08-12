@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>The Tragedy of Polonius</title>
+        <script src="jquery.min.js"></script>
+        <script src="polonius.js"></script>
+		<script src="dodge.js"></script>
+		<script src="memory.js"></script>
+		<noscript>This game was created for Benjamin Sigal's English 7-8 first semester final.</noscript>
+        <style>
+            #canvas{
+                width: 800px;
+                height: 600px;
+                padding: 0;
+                margin: 0;
+            }
+            body{
+                margin: 0;
+            }
+            #canvasHolder{
+                margin: 2px auto;
+                padding: 0;
+                border: 1px solid black;
+                width: 800px;
+                height: 600px;
+            }
+            img{
+                display: none;
+            }
+        </style>
+		<img src="polonius.png" id="poloniusImage">
+        <img src="title.png" id="titleImage">
+		<img src="curtains.png" id="curtainsImage">
+		<img src="sword.png" id="swordImage">
+		<img src="clouds.png" id="cloudsImage">
+    </head>
+    <body>
+        <div id="canvasHolder">
+            <canvas id="canvas">Your browser does not support this game.</canvas>
+        </div>
+    </body>
+</html>

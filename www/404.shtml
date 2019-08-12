@@ -6,7 +6,7 @@
     </head>
     <body>
         <header id="error">
-            <h1>Error 404 - File Not Found</h1>
+            <h1>Error 404 - File Not Found</h1> 
         </header>
         <nav>
             <a href="/index.html"><div>Home</div></a>

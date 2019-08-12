@@ -24,7 +24,7 @@ process.argv[3] = process.argv[3] || "";
 var processOptions = process.argv[3];
 //Time of start of execution
 var startTime = new Date().getTime();
-var logging = true;
+var logging = false;
 var sockets = [];
 
 //Called for each request, calls serverRespond at end
@@ -250,7 +250,7 @@ function defaultTunnel(req, res, whereis, options){
 var supportedErrorCodes = [401,403,404,405,500];
 var messages = [
 	"Authorization Required",
-	"Forbidden",
+	"Currently Forbidden",
 	"File Not Found",
 	"Method Not Allowed",
 	"Internal Server Error"
@@ -258,13 +258,15 @@ var messages = [
 
 function showErrorPage(errorCode, req, res, showAsText){
 	req.log("Showing error "+errorCode);
+	if(supportedErrorCodes.indexOf(errorCode) < 0){
+	    errorCode = 501;
+	}
 	res.statusCode=errorCode;
-	if(!showAsText && supportedErrorCodes.indexOf(errorCode)>=0){
+	if(!showAsText){
 		fs.readFile("www/"+errorCode+".shtml",function readErrorPageCallback(err, data){
 			if(err){
 				req.err(err.stack);
-				//TODO assumes error is file not found.
-				data="Error "+errorCode+"<br>Also, 404 error trying to find"+
+				data="Error "+errorCode+"<br>Also, failed to load"+
 					" the error page.";
 			}
 			res.setHeader('Content-Type',"text/html");
@@ -317,14 +319,19 @@ function getFile(path,req,res,options){
 }
 function sendString(output, req, res, options){
 	options=options||{};
+	if(typeof options == "number"){
+	    options = {statusCode: options};
+	}
 	req.log("Sending string data.");
 	if(logging){
 	    fs.writeFile(req.logLocation+"responseText.log",output,function(err){
 	    	if(err)req.err(err);
 	    });
 	}
-	res.setHeader('Content-Length',output.length);
-	res.setHeader('Content-Type',options.contentType||"text/plain");
+	try{
+    	res.setHeader('Content-Length',output.length);
+    	res.setHeader('Content-Type',options.contentType||"text/plain");
+	}catch(e){console.error(e.stacktrace)}
 	res.statusCode=options.statusCode||200;
 	res.end(output);
 }
@@ -401,14 +408,7 @@ var Session = function(id){
 	sessions.push(this);
 }
 
-var supportedErrorCodes = [401,403,404,405,500];
-var messages = [
-	"No Authorization",
-	"Forbidden",
-	"File Not Found",
-	"Method Not Allowed",
-	"Internal Server Error"
-];
+
 //Log folder, actually start server.
 fs.mkdir("server/logs/"+startTime,function(err){
 	if(err) throw err;

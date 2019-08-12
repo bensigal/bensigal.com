@@ -141,16 +141,26 @@ module.exports=function(req,res,server){
             if(!file.startsWith("/home/bensigal/www/bensigal") || file.indexOf("..") > -1)
                 return server.sendString("You only have the permissions to edit: /home/bensigal/www/bensigal/", req, res);
             req.log("Saving to file "+file);
-            var is = fs.createReadStream(req.files.contents[0].path);
-            var os = fs.createWriteStream(file);
-            is.pipe(os);
-            is.on('end',function(err){
-                if(err)throw err;
-                fs.unlink(req.files.contents[0].path,function(err){
-                    if(err)throw err;
-                    server.sendString("Success!",req,res);
+            if(req.post.value){
+                fs.writeFile(file, req.post.value, function(err){
+                    if(err){
+                        server.showErrorPage("Could not write to file: "+err.message, req, res);
+                    }else{
+                        server.sendString("Success!", req, res);
+                    }
+                })
+            }else{
+                var is = fs.createReadStream(req.files.contents[0].path);
+                var os = fs.createWriteStream(file);
+                is.pipe(os);
+                is.on('end',function(err){
+                    if(err)server.sendError;
+                    fs.unlink(req.files.contents[0].path,function(err){
+                        if(err)throw err;
+                        server.sendString("Success!",req,res);
+                    });
                 });
-            });
+            }
         }
     }
     else if(new RegExp(adminRequired.join("|")).test(req.path)){
@@ -175,6 +185,9 @@ module.exports=function(req,res,server){
             });
         }
         else if(/getfilecontents\/?/i.test(req.path)){
+            if(!req.post || !req.post.edit){
+                return server.showErrorPage(400, req, res);
+            }
             req.log("Reading file contents for "+req.post.edit);
             server.getFile(req.post.edit,req,res,{
                 pathNotFromWww:true,
@@ -184,16 +197,18 @@ module.exports=function(req,res,server){
                 encoding:"binary"
             });
         }else if(/save\/?/i.test(req.path)){
-            req.log("Saving to file "+req.post.file);
-            var is = fs.createReadStream(req.files.contents[0].path);
-            var os = fs.createWriteStream(String(req.post.file));
-            is.pipe(os);
-            is.on('end',function(err){
-                if(err)throw err;
-                fs.unlink(req.files.contents[0].path,function(err){
-                    if(err)throw err;
-                    server.sendString("Success!",req,res);
-                });
+            if(!req.post){
+                return server.showErrorPage(400, req, res);
+            }
+            console.log("Saving to file "+req.post.file);
+            console.error("Testing, got to 201");
+            if(!req.post.value || !req.post.file){
+                return server.showErrorPage(400, req, res);
+            }
+            console.error("Writing to "+req.post.file+" with length "+req.post.value.length);
+            fs.writeFile(req.post.file, req.post.value, function(err){
+                if(err)return server.showErrorPage(err.message, req, res);
+                server.sendString("Success!", req, res);
             });
         }
         else if(/purgecache\/?/i.test(req.path)){
@@ -213,16 +228,9 @@ module.exports=function(req,res,server){
     	    });
     	}
     	else if (/exec\/?/i.test(req.path)){
-    		var process = exec(req.post.command, function(err){
-    			if(err) throw err;
-    			res.end();
+    		var process = exec(req.post.command, function(err, out, code){
+    			server.sendString(err + "<br>"+ out + "<br>With code: "+code, req, res)
     		});
-    		res.setHeader("Content-Type", "text/plain")
-    		var respondToData = function(data){
-    			res.write(data);
-    		};
-    		process.stdout.on("data",respondToData)
-    		process.stderr.on("data",respondToData)
     	}
         else if(/mkdir\/?/i.test(req.path)){
             req.log("Attempting to make directory at "+req.post.path);

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Console</title>
+        <script src="/jquery.min.js"></script>
+        <script>
+            $(function(){
+                $("#input").keydown(checkKeydown);
+            });
+            function checkKeydown(event){
+                //If the key pressed was enter
+                if(event.which == 13){
+                    $("#response").text("Waiting for response...");
+                    $.post(
+                        $("#url").val(),
+                        {command:$("#data").val()},
+                        function(data){
+                            $("#response").text(data);
+                        }
+                    );
+                }
+            }
+        </script>
+    </head>
+    <body>
+        <p>Command: <input size=50 id="data"></p>
+        <p>Response: </p>
+        <p id="response"></p>
+    </body>

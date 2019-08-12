@@ -1,20 +1,32 @@
-var canvas, ctx, mainLoopInterval, ticks, player;
+//Game by Benjamin Sigal. Play as the large circle in the middle. A small dot orbits you. Use it to destroy the lines chasing you.
+
+//Reference to the HTML object.
+var canvas,
+//Reference to the object used to draw on the canvas
+ctx, 
+mainLoopInterval, 
+//how many ticks have passed
+ticks, 
+player;
 
 var keyboard = {};
 var mouse = {};
 var stopped = false;
-var lastKeys=[];
 var enemies;
+//How many ticks before the next enemy should appear
 var level = 120;
 var nextEnemy, killed, originalPlayers, players, menuTicks, menuLoopInterval, gameType, scene, enemyBaseSpeed;
+//List of options for the menu at the beginning
 var options = [
     ["singleplayer", "multiplayer"],
     ["easy", "classic", "impossible", "back"]
 ];
 var onMenu = true;
 var optionSelected = 0;
+//How far in the options menu you are
 var depth = 0;
 
+//Called when the game begins
 function resetGame(){
     
     enemyBaseSpeed = 1;
@@ -34,14 +46,20 @@ function resetGame(){
     killed = 0;
     
 }
+
+//Enter was pressed while on the menu
 function selectMenuOption(index){
     optionSelected = 0;
+    //If you were on back, go back
     if(options[depth][index]=="back")return depth--;
+    
     switch(depth){
+    //If on the first page of options, set singleplayer/multiplayer and go to next page
     case 0:
         scene=options[0][index];
         depth++;
         break;
+    //If on second page, set the difficulty according to which is selected and start game.
     case 1:
         difficulty = options[1][index];
         resetGame();
@@ -49,14 +67,19 @@ function selectMenuOption(index){
         break;
     }
 }
+
 $(function(){
+    //Reference to canvas object
     canvas = $("#canvas")[0];
+    
     canvas.width = 800;
     canvas.height= 600;
     canvas.style.background="white"
     
+    //Object used to draw on canvas
     ctx = canvas.getContext("2d");
     
+    //Call mainLoop at 60fps
     mainLoopInterval = setInterval(mainLoop, 16);
     
     stopped=false;
@@ -65,6 +88,7 @@ $(function(){
     scene = "menu";
     menuTicks=0;
     
+    //When the mouse moves or clicks, store the location of the mouse
     $("#canvas").mousemove(function(e){
         mouse.x = e.pageX - canvas.offsetLeft;
         mouse.y = e.pageY - canvas.offsetTop;
@@ -72,28 +96,39 @@ $(function(){
     $("#canvas").click(function(e){
         mouse.x = e.pageX - canvas.offsetLeft;
         mouse.y = e.pageY - canvas.offsetTop;
-    })
+    });
 });
+//Called while on menu
 function menuLoop(){
     ctx.clearRect(0,0,800,600);
     menuTicks++;
     
     ctx.fillStyle = "black";
-    ctx.font = "12px Arial"
+    ctx.font = "12px Arial";
     
+    //Draw each option for whatever you're on
     options[depth].forEach(function(element, index){
         ctx.fillStyle = index == optionSelected ? "black" : "#BBB";
         ctx.textAlign = "center";
         ctx.font = "italic bold 24px Arial";
-        ctx.fillText(element, 400, 300 + 40 * (index-options.length/2))
+        ctx.fillText(element, 400, 300 + 40 * (index-options.length/2));
     });
 }
+
+//Called each frame
 function mainLoop(){
-    if(paused)return;
-    if(onMenu)return menuLoop();
-    if(scene == "multiplayer" && players.length == 1 && enemyBaseSpeed < 2)enemyBaseSpeed+=0.001;
-    ctx.clearRect(0,0,800,600)
     
+    if(paused)return;
+    //If on menu, draw menu instead
+    if(onMenu)return menuLoop();
+    
+    //If multiplayer and one person is dead, speed things up a bit
+    if(scene == "multiplayer" && players.length == 1 && enemyBaseSpeed < 2)enemyBaseSpeed+=0.001;
+    
+    //Clear the canvas
+    ctx.clearRect(0,0,800,600);
+    
+    //Update how fast enemies appear based on difficulty
     switch(difficulty){
     case "classic":
         level = Math.round( 15 + 60 * Math.pow(1.1, (ticks + 120)/-300) );
@@ -108,37 +143,48 @@ function mainLoop(){
     if(scene == "multiplayer"){
         level = Math.round(level/2);
     }
-    if(ticks==nextEnemy){
+    
+    //If it's time to spawn an enemy, spawn it and store when the next should be spawned based
+    //on level ticks from now.
+    if(ticks >= nextEnemy){
         enemies.push(new Enemy());
         nextEnemy = ticks + level;
-        console.log("NEW ENEMY")
     }
     
+    //Draw how many enemies have been killed in grey in the center of the screen
     ctx.fillStyle = "#EFEFEF";
     ctx.font = "400px Arial";
     ctx.textAlign = "center";
     ctx.fillText(killed, 400, 400);
     
+    //Draw the level in the top right
     ctx.fillStyle = "black";
     ctx.font = "14px Arial";
     ctx.textAlign = "start";
     ctx.fillText(level, 40, 60);
     
-    ctx.fillText("Arrow keys to move you (the large circle). Hold space to extend. P to pause. Avoid the lines, destroy them with your moon.", 20, 580)
+    //Draw instructions
+    ctx.fillText("Arrow keys to move you (the large circle). Hold space to extend. P to pause. Avoid the lines, destroy them with your moon.", 20, 580);
     
+    //For each player (whether or not dead) draw it
     originalPlayers.forEach(function(player){
         player.tick();
         player.draw();
     });
     
+    //Draw each enemy
     enemies.forEach(function(element){
         element.tick();
         element.draw();
     });
+    
+    //If there are no living players, reset the game (but don't clear the screen)
     if(players.length === 0){
         resetGame(gameType);
         paused=true;
     }
+    
+    //Remove dead enemies from the array
     for(var i = 0; i < enemies.length; i++){
         if(enemies[i].dead){
             enemies.splice(i, 1);
@@ -146,6 +192,7 @@ function mainLoop(){
             killed++;
         }
     }
+    //If a player died, remove them from the array and set the lines chasing them to chase someone.
     if(players[0].dead){
         players.splice(0,1);
         if(players[0]){
@@ -169,6 +216,8 @@ function mainLoop(){
     
     ticks++;
 }
+
+//Detect keypresses
 $(document).keydown(function(e){
     e.preventDefault();
     switch(e.keyCode){
@@ -205,6 +254,7 @@ $(document).keydown(function(e){
     case 32:
         keyboard.space = true;
     case 13:
+        //enter
         if(stopped){
             break;
         }else if(paused){
@@ -215,6 +265,7 @@ $(document).keydown(function(e){
         }
         break;
     case 80:
+        //p
         if(stopped){
             break;
         }else if(paused){

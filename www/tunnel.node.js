@@ -3,6 +3,9 @@ module.exports = function(req, res, server, whereis){
     if(countSlashes(req.lastPath.substring(0, req.lastPath.length - 1)) <= 1){
         switch(req.lastPath){
         
+        case "righteous":
+            server.getFile("righteous.html", req, res);
+            break;
         case "eggs":
             server.redirect("https://www.youtube.com/watch?v=YlMang9B-wI?t=12s", req, res);
             break;
@@ -22,7 +25,7 @@ module.exports = function(req, res, server, whereis){
             server.redirect("https://wismuth.com/elo/calculator.html", req, res);
             break;
         case "graveyard":
-            server.getFile("includes/graveyard.html");
+            server.getFile("includes/graveyard.html", req, res);
             break;
         default:
             server.defaultTunnel(req, res, "/");

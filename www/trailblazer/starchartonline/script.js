@@ -24,12 +24,12 @@ $(function(){
 });
 $.get("/trailblazer/tables.json", function(data){
     tables=data;
+    setInterval(function(){
+        var expectedValue = tables.priceDetermination[$("option:selected").val()][$("#numberSold").val()][$("#demandNumber").val()];
+        if(expectedValue!=$("#result").text())
+            $("#result").text(expectedValue);
+    }, 100);
 });
-setInterval(function(){
-    var expectedValue = tables.priceDetermination[$("option:selected").val()][$("#numberSold").val()][$("#demandNumber").val()];
-    if(expectedValue!=$("#result").text())
-        $("#result").text(expectedValue);
-}, 100);
 function calculateRandomization(){
     var direction = [
         "Northwest",

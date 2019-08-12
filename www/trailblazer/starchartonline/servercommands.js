@@ -1,5 +1,5 @@
 function getData(){
-    $.get("http://bensigal.com/trailblazer/starchartonline/get", function(data){
+    $.get("/trailblazer/starchartonline/get", function(data){
         chartData(data);
     });
 }
