@@ -4,6 +4,7 @@
 !/www/
 !README
 !.gitignore
+!node_modules/
 *.mp4
 /www/homework.txt
 /www/.codetasty

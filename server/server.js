@@ -9,7 +9,6 @@ var util      	= require('util');
 
 //Create server
 var httpServer = http.createServer(prepareLogs);
-var io = require("socket.io")(httpServer);
 //To make it easier to read console output.
 var numberOfRequests = 0;
 //Pseudorandom hex strings. 48 bytes of value, but more in string form.
@@ -19,50 +18,61 @@ var sessions  = [];
 var root = process.argv[2];
 //Given to tunnels
 var serverInfo = {};
-process.argv[3] = process.argv[3] || "";
-//Options
-var processOptions = process.argv[3];
 //Time of start of execution
 var startTime = new Date().getTime();
-var logging = false;
-var sockets = [];
+//0: no logging, 1: log to console, 2: log to files
+var logging = process.argv[3];
 
 //Called for each request, calls serverRespond at end
 //Should really be part of serverRespond
 function prepareLogs(req, res){
+	
 	req.serverOrder = numberOfRequests++;
-	console.log("Request "+req.serverOrder+" recieved: "+req.url);
-	req.logLocation = root+"server/logs/"+startTime+"/"+req.serverOrder+"/";
-	//Create directory for logs
-	if(logging)
-	fs.mkdir(req.logLocation,function(err){
-		if(err) throw err;
-		//Create headers.log file with the headers recieved from the client
-		//if(processOptions.includes("headersLog"))
-		fs.writeFile(req.logLocation+"headers.log",benSpect(req.headers),function(err){
+	
+	if(logging == 1 || logging == 2) console.log("Request "+req.serverOrder+" recieved: "+req.url);
+	
+	//Create directory for logs, when ready respond to server
+	if(logging == 2){
+		req.logLocation = root+"server/logs/"+startTime+"/"+req.serverOrder+"/";
+		fs.mkdir(req.logLocation,function(err){
 			if(err) throw err;
-			req.logBody="";
-			req.log=function(next,noNewLine){
-				next=next||"";
-				req.logBody+=next;
-				if(!noNewLine){
-					req.logBody+="\r\n";
-				}
-			};
-			req.err=function(next){
-				req.log(next);
-				console.error(req.serverOrder+":"+next);
-			};
-			res.on('finish',function(){
-				if(logging)
-				fs.writeFile(req.logLocation+"main.log",req.logBody,function(err){
-					if(err) throw err;
+			//Create headers.log file with the headers recieved from the client
+			//if(processOptions.includes("headersLog"))
+			fs.writeFile(req.logLocation+"headers.log",benSpect(req.headers),function(err){
+				if(err) throw err;
+				req.logBody="";
+				req.log=function(next,noNewLine){
+					next=next||"";
+					req.logBody+=next;
+					if(!noNewLine){
+						req.logBody+="\r\n";
+					}
+				};
+				req.err=function(next){
+					req.log(next);
+					console.error(req.serverOrder+":"+next);
+				};
+				res.on('finish',function(){
+					if(logging)
+					fs.writeFile(req.logLocation+"main.log",req.logBody,function(err){
+						if(err) throw err;
+					});
 				});
+				serverRespond(req,res);
 			});
-			serverRespond(req,res);
 		});
-		//else serverRespond(req, res);
-	});
+	}
+	//Direct request logs to console, then respond to server
+	else if(logging == 1){
+		req.log = function(output){
+			console.log(req.serverOrder + ":" + output);
+		}
+		req.err = function(output){
+			console.error(req.serverOrder + ":" + output);
+		}
+		serverRespond(req, res);
+	}
+	//Ignore request logs, respond to server
 	else{
 	    req.log = function(){};
 	    req.err = function(next){console.error(req.serverOrder+":"+next)};
@@ -86,21 +96,17 @@ function serverRespond(req, res){
 		req.path="/";
 		//Do not send redirect; most browsers redirect example.com/ to example.com
 	}
-	req.log(req.path);
 	
 	req.cookies=parseCookies(req);
 	var index = sessionIds.indexOf(req.cookies.sessid);
 	
 	if(req.cookies.sessid&&index!=-1){
-		req.log("\nSession found.");
 		req.session=sessions[index];
-		req.log(benSpect(req.session));
+		req.log("Session found with id "+ req.session.id);
 	}else{
-		req.log("\nNo session found. Sending cookie header.");
 		req.session=new Session();
 		res.setHeader('Set-Cookie','sessid='+req.session.id);
 	}
-	req.log();
 	if(req.method=="POST"){
 		//If there is no data...
 		if(!req.headers["content-type"] || !(Number(req.headers["content-length"]))){
@@ -151,7 +157,6 @@ function serverRespond(req, res){
 		}
 	}
 	if(req.method!="POST"){
-		req.log(req.method);
 		sendThroughTunnel(req,res,"/");
 	}
 }
@@ -164,9 +169,7 @@ function defaultTunnel(req, res, whereis, options){
 	options = options || {};
 	indexFile=options.indexFile||"index.html";
 
-	fs.stat("www"+whereis,function(err,stat){
-		//TODO
-		req.log("MEEP:"+benSpect(options));
+	fs.stat(root + "www" + whereis,function(err,stat){
 		//File Not Found
 		if(err&&err.code=="ENOENT"){
 			req.log("Location of current tunnel not found.");
@@ -185,7 +188,7 @@ function defaultTunnel(req, res, whereis, options){
 			relativeUrl=req.path.substring(whereis.length);
 			nextDir = relativeUrl.substring(0,relativeUrl.indexOf("/")+1);
 			//Go through the next folder's tunnel.
-			req.log("Found another supposed folder. Sending through tunnel.");
+			req.log("Found another supposed folder ("+nextDir+". Sending through tunnel.");
 			sendThroughTunnel(req, res, whereis+nextDir);
 		//If this is the requested destination...
 		}else if(req.path==whereis){
@@ -193,7 +196,10 @@ function defaultTunnel(req, res, whereis, options){
 			req.log("Current location is request. Sending index file.");
 			//Show index file, or, if id does not exist, show 403
 			getFile(req.path+indexFile, req, res, {
-                notFoundCallback: () => showErrorPage(403, req, res),
+                notFoundCallback: () => {
+					req.log("Attempted to get index page where none exists. Forbidden")
+					showErrorPage(403, req, res);
+				},
                 location: req.redirectPath,
                 statusCode: req.redirectStatusCode
 			});
@@ -214,7 +220,7 @@ function defaultTunnel(req, res, whereis, options){
                 }
 			}
 			
-			fs.stat("www"+req.path,function statCallback(err,stats){
+			fs.stat(root + "www" + req.path,function statCallback(err,stats){
 				if(err&&err.code=="ENOENT"){
 				    //File Not Found
 					showErrorPage(404, req, res);
@@ -306,7 +312,7 @@ function getFile(path,req,res,options){
 		}else{
 			res.setHeader('Content-Length',data.length);
 			res.setHeader('Content-Type'    ,
-				options.encoding=="binary"?"application/octet-stream":mime.lookup(path)
+				options.encoding=="binary"?"application/octet-stream":mime.getType(path)
 			);
 			if(options.location)
                 res.setHeader('Location', options.location);
@@ -410,12 +416,18 @@ var Session = function(id){
 
 
 //Log folder, actually start server.
-fs.mkdir("server/logs/"+startTime,function(err){
-	if(err) throw err;
+if(logging){
+	fs.mkdir(root + "server/logs/"+startTime,function(err){
+		if(err) throw err;
+		httpServer.listen(8000, function(){
+			console.log("Server listening on localhost:8000! Let's serve some files!");
+		});
+	});
+}else{
 	httpServer.listen(8000, function(){
 		console.log("Server listening on localhost:8000! Let's serve some files!");
 	});
-});
+}
 function benSpect(obj){
 	return util.inspect(obj,{depth:null});
 }
@@ -444,7 +456,6 @@ exportRefs(
 	"Session",		Session,
 	"startTime",		startTime,
 	"redirect",		redirect,
-	"io"        ,  io,
 	"purgeCache", purgeCache
 );
 

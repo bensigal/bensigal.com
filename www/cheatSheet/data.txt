@@ -106,10 +106,4 @@
     6NT : 13-15 points. We go no further.
         Pass: Forced.
     7NT : 17 points. We can make 7NT.
-        Why do you need to know responses
-        to 7NT? There's not exactly many
-        options. Oh well, I'll give you 
-        some anyway.
-        8NT : 41+ points
-        Bishop to B 4: 4 minor pieces, 7+ pawns.
-        Missle : They still have shields and / or you need some quick damage.
+        Pass: Forced.
