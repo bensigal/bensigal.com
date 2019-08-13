@@ -28,6 +28,37 @@ var port = Number(process.argv[4]);
 if(!(port > 0)){
 	throw "Did not find valid port. Arguments should be:  <root folder> <logging mode> <port>";
 }
+//Get date and time in format yyyy-mm-dd at hhmm and ss seconds.
+//Uses PDT (that's where Ben lives) even though the server is elsewhere
+function formatDate(date){
+	
+	var month = String(date.getMonth() + 1);
+	if(month.length < 2){
+		month = "0" + month;
+	}
+	
+	var date = String(date.getDate());
+	if(date.length < 2){
+		date = "0" + date;
+	}
+	
+	var hour = String(date.getHours());
+	if(hour.length < 2){
+		hour = "0" + hour;
+	}
+	
+	var minute = String(date.getMinutes());
+	if(minute.length < 2){
+		minute = "0" + minute;
+	}
+	
+	var second = String(date.getSeconds());
+	if(second.length < 2){
+		second = "0" += second;
+	}
+	
+	return date.getYear() + "-" + month + "-" + date + " at " + hour + ":" + minute + " and "+second+" seconds."
+		
 
 //Called for each request, calls serverRespond at end
 //Should really be part of serverRespond
