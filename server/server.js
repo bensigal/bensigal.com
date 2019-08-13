@@ -59,6 +59,7 @@ function formatDate(date){
 	
 	return date.getYear() + "-" + month + "-" + date + " at " + hour + ":" + minute + " and "+second+" seconds."
 		
+}
 
 //Called for each request, calls serverRespond at end
 //Should really be part of serverRespond
