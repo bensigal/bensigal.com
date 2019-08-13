@@ -54,7 +54,7 @@ function formatDate(date){
 	
 	var second = String(date.getSeconds());
 	if(second.length < 2){
-		second = "0" += second;
+		second = "0" + second;
 	}
 	
 	return date.getYear() + "-" + month + "-" + date + " at " + hour + ":" + minute + " and "+second+" seconds."
