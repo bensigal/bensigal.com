@@ -24,6 +24,11 @@ var startTime = new Date().getTime();
 //0: no logging, 1: log to console, 2: log to files
 var logging = process.argv[3];
 
+var port = Number(process.argv[4]);
+if(!(port > 0)){
+	throw "Did not find valid port. Arguments should be:  <root folder> <logging mode> <port>";
+}
+
 //Called for each request, calls serverRespond at end
 //Should really be part of serverRespond
 function prepareLogs(req, res){
