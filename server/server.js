@@ -15,6 +15,7 @@ var numberOfRequests = 0;
 var sessionIds= [];
 //Objects. Associated array with sessionIds
 var sessions  = [];
+//Base directory of server, parent of /www and /server
 var root = process.argv[2];
 //Given to tunnels
 var serverInfo = {};
@@ -27,6 +28,7 @@ var logging = process.argv[3];
 //Should really be part of serverRespond
 function prepareLogs(req, res){
 	
+	//Index of this request, starting from 0
 	req.serverOrder = numberOfRequests++;
 	
 	if(logging == 1 || logging == 2) console.log("Request "+req.serverOrder+" recieved: "+req.url);
@@ -81,6 +83,7 @@ function prepareLogs(req, res){
 }
 function serverRespond(req, res){
 	
+	
 	req.path=url.parse(req.url).pathname.toLowerCase();
 	
 	req.lastPath = req.path;
@@ -91,28 +94,32 @@ function serverRespond(req, res){
 		req.path="/";
 		//Do not send redirect; most browsers redirect example.com/ to example.com
 	}
+	//Redirect index.html.var, which is an incorrect link to the homepage, to /
 	if(req.path=="/index.html.var"){//Proxy index from .htaccess
         req.log("Request is for index.html.var, redirecting to /");
 		req.path="/";
-		//Do not send redirect; most browsers redirect example.com/ to example.com
 	}
 	
 	req.cookies=parseCookies(req);
-	var index = sessionIds.indexOf(req.cookies.sessid);
 	
+	//Check if the session with given id is found
+	var index = sessionIds.indexOf(req.cookies.sessid);
+	//If so, give the information on the session to the request object
 	if(req.cookies.sessid&&index!=-1){
 		req.session=sessions[index];
 		req.log("Session found with id "+ req.session.id);
-	}else{
+	}
+	//If not, create a new session and give a cookie so the client remembers it.
+	else{
 		req.session=new Session();
 		res.setHeader('Set-Cookie','sessid='+req.session.id);
 	}
 	if(req.method=="POST"){
-		//If there is no data...
+		//If there is no data, act like it's a GET request
 		if(!req.headers["content-type"] || !(Number(req.headers["content-length"]))){
 			req.method = "GET";
 		}
-		//If there is data, and it's multipart
+		//If there is data, and it's multipart, parse it with the module multiparty
 		else if(req.headers["content-type"].startsWith("multipart/form-data")){
 			req.log("POST multipart/form-data");
 			req.log("Waiting for body before sending through tunnel...");
@@ -128,7 +135,9 @@ function serverRespond(req, res){
 				req.log(req.post);
 				sendThroughTunnel(req,res,"/");
 			});
-		}else{
+		}
+		//If there is data and it's not multipart, parse it as a querystring and put the object in req.post
+		else{
 			var body = "";
 			req.on('data', function(data){
 				body+=data;
@@ -145,6 +154,8 @@ function serverRespond(req, res){
 			req.log("Waiting for body before sending through tunnel...");
 		}
 	}
+	//If the method was POST, the request will be sent through the / tunnel once the data are processed.
+	//If it isn't POST, send it now.
 	if(req.method!="POST"){
 		sendThroughTunnel(req,res,"/");
 	}
@@ -153,18 +164,20 @@ function serverRespond(req, res){
 function defaultTunnel(req, res, whereis, options){
 
 	req.log("At default tunnel at "+whereis+ " with options "+benSpect(options));
-
 	
 	options = options || {};
-	indexFile=options.indexFile||"index.html";
+	indexFile = options.indexFile||"index.html";
 
+	//Find out if whereis is a legitimate folder
 	fs.stat(root + "www" + whereis,function(err,stat){
 		//File Not Found
 		if(err&&err.code=="ENOENT"){
 			req.log("Location of current tunnel not found.");
 			showErrorPage(404, req, res);
 			return;
-		}else if (err){
+		}
+		//Other error
+		else if (err){
 			req.err("Error finding current location.");
 			req.err(e.stack);
 			showErrorPage(500);
@@ -174,12 +187,15 @@ function defaultTunnel(req, res, whereis, options){
 		//If there is obviously another folder to go through...
 		if(countSlashes(req.path)>countSlashes(whereis)){
 			
+			//The rest of the url
 			relativeUrl=req.path.substring(whereis.length);
+			//The rest of the url until you hit a slash
 			nextDir = relativeUrl.substring(0,relativeUrl.indexOf("/")+1);
 			//Go through the next folder's tunnel.
-			req.log("Found another supposed folder ("+nextDir+". Sending through tunnel.");
+			req.log("Found another supposed folder ("+nextDir+"). Sending through tunnel.");
 			sendThroughTunnel(req, res, whereis+nextDir);
-		//If this is the requested destination...
+			
+		//If this is the requested destination, send the index file
 		}else if(req.path==whereis){
 		    
 			req.log("Current location is request. Sending index file.");
@@ -199,6 +215,7 @@ function defaultTunnel(req, res, whereis, options){
 			
 			req.log("Searching for "+req.path);
 			
+			//See if this is a shortcut for something else. If so, cchange req.path to the actual location.
 			if(options.links){
                 req.log("Searching for a link from "+req.path.substring(req.path.lastIndexOf("/")+1));
                 var linkEnd = options.links[req.path.substring(req.path.lastIndexOf("/")+1)];
@@ -209,12 +226,13 @@ function defaultTunnel(req, res, whereis, options){
                 }
 			}
 			
+			//Figure out what's at the url
 			fs.stat(root + "www" + req.path,function statCallback(err,stats){
 				if(err&&err.code=="ENOENT"){
 				    //File Not Found
 					showErrorPage(404, req, res);
 				}else if(err){
-				    //Could not read whether there is a file.
+				    //Other error
 					req.err(err.stack);
 					showErrorPage(500, req, res);
 				}else if(stats.isDirectory()){
@@ -231,10 +249,11 @@ function defaultTunnel(req, res, whereis, options){
 					req.log("Found directory");
 					sendThroughTunnel(req, res, req.path);				
 				}else if(req.path.endsWith(".node.js")){
-					req.log("Node js file found.");
+					req.log("Node js file found, showing 403.");
+					//Stop the client from seeing or executing the code for the server
 					showErrorPage(403, req, res);
-					//TODO require("www"+req.path)(req,res);
 				}else{
+					//There is a file here. Send it.
 					getFile(req.path, req, res);
 				}
 			});
@@ -251,12 +270,18 @@ var messages = [
 	"Internal Server Error"
 ];
 
+//Show an error page and send the appropriate error code.
 function showErrorPage(errorCode, req, res, showAsText){
+	
 	req.log("Showing error "+errorCode);
+	
+	//If the error code isn't supported, send a 501 error.
 	if(supportedErrorCodes.indexOf(errorCode) < 0){
 	    errorCode = 501;
 	}
+	
 	res.statusCode=errorCode;
+	
 	if(!showAsText){
 		fs.readFile("www/"+errorCode+".shtml",function readErrorPageCallback(err, data){
 			if(err){
@@ -268,15 +293,14 @@ function showErrorPage(errorCode, req, res, showAsText){
 			res.setHeader('Content-Length',data.length);
 			res.end(data);
 		});
-	}else if(showAsText=="INFO" || !showAsText){
-		res.end("Error "+errorCode);
 	}else{
-		req.err("Unknown showAsText value.");
-		showErrorPage(500,req,res);
+		res.end("Error "+errorCode);
 	}
 }
+
 //Send the file at path
 function getFile(path,req,res,options){
+	
 	options=options||{};
 	req.log("Sending "+path+" with options "+benSpect(options));
 	
@@ -295,7 +319,7 @@ function getFile(path,req,res,options){
 				showErrorPage(404, req, res);
 			}
 		}else if(err){
-		    //Other error. Uncommon.
+		    //Error besides file not found, show a generic 500
 			req.err(err.stack);
 			showErrorPage(500, req, res);
 		}else{
@@ -339,9 +363,14 @@ function redirect(path, req, res, options){
 	res.writeHead(options.statusCode, {Location: path});
 	res.end();
 }
+
+//The request has reached this folder along its path to the correct file. If there is a tunnel.node.js, use that, otherwise, use defaultTunnel.
 function sendThroughTunnel(req, res, path){
+	
 	req.log("Sending through tunnel "+path);
 	var nextTunnel = null;
+	
+	//Try to get the tunnel.node.js
 	try{
 		nextTunnel = require(root+"www"+path+"tunnel.node.js");
 		if(nextTunnel.init && !nextTunnel.didInit){
@@ -349,6 +378,7 @@ function sendThroughTunnel(req, res, path){
 		    nextTunnel.didInit = true;
 		}
 	}catch(e){
+		//If not found, or another error, use defaultTunnel
 		if(e.code=="MODULE_NOT_FOUND"){
 			req.log("Tunnel not found at "+root+"www"+path+"tunnel.node.js");
 		}else{
@@ -379,10 +409,12 @@ function sendThroughTunnel(req, res, path){
 		defaultTunnel(req,res,path);
 	}
 }
+
+//count slashes in string
 function countSlashes(input){
 	return (input.match(/\/.?/g)||[]).length //.? at end of regex is to stop syntax highlight from reading comment.
 }
-//Got this from... Somewhere. Sorry, citation got lost somewhere. All credit goes to whoever wrote this.
+//Got this from... somewhere. Sorry, citation got lost somewhere. All credit goes to whoever wrote this. Returns an object when given a cookie string.
 function parseCookies (request) {
     var list = {},
         rc = request.headers.cookie;
@@ -398,7 +430,9 @@ function parseCookies (request) {
 //Constructor for a session. Has a property id, which is pushed into sessionIds, and 
 //the session is pushed into sessions. Other data should be added dynamically.
 var Session = function(id){
+	//The value that will be given to the client to identify their session.
 	this.id=id||require('crypto').randomBytes(48).toString('hex')
+	//Add the id and this object to arrays. The id will be used to locate this object, which will contain other information on the client.
 	sessionIds.push(this.id);
 	sessions.push(this);
 }
@@ -408,27 +442,31 @@ var Session = function(id){
 if(logging){
 	fs.mkdir(root + "server/logs/"+startTime,function(err){
 		if(err) throw err;
-		httpServer.listen(8000, function(){
-			console.log("Server listening on localhost:8000! Let's serve some files!");
+		httpServer.listen(port, function(){
+			console.log("Server listening on localhost:"+port+"! Let's serve some files!");
 		});
 	});
 }else{
-	httpServer.listen(8000, function(){
-		console.log("Server listening on localhost:8000! Let's serve some files!");
+	httpServer.listen(port, function(){
+		console.log("Server listening on localhost:"+port+"! Let's serve some files!");
 	});
 }
+
+//Make a readable string representing an object
 function benSpect(obj){
 	return util.inspect(obj,{depth:null});
 }
+
+function purgeCache(path){
+    delete require.cache[path];
+}
+
+//Put these variables in serverInfo to be passed to tunnels
 function exportRefs(){
 	for(var i = 0; i < arguments.length; i+=2){
 		serverInfo[arguments[i]]=arguments[i+1];
 	}
 }
-function purgeCache(path){
-    delete require.cache[path];
-}
-//Now handled by tunnels
 exportRefs(
 	"showErrorPage",	showErrorPage,
 	"defaultTunnel",	defaultTunnel,
@@ -448,4 +486,5 @@ exportRefs(
 	"purgeCache", purgeCache
 );
 
-require(root+"www/trailblazer/tunnel.node.js").init(serverInfo);//tunnel has to load a couple files, do this before first time is called
+
+require(root+"www/trailblazer/tunnel.node.js").init(serverInfo);//This tunnel should have a bit of time to load a couple files before called for the first time, so do it now 
