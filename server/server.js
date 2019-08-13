@@ -36,7 +36,7 @@ function prepareLogs(req, res){
 	//Index of this request, starting from 0
 	req.serverOrder = numberOfRequests++;
 	
-	if(logging == 1 || logging == 2) console.log("Request "+req.serverOrder+" recieved: "+req.url);
+	if(logging == 1 || logging == 2) console.log("Request "+req.serverOrder+" recieved for "+req.url+", at "+new Date().dateString);
 	
 	//Create directory for logs, when ready respond to server
 	if(logging == 2){
