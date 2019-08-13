@@ -163,10 +163,8 @@
 						}else{
                             location.href = "/"
 						}
-                    }else if(data == "false"){
-						alert("Login failed!");
-					}else{
-						alert("Login failed: "+data);
+                    }else if(data != "false"){
+						alert("Login test failed: "+data);
 					}
                 });
 			}
