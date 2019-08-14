@@ -30,35 +30,35 @@ if(!(port > 0)){
 }
 //Get date and time in format yyyy-mm-dd at hhmm and ss seconds.
 //Uses PDT (that's where Ben lives) even though the server is elsewhere
-function formatDate(date){
+function formatDate(input){
 	
-	var month = String(date.getMonth() + 1);
+	var month = String(input.getMonth() + 1);
 	if(month.length < 2){
 		month = "0" + month;
 	}
 	
-	var date = String(date.getDate());
+	var date = String(input.getDate());
 	if(date.length < 2){
 		date = "0" + date;
 	}
 	
-	var hour = String(date.getHours());
+	var hour = String(input.getHours());
 	if(hour.length < 2){
 		hour = "0" + hour;
 	}
 	
-	var minute = String(date.getMinutes());
+	var minute = String(input.getMinutes());
 	if(minute.length < 2){
 		minute = "0" + minute;
 	}
 	
-	var second = String(date.getSeconds());
+	var second = String(input.getSeconds());
 	if(second.length < 2){
 		second = "0" + second;
 	}
 	
-	return date.getYear() + "-" + month + "-" + date + " at " + hour + ":" + minute + " and "+second+" seconds."
-		
+	return input.getYear() + "-" + month + "-" + date + " at " + hour + ":" + minute + " and "+second+" seconds."
+
 }
 
 //Called for each request, calls serverRespond at end
@@ -68,7 +68,9 @@ function prepareLogs(req, res){
 	//Index of this request, starting from 0
 	req.serverOrder = numberOfRequests++;
 	
-	if(logging == 1 || logging == 2) console.log("Request "+req.serverOrder+" recieved for "+req.url+", at "+new Date().dateString);
+	if(logging == 1 || logging == 2){
+		console.log("Request "+req.serverOrder+" recieved for "+req.url+", at " + formatDate(new Date()) );
+	}
 	
 	//Create directory for logs, when ready respond to server
 	if(logging == 2){
