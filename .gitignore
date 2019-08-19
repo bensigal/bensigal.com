@@ -5,6 +5,7 @@
 !README
 !.gitignore
 !node_modules/
+node_modules/*/.git/*
 *.mp4
 /www/homework.txt
 /www/.codetasty
