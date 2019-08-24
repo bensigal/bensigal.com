@@ -14,45 +14,29 @@ $(function(){
     addCourse(7, "&nbsp;&nbsp;&nbsp;&nbsp;Physics 1AH Dis 1A", sciD, [
         new Time(THURSDAY, 8)
     ], "Phys 1A Dis");
-    addCourse(1, "Physics 1A - Mornings (lecture 1 or 2)", sci, [
-        new Time(MONDAY, 8),
-        new Time(TUESDAY, 8),
-        new Time(WEDNESDAY, 8),
-        new Time(FRIDAY, 8),
-    ], "Physics 1A");
-    addCourse(2, "&nbsp;&nbsp;&nbsp;&nbsp;Physics 1A Dis 1A", sciD, [
-        new Time(TUESDAY, 2)
-    ], "Phys 1A Dis");
-    addCourse(3, "&nbsp;&nbsp;&nbsp;&nbsp;Physics 1A Dis 1B", sciD, [
-        new Time(TUESDAY, 3)
-    ], "Phys 1A Dis");
-    addCourse(4, "&nbsp;&nbsp;&nbsp;&nbsp;Physics 1A Dis 1C", sciD, [
-        new Time(TUESDAY, 4)
-    ], "Phys 1A Dis");
-    addCourse(5, "&nbsp;&nbsp;&nbsp;&nbsp;Physics 1A Dis 1D", sciD, [
-        new Time(THURSDAY, 3)
-    ], "Phys 1A Dis");
-    addCourse(6, "&nbsp;&nbsp;&nbsp;&nbsp;Physics 1A Dis 1E", sciD, [
-        new Time(THURSDAY, 4)
-    ], "Phys 1A Dis");
-    addCourse(8, "Intro to Computer Science I - Noon (lecture 1)", otherSci, [
-        new Time(MONDAY, [12, 1]),
-        new Time(WEDNESDAY, [12, 1])
-    ], "CS 31");
-    addCourse(13, "Intro to Computer Science I - Afternoon (lecture 2)", otherSci, [
-        new Time(MONDAY, [4, 5]),
-        new Time(WEDNESDAY, [4, 5])
-    ], "CS 31");
-    addCourse(9, "&nbsp;&nbsp;&nbsp;&nbsp;Intro to CS I Dis A/B/C", otherSciD, [
-        new Time(FRIDAY, [10, 11])
-    ], "CS 31 Dis");
-    addCourse(10, "&nbsp;&nbsp;&nbsp;&nbsp;Intro to CS I Dis D/E/F", otherSciD, [
-        new Time(FRIDAY, [12, 1])
-    ], "CS 31 Dis");
-    addCourse(11, "&nbsp;&nbsp;&nbsp;&nbsp;Intro to CS I Dis G/H", otherSciD, [
-        new Time(FRIDAY, [2, 3])
-    ], "CS 31 Dis");
     addCourse(12, "Electrical Engineering 1 Seminar", other, [
         new Time(WEDNESDAY, 5)
     ], "EC ENGR 1");
+	addCourse(1, "Math 32A", sci, [
+		new Time(MONDAY, 2),
+		new Time(WEDNESDAY, 2),
+		new Time(FRIDAY, 2)
+	]);
+	addCourse(2, "&nbsp;&nbsp;&nbsp;&nbsp;Math 32A Dis 4B", sciD, [
+		new Time(THURSDAY, 2)
+	], "Math 32A D");
+	addCourse(3, "History 11B", other, [
+		new Time(MONDAY, 11),
+		new Time(WEDNESDAY, 11),
+		new Time(FRIDAY, 11)
+	]);
+	addCourse(4, "&nbsp;&nbsp;&nbsp;&nbsp;History 11B Dis 1C", otherD, [
+		new Time(FRIDAY, 12)
+	], "History 11BD");
+	addCourse(5, "Engineering 96", otherSci, [
+		new Time(FRIDAY, 9)
+	]);
+	addCourse(6, "Engineering 96D", otherSci, [
+		new Time(FRIDAY, 10)
+	]);
 });
