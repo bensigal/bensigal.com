@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Programming at bensigal.com</title>
+        <link rel="stylesheet" type="text/css" href="/home.css">
+        <script src="/jquery.min.js"></script>
+        <script>
+            $(function(){
+                $("#gitHubItem").click(function(){
+                    location.href="https://github.com/bensigal/bensigal.com";
+                });
+                $("#editorItem").click(function(){
+                    location.href="/edit/";
+                });
+                $("#gameItem").click(function(){
+                    location.href="/game/";
+                });
+                $("#squirrelItem").click(function(){
+                    location.href="/squirrel/";
+                })
+                $("#adminItem").click(function(){
+                    location.href="/portal/";
+                });
+                $("#xwingItem").click(function(){
+                    location.href="/xwing/";
+                });
+                $("#zoneItem").click(function(){
+                    location.href="/zone/";
+                });
+                $("#circleItem").click(function(){
+                    location.href="/circle/";
+                });
+                $("#poloniusItem").click(function(){
+                    location.href="/polonius/";
+                });
+            });
+        </script>
+    </head>
+    <body>
+		<div id="logoHolder">
+			<a href="/">
+				<img id="logo" src="images/logo.png">
+			</a>
+		</div>
+		<div id="navigation">
+			<a href="/">
+				<div>Home</div>
+			</a>
+			<a href="/games">
+				<div>Games</div>
+			</a>
+			<a href="/tools">
+				<div>Tools</div>
+			</a>
+			<a href="/programming">
+				<div>Programming</div>
+			</a>
+		</div>
+        <div id="all">
+            <div class="item" id="gitHubItem">
+                <div class="itemDescription">
+                    <p class="itemHeader">
+                        GitHub
+                    </p>
+                    <p class="itemFinerDescription">
+                        Look at the source code for this website at GitHub.
+                    </p>
+                </div>
+                <img src="/images/github.png" class="middlePicture">
+            </div>
+            <div class="item" id="editorItem">
+                <img src="/images/editor.png" class="middlePicture">
+                <div class="itemDescription">
+                    <p class="itemHeader">
+                        Editor
+                    </p>
+                    <p class="itemFinerDescription">
+                        A text editor used to edit files on this website. This feature is available only to users with a login.
+                    </p>
+                </div>
+            </div>
+            <div class="item" id="postToolItem">
+                <div class="itemDescription">
+                    <p class="itemHeader">
+                        Post Tools
+                    </p>
+                    <p class="itemFinerDescription">
+                        Send post requests to other pages on this website. This tool is unlikely to be very useful to anyone without a login. Additionally, an intuitive user interface has not yet been added.
+                    </p>
+                </div>
+                <img src="/images/posttool.png" class="middlePicture">
+            </div>
+        </div>
+    </body>
+</html>
