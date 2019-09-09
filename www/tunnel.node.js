@@ -4,7 +4,7 @@ module.exports = function(req, res, server, whereis){
 		meep: "includes/meep.html",
 		seconds: "includes/seconds.html",
 		games: "includes/games.html",
-		programming: "includes/programming.html"
+		tools: "includes/tools.html"
 	}});
     
 }

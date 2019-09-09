@@ -12,26 +12,8 @@
                 $("#editorItem").click(function(){
                     location.href="/edit/";
                 });
-                $("#gameItem").click(function(){
-                    location.href="/game/";
-                });
-                $("#squirrelItem").click(function(){
-                    location.href="/squirrel/";
-                })
-                $("#adminItem").click(function(){
-                    location.href="/portal/";
-                });
-                $("#xwingItem").click(function(){
-                    location.href="/xwing/";
-                });
-                $("#zoneItem").click(function(){
-                    location.href="/zone/";
-                });
-                $("#circleItem").click(function(){
-                    location.href="/circle/";
-                });
-                $("#poloniusItem").click(function(){
-                    location.href="/polonius/";
+                $("#postToolItem").click(function(){
+                    location.href="/server/post.html";
                 });
             });
         </script>
@@ -44,16 +26,13 @@
 		</div>
 		<div id="navigation">
 			<a href="/">
-				<div>Home</div>
+				<div class="rightBorder">Home</div>
 			</a>
 			<a href="/games">
-				<div>Games</div>
+				<div class="rightBorder">Games</div>
 			</a>
 			<a href="/tools">
-				<div>Tools</div>
-			</a>
-			<a href="/programming">
-				<div>Programming</div>
+				<div id="toolsDiv">Tools/Programming</div>
 			</a>
 		</div>
         <div id="all">

@@ -15,18 +15,6 @@
                 $("#gameItem").click(function(){
                     location.href="/game/";
                 });
-                $("#squirrelItem").click(function(){
-                    location.href="/squirrel/";
-                })
-                $("#adminItem").click(function(){
-                    location.href="/portal/";
-                });
-                $("#githubItem").click(function(){
-                    location.href="https://github.com/bensigal/bensigal.com";
-                });
-                $("#xwingItem").click(function(){
-                    location.href="/xwing/";
-                });
                 $("#zoneItem").click(function(){
                     location.href="/zone/";
                 });
@@ -47,16 +35,13 @@
 		</div>
 		<div id="navigation">
 			<a href="/">
-				<div>Home</div>
+				<div class="rightBorder">Home</div>
 			</a>
 			<a href="/games">
-				<div>Games</div>
+				<div class="rightBorder">Games</div>
 			</a>
 			<a href="/tools">
-				<div>Tools</div>
-			</a>
-			<a href="/programming">
-				<div>Programming</div>
+				<div id="toolsDiv">Tools/Programming</div>
 			</a>
 		</div>
         <div id="all">
@@ -123,28 +108,6 @@
                     </p>
                     <p class="itemFinerDescription">
                         Using the arrow keys to move, avoid the red rectangles, using the green powerups to help you on your way. A second player can use WASD to have an invincible blue rectangle slowly chase after player 1.
-                    </p>
-                </div>
-            </div>
-            <div class="item" id="squirrelItem">
-                <div class="itemDescription">
-                    <p class="itemHeader">
-                        Squirrel
-                    </p>
-                    <p class="itemFinerDescription">
-                        A variant of /game. Using the arrow keys to move, avoid the brocolli, using the delicious oranges to help you on your way.
-                    </p>
-                </div>
-                <img src="/images/squirrel.png" class="middlePicture">
-            </div>
-            <div class="item" id="xwingItem">
-                <img src="/images/beaker.jpg" class="middlePicture">
-                <div class="itemDescription">
-                    <p class="itemHeader">
-                        X-Wing Game
-                    </p>
-                    <p class="itemFinerDescription">
-                        A version of Game with a cooler sprite.
                     </p>
                 </div>
             </div>
