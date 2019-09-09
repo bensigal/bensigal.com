@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Spender</title>
+        <link rel="stylesheet" type="text/css" href="/spender/style.css">
+        <script src="/jquery.min.js"></script>
+        <script src="/spender/script.js"></script>
+    </head>
+    <body>
+        <table id="mainTable">
+            <tr id="resourceRow">
+                <td id="leftResources">
+                    <table id="leftResourcesTable" class="resourcesTable">
+                        <tr class="woodRow">
+                            <td class="resourceName"><img src="/spender/images/wood.png"></td>
+                            <td class="amount">0</td>
+                            <td class="buttonHolder" data-name="wood">
+                                <button data-action="buy">Buy</button>
+                                <button data-action="sell">Sell</button>
+                                <button data-action="quickbuy">Quickbuy</button>
+                                <button data-action="autobuy">Autobuy</button>
+                            </td>
+                        </tr>
+                        <tr class="stoneRow">
+                            <td class="resourceName"><img src="/spender/images/stone.png"></td>
+                            <td class="amount">0</td>
+                            <td class="buttonHolder" data-name="stone">
+                                <button data-action="buy">Buy</button>
+                                <button data-action="sell">Sell</button>
+                                <button data-action="quickbuy">Quickbuy</button>
+                                <button data-action="autobuy">Autobuy</button>
+                            </td>
+                        </tr>
+                        <tr class="ironRow">
+                            <td class="resourceName"><img src="/spender/images/iron.png"></td>
+                            <td class="amount">0</td>
+                            <td class="buttonHolder" data-name="iron">
+                                <button data-action="buy">Buy</button>
+                                <button data-action="sell">Sell</button>
+                                <button data-action="quickbuy">Quickbuy</button>
+                                <button data-action="autobuy">Autobuy</button>
+                            </td>
+                        </tr>
+                        <tr class="goldRow">
+                            <td class="resourceName"><img src="/spender/images/gold.png"></td>
+                            <td class="amount">0</td>
+                            <td class="buttonHolder" data-name="gold">
+                                <button data-action="buy">Buy</button>
+                                <button data-action="sell">Sell</button>
+                                <button data-action="quickbuy">Quickbuy</button>
+                                <button data-action="autobuy">Autobuy</button>
+                            </td>
+                        </tr>
+                        <tr class="diamondRow">
+                            <td class="resourceName"><img src="/spender/images/diamond.png"></td>
+                            <td class="amount">0</td>
+                            <td class="buttonHolder" data-name="diamond">
+                                <button data-action="buy">Buy</button>
+                                <button data-action="sell">Sell</button>
+                                <button data-action="quickbuy">Quickbuy</button>
+                                <button data-action="autobuy">Autobuy</button>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td id="rightResources">
+                    <table id="rightResourcesTable" class="resourcesTable">
+                        <tr class="woodRow">
+                            <td class="buttonHolder" data-name="wood">
+                                <button data-action="buy">Buy</button>
+                                <button data-action="sell">Sell</button>
+                                <button data-action="quickbuy">Quickbuy</button>
+                                <button data-action="autobuy">Autobuy</button>
+                            </td>
+                            <td class="amount">0</td>
+                            <td class="resourceName"><img src="/spender/images/wood.png"></td>
+                        </tr>
+                        <tr class="stoneRow">
+                            <td class="buttonHolder" data-name="stone">
+                                <button data-action="buy">Buy</button>
+                                <button data-action="sell">Sell</button>
+                                <button data-action="quickbuy">Quickbuy</button>
+                                <button data-action="autobuy">Autobuy</button>
+                            </td>
+                            <td class="amount">0</td>
+                            <td class="resourceName"><img src="/spender/images/stone.png"></td>
+                        </tr>
+                        <tr class="ironRow">
+                            <td class="buttonHolder" data-name="iron">
+                                <button data-action="buy">Buy</button>
+                                <button data-action="sell">Sell</button>
+                                <button data-action="quickbuy">Quickbuy</button>
+                                <button data-action="autobuy">Autobuy</button>
+                            </td>
+                            <td class="amount">0</td>
+                            <td class="resourceName"><img src="/spender/images/iron.png"></td>
+                        </tr>
+                        <tr class="goldRow">
+                            <td class="buttonHolder" data-name="gold">
+                                <button data-action="buy">Buy</button>
+                                <button data-action="sell">Sell</button>
+                                <button data-action="quickbuy">Quickbuy</button>
+                                <button data-action="autobuy">Autobuy</button>
+                            </td>
+                            <td class="amount">0</td>
+                            <td class="resourceName"><img src="/spender/images/gold.png"></td>
+                        </tr>
+                        <tr class="diamondRow">
+                            <td class="buttonHolder" data-name="diamond">
+                                <button data-action="buy">Buy</button>
+                                <button data-action="sell">Sell</button>
+                                <button data-action="quickbuy">Quickbuy</button>
+                                <button data-action="autobuy">Autobuy</button>
+                            </td>
+                            <td class="amount">0</td>
+                            <td class="resourceName"><img src="/spender/images/diamond.png"></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr id="infoRow">
+                <td id="leftInfo" class="info">
+                    <div class="factoryInfo">Makes $0 per turn automatically.</div>
+                    <div class="moneyInfo">
+                        <span>$800</span>
+                    </div>
+                </td>
+                <td id="rightInfo" class="info">
+                    <div class="moneyInfo">
+                        <span>$1000</span>
+                    </div>
+                    <div class="factoryInfo">Makes $0 per turn automatically.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" id="cardsForSaleTD">
+                    <table id="cardsForSaleTable">
+                        <tr id="cardsForSaleRow">
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
