@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="/jquery.min.js"></script>
+    <script src="classes.js"></script>
+    <script src="courses.js"></script>
+    <script src="events.js"></script>
+    <style>
+        #canvas{
+            width: 800px;
+            height: 500px;
+            margin: 0 auto;
+            border: 1px solid black;
+            display: block;
+            position: fixed;
+            top: 20px;
+            left: calc(50vw - 400px);
+            background-color: white;
+        }
+        #courses{
+            position: fixed;
+            background-color: white;
+            top: 540px;
+            height: calc(100vh - 540px);
+            overflow-y: scroll;
+            width: 100%;
+        }
+    </style>
+    <title>Course Timer</title>
+</head>
+<body>
+    <canvas id="canvas">You need to upgrade your browser or enable HTML5 canvas.</canvas>
+    <div id="courses"></div>
+</body>
+</html>
