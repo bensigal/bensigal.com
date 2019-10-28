@@ -39,34 +39,38 @@ function generateSchedule(){
     
     //For each checked course
     $("input:checked").each(function(){
+		
         //the course id is the id of the element, ignoring the first 6 letters ("course")
         console.log($(this))
         var id = $(this).parent().attr("id").substring(6);
         var course = courses[id]
+		
         //For each of the Time objects in the course...
         course.times.forEach(function(time){
-            var day = time.day;
-            //For each of the hours in the time object...
-            time.hours.forEach(function(hour){
-                //If it's already occupied, fill it black and write ERROR.
-                if(timesOccupied[day][hour]){
-                    ctx.fillStyle = "#000";
-                    ctx.fillRect(dayToX(day), hourToY(hour), canvas.width/6, canvas.height/12);
-                    ctx.fillStyle = "white";
-                    ctx.fillText("OVERLAP", dayToX(day)+canvas.width/12, hourToY(hour) + canvas.height/24);
-                    $("body").css("background-color", "#FCC");
-                }
-                //Otherwise, set the space to occupied, fill it black, and write shortName in white.
-                else{
-                    timesOccupied[day][hour] = true;
-                    
-                    ctx.fillStyle = course.color;
-                    ctx.fillRect(dayToX(day), hourToY(hour), canvas.width/6, canvas.height/12);
-                    
-                    ctx.fillStyle = "white";
-                    ctx.fillText(course.shortName, dayToX(day)+canvas.width/12, hourToY(hour) + canvas.height/24);
-                }
-            });
+			//For each day...
+			time.days.forEach(function(day){
+				//For each of the hours in the time object...
+				time.hours.forEach(function(hour){
+					//If it's already occupied, fill it black and write ERROR.
+					if(timesOccupied[day][hour]){
+						ctx.fillStyle = "#000";
+						ctx.fillRect(dayToX(day), hourToY(hour), canvas.width/6, canvas.height/12);
+						ctx.fillStyle = "white";
+						ctx.fillText("OVERLAP", dayToX(day)+canvas.width/12, hourToY(hour) + canvas.height/24);
+						$("body").css("background-color", "#FCC");
+					}
+					//Otherwise, set the space to occupied, fill it black, and write shortName in white.
+					else{
+						timesOccupied[day][hour] = true;
+						
+						ctx.fillStyle = course.color;
+						ctx.fillRect(dayToX(day), hourToY(hour), canvas.width/6, canvas.height/12);
+						
+						ctx.fillStyle = "white";
+						ctx.fillText(course.shortName.replace(/TAB/g, ""), dayToX(day)+canvas.width/12, hourToY(hour) + canvas.height/24);
+					}
+				});
+			});
         });
     });
     
