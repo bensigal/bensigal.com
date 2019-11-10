@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Course Planner</title>
+    <script src="/jquery.min.js"></script>
+    <script src="/lib/jqui/jquery-ui.min.js"></script>
+    <script src="classes.js"></script>
+    <script src="courses.js"></script>
+    <script src="events.js"></script>
+    <link rel="stylesheet" type="text/css" href="/lib/jqui/jquery-ui.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+    <div id="top">
+        <div id="buttonHolder">
+            <button id="viewData">View Data</button>
+            <button id="loadFromData">Load from Data</button>
+            <button id="save">Save (requires login)</button>
+            <button id="open">Open Saved File</button>
+        </div>
+        <div id="depo"></div>
+    </div>
+    <div id="scrollable">
+        <table>
+            <tr id="freshman">
+                <td><div id="freshmanFall" class="box">
+                    <h3>Credits: 0</h3>
+                    <div class="courseHolder"></div>
+                </div></td>
+                <td><div id="freshmanWinter" class="box">
+                    <h3>Credits: 0</h3>
+                    <div class="courseHolder"></div>
+                </div></td>
+                <td><div id="freshmanSpring" class="box">
+                    <h3>Credits: 0</h3>
+                    <div class="courseHolder"></div>
+                </div></td>
+            </tr>
+            <tr id="sophomore">
+                <td><div id="sophomoreFall" class="box">
+                    <h3>Credits: 0</h3>
+                    <div class="courseHolder"></div>
+                </div></td>
+                <td><div id="sophomoreWinter" class="box">
+                    <h3>Credits: 0</h3>
+                    <div class="courseHolder"></div>
+                </div></td>
+                <td><div id="sophomoreSpring" class="box">
+                    <h3>Credits: 0</h3>
+                    <div class="courseHolder"></div>
+                </div></td>
+            </tr>
+            <tr id="junior">
+                <td><div id="juniorFall" class="box">
+                    <h3>Credits: 0</h3>
+                    <div class="courseHolder"></div>
+                </div></td>
+                <td><div id="juniorWinter" class="box">
+                    <h3>Credits: 0</h3>
+                    <div class="courseHolder"></div>
+                </div></td>
+                <td><div id="juniorSpring" class="box">
+                    <h3>Credits: 0</h3>
+                    <div class="courseHolder"></div>
+                </div></td>
+            </tr>
+            <tr id="senior">
+                <td><div id="seniorFall" class="box">
+                    <h3>Credits: 0</h3>
+                    <div class="courseHolder"></div>
+                </div></td>
+                <td><div id="seniorWinter" class="box">
+                    <h3>Credits: 0</h3>
+                    <div class="courseHolder"></div>
+                </div></td>
+                <td><div id="seniorSpring" class="box">
+                    <h3>Credits: 0</h3>
+                    <div class="courseHolder"></div>
+                </div></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

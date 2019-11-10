@@ -1,0 +1,106 @@
+button{
+    font-size: 16px;
+    width: 170px;
+    margin: 0 10px;
+    text-align: center;
+    display: inline-block;
+}
+#buttonHolder{
+    width: auto;
+    margin: 30px auto;
+    text-align: center;
+}
+#trash{
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    margin: 25px 0 0 25px;
+}
+#top{
+    position: absolute;
+    padding: 0 0 50px 0;
+    top: 0;
+    width: 100%;
+}
+html, body{
+    padding: 0;
+    width: 100%;
+    margin: 0;
+    font-family: "Ubuntu Mono", Verdana, sans-serif;
+}
+#scrollable{
+    position: absolute;
+    width: 100%;
+    top: 200px;
+    overflow-y: scroll;
+    height: calc(100vh - 200px);
+}
+#scrollable > table{
+    width: 100%;
+}
+#scrollable > table td{
+    width: 30%;
+    margin: 0 1.5%;
+}
+.box{
+    min-width: 200px;
+    padding: 10px 0;
+    border-radius: 20px;
+    background-color: #E3E3E3;
+    text-align: center;
+}
+.courseHolder{
+    min-height: 40px;
+}
+.courseHolder .course{
+    margin: 5px calc(50% - 60px);
+}
+.courseHolder .ui-sortable-helper{
+    margin: 0;
+}
+.box h2{
+    width: 100%;
+}
+#scrollable > .box{
+    margin-top: 30px;
+}
+.course{
+    padding: 10px;
+    border-radius: 3px;
+    width: 100px;
+    text-align: center;
+    font-size: 14px;
+    z-index: 1;
+}
+.hardsci{
+    background-color: #B00;
+    color: white;
+}
+.lab{
+    background-color: #00B;
+    color: white;
+}
+.other{
+    background-color: #0B0;
+    color: white;
+}
+.othersci{
+    background-color: #D70;
+    color: white;
+}
+.required{
+    font-weight: 700;
+}
+#depo{
+    margin-left: 20px;
+    margin-right: 20px;
+    padding: 10px 0;
+    overflow-x: scroll;
+    border: 1px solid #444;
+    border-radius: 5px 5px 0 0;
+    white-space: nowrap;
+}
+#depo .course{
+    margin: 0 20px;
+    display: inline-block;
+}
