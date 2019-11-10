@@ -1,34 +1,24 @@
 class Course{
     
-    constructor(id, name, credits, type, required, description){
-        this.id = id;
+    constructor(id, name, credits, color){
+		this.id = id;
         this.name = name;
         this.credits = credits;
-        this.type = type;
-        this.description = description;
-        this.required = required;
         
         this.element = $("<div draggable='true'>")
             .addClass("course")
-            .addClass(this.type)
+            .css("background-color", color)
             .attr("id", "course"+this.id)
             .html(this.name + "<br>("+this.credits+")")
-            .on("contextmenu", (event) => {
-                event.preventDefault();
-                alert(this.description);
-            })
         ;
-        if(this.required){
-            this.element.addClass("required");
-        }
     }
     
 }
 
 var courses = [];
 
-function addCourse(id, name, credits, type, required, description){
-    var course = new Course(id, name, credits, type, required, description);
-    courses[id] = course;
+function addCourse(name, credits, color){
+    var course = new Course(courses.length, name, credits, color);
+    courses.push(course);
     course.element.appendTo($("#depo"));
 }

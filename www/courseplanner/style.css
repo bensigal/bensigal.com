@@ -71,25 +71,8 @@ html, body{
     text-align: center;
     font-size: 14px;
     z-index: 1;
-}
-.hardsci{
-    background-color: #B00;
-    color: white;
-}
-.lab{
-    background-color: #00B;
-    color: white;
-}
-.other{
-    background-color: #0B0;
-    color: white;
-}
-.othersci{
-    background-color: #D70;
-    color: white;
-}
-.required{
     font-weight: 700;
+    color: white;
 }
 #depo{
     margin-left: 20px;

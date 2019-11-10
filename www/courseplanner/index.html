@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>EE Course Planner</title>
+    <title>Course Planner</title>
     <script src="/jquery.min.js"></script>
     <script src="/lib/jqui/jquery-ui.min.js"></script>
 	<script src="/includes/touchpunch.min.js"></script>
@@ -15,9 +15,11 @@
     <div id="top">
         <div id="buttonHolder">
             <button id="viewData">View Data</button>
+			<select id="majorSelect">
+				<option selected>EE</option>
+				<option>ME</option>
+			</select>
             <button id="loadFromData">Load from Data</button>
-            <button id="save">Save (requires login)</button>
-            <button id="open">Open Saved File</button>
         </div>
         <div id="depo"></div>
     </div>
