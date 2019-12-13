@@ -11,6 +11,8 @@ var tickLayers = {
 	players: 	[],
 }
 
+var walls = [];
+
 function gameScene(dt){
 	
 	gameTick += dt;
@@ -31,5 +33,9 @@ function gameSceneSetup(){
 	player = new Player();
 	drawLayers.players.push(player);
 	tickLayers.players.push(player);
+	
+	var wall = new Wall(10, 20, 30, 40);
+	drawLayers.background.push(wall);
+	walls.push(wall);
 	
 }
