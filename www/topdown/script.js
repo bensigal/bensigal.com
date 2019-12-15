@@ -32,6 +32,7 @@ $(function(){
 });
 function animationFrame(timestamp){
     var dt = timestamp - lastTime;
+	if(dt > 100)dt = 100;
     lastTime = timestamp;
     ctx.clearRect(0,0,800,600);
     try{

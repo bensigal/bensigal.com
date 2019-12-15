@@ -34,8 +34,10 @@ function gameSceneSetup(){
 	drawLayers.players.push(player);
 	tickLayers.players.push(player);
 	
-	var wall = new Wall(10, 20, 30, 40);
-	drawLayers.background.push(wall);
-	walls.push(wall);
+	//outer walls, in order of top, left, bottom, right
+	Wall.add(0, 0, 800, 20);
+	Wall.add(0, 0, 20, 600);
+	Wall.add(0, 580, 800, 20);
+	Wall.add(780, 0, 20, 600);
 	
 }

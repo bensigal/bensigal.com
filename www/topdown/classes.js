@@ -20,21 +20,35 @@ class Rectangle{
 		
 	}
 	
-	checkCollisionWith(other){
+	checkCollisionWith(other, reverseCheck){
 		
 		//If the left side or the right side of this is in its x range...
-		if(this.leftX > other.leftX && this.leftX < other.rightX || 
-		this.rightX < other.rightX && this.rightX > other.leftX){
+		if((this.leftX > other.leftX && this.leftX < other.rightX) || 
+		(this.rightX < other.rightX && this.rightX > other.leftX)){
 			//If the top or bottom is in its y range...
-			if(this.topY > other.topY && this.topY < other.bottomY ||
-			this.bottomY > other.topY && this.bottomY < other.bottomY){
+			if((this.topY > other.topY && this.topY < other.bottomY) ||
+			(this.bottomY > other.topY && this.bottomY < other.bottomY)){
 				
 				return true;
 				
 			}
 			
 		}
-		return false;
+		//If haven't checked the other way around, do so.
+		return !reverseCheck ? other.checkCollisionWith(this, true) : false;
+	}
+	
+	checkIfSideCollidesWith(side, other){
+		switch(side){
+		case "bottom":
+			return this.bottomY	> other.topY 	&& this.bottomY	< other.bottomY;
+		case "top":
+			return this.topY   	> other.topY 	&& this.topY	< other.bottomY;
+		case "left":
+			return this.leftX 	> other.leftX 	&& this.leftX	< other.rightX;
+		case "right":
+			return this.rightX 	> other.leftX	&& this.rightX	< other.rightX;
+		}
 	}
 	
 	setX(x){
@@ -73,22 +87,44 @@ class Creature extends Rectangle{
 		this.xVel *= Math.pow(friction, dt);
 		this.yVel *= Math.pow(friction, dt);
 		
+		//Stop from going too fast
+		if(this.xVel > 0.3){
+			this.xVel = 0.3;
+		}else if(this.xVel < -0.3){
+			this.xVel = -0.3;
+		}
+		if(this.yVel > 0.3){
+			this.yVel = 0.3;
+		}else if(this.yVel < -0.3){
+			this.yVel = -0.3;
+		}
+		
 		this.setX(this.x + this.xVel * dt);
 		this.setY(this.y + this.yVel * dt);
 		
-		var wallCollision = false;
+		var collidedWalls = [];
 		walls.forEach(function(wall){
 			if(wall.checkCollisionWith(this)){
-				wallCollision = true;
+				collidedWalls.push(wall);
 			}
 		}, this);
 		
-		if(wallCollision){
-			this.setX(this.x - this.xVel * dt * 1);
-			this.setY(this.y - this.yVel * dt * 1);
-			this.xVel = 0;
-			this.yVel = 0;
-		}
+		collidedWalls.forEach(function(collidedWall){
+			
+			var b = this.checkIfSideCollidesWith("bottom"	, collidedWall);
+			var t = this.checkIfSideCollidesWith("top"		, collidedWall);
+			var r = this.checkIfSideCollidesWith("right"	, collidedWall);
+			var l = this.checkIfSideCollidesWith("left"		, collidedWall);
+			
+			if((b && !t && this.yVel > 0) || (t && !b && this.yVel < 0)){
+				this.setY(this.y - this.yVel * dt);
+				this.yVel = 0;
+			}
+			if((r && !l && this.xVel > 0) || (l && !r && this.xVel < 0)){
+				this.setX(this.x - this.xVel * dt);
+				this.xVel = 0;
+			}
+		}, this);
 		
 	}
 	
@@ -155,5 +191,10 @@ class Wall extends Rectangle{
 		ctx.fillStyle = "black";
 		this.fillRect();
 	}
+}
+Wall.add = function(x, y, w, h){
+	var wall = new Wall(x, y, w, h);
+	walls.push(wall);
+	drawLayers.background.push(wall);
 }
 	
