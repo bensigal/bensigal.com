@@ -1,4 +1,4 @@
-var friction = 0.99;
+var friction = 0.995;
 
 class Rectangle{
 	constructor(x, y, w, h, cornerDefined){
@@ -130,20 +130,78 @@ class Creature extends Rectangle{
 	
 }
 
+class Enemy extends Creature{
+	
+	constructor(x, y, w, h, touchDamage){
+		super(x, y, w, h);
+		this.touchDamage = touchDamage;
+		this.knockbackSpeed = 2;
+	}
+	
+	tick(dt){
+		super.tick(dt);
+		if(this.checkCollisionWith(player) && player.invulnTime === 0){
+			this.hitPlayer();
+		}
+	}
+	
+	hitPlayer(){
+		player.hitFrom(this, this.touchDamage, this.knockbackSpeed);
+	}
+}
+
+class Creeper extends Enemy{
+	
+	constructor(x, y, w, h){
+		super(x, y, 30, 30, 200);
+		this.speed = 1/1000;
+		this.baseSpeed = 1/1000;
+	}
+	
+	draw(){
+		ctx.fillStyle = "red";
+		ctx.fillRect(this.leftX, this.topY, this.w, this.h);
+	}
+	
+	tick(dt){
+		super.tick(dt);
+		
+		var angle = Math.atan2(player.y - this.y, player.x - this.x);
+		this.xVel += this.speed * Math.cos(angle) * dt;
+		this.yVel += this.speed * Math.sin(angle) * dt;
+	}
+	
+	hitPlayer(){
+		super.hitPlayer();
+		
+		setTimeout(function(){
+			this.speed = this.baseSpeed;
+		}.bind(this), 1000);
+		
+		this.speed = 0;
+	}
+	
+}
+
 class Player extends Creature{
 	
 	constructor(){
 		
-		super(400, 300, 30, 30);
+		super(400, 500, 30, 30);
 		
-		this.speed	= 1/20;
+		//Pixels/ms^2
+		this.speed	= 1/400;
 		
 		this.color 	= "blue";
+		
+		this.invulnTime = 0;
+		this.baseInvulnTime = 2000;
 		
 	}
 	
 	draw(){
 		//draw a rectangle centered at x, y and of width, height.
+		if(this.invulnTime % 200 > 150)return;
 		ctx.fillStyle = this.color;
 		this.fillRect();
 	}
@@ -152,6 +210,11 @@ class Player extends Creature{
 		
 		var yAccel = 0;
 		var xAccel = 0;
+		
+		this.invulnTime -= dt;
+		if(this.invulnTime < 0){
+			this.invulnTime = 0;
+		}
 		
 		//Store whether or not to slow down horizontal movement
 		var verticalMovement = true;
@@ -175,11 +238,25 @@ class Player extends Creature{
 				this.speed/Math.sqrt(2) : this.speed;
 		}
 		
-		this.xVel += xAccel;
-		this.yVel += yAccel;
+		this.xVel += xAccel * dt;
+		this.yVel += yAccel * dt;
 		
 		super.tick(dt);
 		
+	}
+	
+	hitFrom(source, damage, knockbackSpeed){
+		
+		this.invulnTime = this.baseInvulnTime;
+		var angle = Math.atan2(this.y - source.y, this.x - source.x);
+		
+		ctx.fillStyle = "red";
+		ctx.fillRect(0, 0, 800, 600);
+		
+		if(knockbackSpeed > 0){
+			this.xVel += Math.cos(angle) * knockbackSpeed;
+			this.yVel += Math.sin(angle) * knockbackSpeed;
+		}
 	}
 }
 

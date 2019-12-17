@@ -33,6 +33,7 @@ $(function(){
 function animationFrame(timestamp){
     var dt = timestamp - lastTime;
 	if(dt > 100)dt = 100;
+	if(dt < 0  )dt = 0;
     lastTime = timestamp;
     ctx.clearRect(0,0,800,600);
     try{
@@ -44,6 +45,9 @@ function animationFrame(timestamp){
     }catch(e){
         console.error(e.message)
         console.error(e.stack)
+		return setTimeout(function(){
+			window.requestAnimationFrame(animationFrame);
+		}, 100);
     }
     window.requestAnimationFrame(animationFrame);
 }
