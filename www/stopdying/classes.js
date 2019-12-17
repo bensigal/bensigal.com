@@ -148,17 +148,28 @@ class Enemy extends Creature{
 	hitPlayer(){
 		player.hitFrom(this, this.touchDamage, this.knockbackSpeed);
 	}
+	
+	drawHealthBar(){
+		ctx.drawImage($("#healthBarCover")[0], this.x - 15, this.topY - 15);
+		ctx.fillStyle = "#00FF44";
+		ctx.fillRect(this.x - 13, this.topY - 13, (this.hp/this.maxHp)*26, 6);
+	}
 }
 
 class Creeper extends Enemy{
 	
-	constructor(x, y, w, h){
-		super(x, y, 30, 30, 200);
-		this.speed = 1/1000;
-		this.baseSpeed = 1/1000;
+	constructor(x, y){
+		super(x, y, 40, 40, 200);
+		
+		this.speed = 1/2000;
+		this.baseSpeed = 1/2000;
+		
+		this.maxHp = 100;
+		this.hp = this.maxHp;
 	}
 	
 	draw(){
+		super.drawHealthBar();
 		ctx.fillStyle = "red";
 		ctx.fillRect(this.leftX, this.topY, this.w, this.h);
 	}
@@ -183,30 +194,70 @@ class Creeper extends Enemy{
 	
 }
 
+//Player sprite comes from https://opengameart.org/content/alternate-lpc-character-sprites-george
 class Player extends Creature{
 	
 	constructor(){
 		
-		super(400, 500, 30, 30);
+		super(400, 500, 27, 29);
 		
 		//Pixels/ms^2
 		this.speed	= 1/400;
+		this.walkingAnimationLength = 400;
 		
 		this.color 	= "blue";
 		
 		this.invulnTime = 0;
 		this.baseInvulnTime = 2000;
 		
+		this.walking = keyboard.down || keyboard.up || keyboard.left || keyboard.right;
+		this.walkingTime = 0;
+		this.direction = 0;
+		
+		
+	}
+	
+	checkWalking(){
+		
+		var anyKeyDown = keyboard.down || keyboard.up || keyboard.left || keyboard.right;
+		if(this.walking){
+			if(!anyKeyDown){
+				this.walking = false;
+				this.walkingTime = 0;
+			}
+		}else{
+			if(anyKeyDown){
+				this.walking = true;
+				this.walkingTime = 0;
+			}
+		}
+		
 	}
 	
 	draw(){
-		//draw a rectangle centered at x, y and of width, height.
-		if(this.invulnTime % 200 > 150)return;
-		ctx.fillStyle = this.color;
-		this.fillRect();
+		
+		if(this.invulnTime % 200 > 130)return;
+		
+		var currentFrame = Math.floor(
+			(this.walkingTime % this.walkingAnimationLength)/this.walkingAnimationLength*4
+		);
+		
+		ctx.drawImage(
+			$("#playerSprite")[0], //Location of image in DOM
+			this.direction * 48 + 10, //Where to find left x inside image. direction is 0: down, 1: left, etc.
+			currentFrame   * 48 + 11, //Where to find top y inside image. Based on current frame.
+			29, 31, //width and height of image
+			this.leftX - 1, //x location on canvas
+			this.topY - 1, //y location on canvas
+			29, 31 //width and height on canvas
+		);
 	}
 	
 	tick(dt){
+		
+		if(this.walking){
+			this.walkingTime += dt;
+		}
 		
 		var yAccel = 0;
 		var xAccel = 0;

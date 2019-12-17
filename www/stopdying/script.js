@@ -57,15 +57,27 @@ $(document).keydown(function(e){
     switch(e.keyCode){
     case 37:
         keyboard.left = true;
+		if(!keyboard.up && !keyboard.down && !keyboard.right){
+			player.direction = 1;
+		}
         break;
     case 38:
         keyboard.up = true;
+		if(!keyboard.left && !keyboard.down && !keyboard.right){
+			player.direction = 2;
+		}
         break;
     case 39:
         keyboard.right = true;
+		if(!keyboard.up && !keyboard.down && !keyboard.left){
+			player.direction = 3;
+		}
         break;
     case 40:
         keyboard.down = true;
+		if(!keyboard.up && !keyboard.right && !keyboard.left){
+			player.direction = 0;
+		}
         break;
     case 87:
         keyboard.w=true;
@@ -84,9 +96,30 @@ $(document).keydown(function(e){
     default:
         preventDefault = false;
     }
+
     if(preventDefault)e.preventDefault();
+	
+	var arrowKeysPressed = 0 + keyboard.up + keyboard.right + keyboard.left + keyboard.down;
+	
+	switch(arrowKeysPressed){ 
+	case 1:
+		if(keyboard.down)player.direction = 0;
+		if(keyboard.left)player.direction = 1;
+		if(keyboard.up)player.direction = 2;
+		if(keyboard.right)player.direction = 3;
+		break;
+	case 3:
+		if(!keyboard.up)player.direction = 0;
+		if(!keyboard.right)player.direction = 1;
+		if(!keyboard.down)player.direction = 2;
+		if(!keyboard.left)player.direction = 3;
+		break;
+	}
+	
+	player.checkWalking();
 });
 $(document).keyup(function(e){
+	
     switch(e.keyCode){
     case 37:
         keyboard.left = false;
@@ -116,4 +149,23 @@ $(document).keyup(function(e){
         keyboard.space = false;
         break;
     }
+	
+	var arrowKeysPressed = 0 + keyboard.up + keyboard.right + keyboard.left + keyboard.down;
+	
+	switch(arrowKeysPressed){ 
+	case 1:
+		if(keyboard.down)player.direction = 0;
+		if(keyboard.left)player.direction = 1;
+		if(keyboard.up)player.direction = 2;
+		if(keyboard.right)player.direction = 3;
+		break;
+	case 3:
+		if(!keyboard.up)player.direction = 0;
+		if(!keyboard.right)player.direction = 1;
+		if(!keyboard.down)player.direction = 2;
+		if(!keyboard.left)player.direction = 3;
+		break;
+	}
+	
+	player.checkWalking();
 })

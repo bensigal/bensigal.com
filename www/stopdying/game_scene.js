@@ -36,12 +36,12 @@ function gameSceneSetup(){
 	drawLayers.players.push(player);
 	tickLayers.players.push(player);
 	
-	enemy = new Creeper(100, 100, 100, 100);
+	enemy = new Creeper(50, 200);
 	drawLayers.entities.push(enemy);
 	tickLayers.enemies .push(enemy);
 	
 	//outer walls, in order of top, left, bottom, right
-	Wall.add(0, 0, 800, 20);
+	Wall.add(0, 0, 800, 100);
 	Wall.add(0, 0, 20, 600);
 	Wall.add(0, 580, 800, 20);
 	Wall.add(780, 0, 20, 600);
