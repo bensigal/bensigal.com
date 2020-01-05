@@ -16,8 +16,9 @@ var majors = {
 		addCourse("GE Art/Hum", 5, "green");
 		addCourse("GE Art/Hum", 5, "green");
 		addCourse("Chem 20A(H)", 4, "orange");
-		addCourse("Society/Cult", 5, "green");
-		addCourse("Society/Cult", 5, "green");
+		addCourse("GE Soc/Cult", 5, "green");
+		addCourse("GE Soc/Cult", 5, "green");
+		addCourse("ENGR 2", 2, "green");
 		addCourse("Life Sci", 5, "orange");
 		addCourse("ECE 2(H)", 4, "red");
 		addCourse("ECE 3", 4, "blue");
@@ -44,6 +45,16 @@ var majors = {
 		addCourse("Tech B. #3", 4, "red");
 		addCourse("Design #1", 4, "blue");
 		addCourse("Design #2", 4, "blue");
+		addCourse("Other", 1, "black");
+		addCourse("Other", 1, "black");
+		addCourse("Other", 2, "black");
+		addCourse("Other", 2, "black");
+		addCourse("Other", 3, "black");
+		addCourse("Other", 3, "black");
+		addCourse("Other", 4, "black");
+		addCourse("Other", 4, "black");
+		addCourse("Other", 5, "black");
+		addCourse("Other", 5, "black");
 	},
 	me: function(){
 		addCourse("PHYS 1A", 5, "red");
@@ -97,5 +108,15 @@ var majors = {
 		addCourse("Matsci 104", 4, "red");
 		addCourse("Design #1", 4, "blue");
 		addCourse("Design #2", 4, "blue");
+		addCourse("Other", 1, "black");
+		addCourse("Other", 1, "black");
+		addCourse("Other", 2, "black");
+		addCourse("Other", 2, "black");
+		addCourse("Other", 3, "black");
+		addCourse("Other", 3, "black");
+		addCourse("Other", 4, "black");
+		addCourse("Other", 4, "black");
+		addCourse("Other", 5, "black");
+		addCourse("Other", 5, "black");
 	},
 };

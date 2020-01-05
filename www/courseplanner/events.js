@@ -8,19 +8,14 @@ $(function(event){
     });
     $(".courseHolder").sortable({
         connectWith: [".courseHolder", "#depo"],
-        update: refreshCredits
+        update: refresh
     });
     
-    //When the View Data button is clicked, call viewCode
-    $("button#viewData").click(function(event){
-        //Calculate the current code and show it as a popup
-        alert("Copy/paste the code below and save it somewhere. Next time you come to this page, use 'Load from Data' to get the classes you saved.\n\n" + getCurrentCode());
-    });
-    
-    //When the Load from Data button is clicked, call openCode
-    $("button#loadFromData").click(function(event){
-        openCode(prompt("Please enter the data obtained by previously using 'View Data.'"));
-    })
+    if(location.hash){
+		openCode(location.hash.substring(1));
+	}else{
+		loadMajor($("#majorSelect").val());
+	}
     
     //When the Save button is clicked, send a message to /server/save to save the current
     $("button#save").click(function(event){
@@ -48,10 +43,8 @@ $(function(event){
 	//When the dropdown menu's selected option is changed, load that major.
 	$("#majorSelect").change(function(e){
 		loadMajor(e.target.value);
+		refresh();
 	});
-	
-	//Load the major currently selected
-	loadMajor($("#majorSelect").val());
 });
 
 //Replace all courses with the one indicated by the string major.
@@ -77,11 +70,11 @@ function loadMajor(major){
 		alert("Major '"+major+"' not found!");
 	}
 	
-	refreshCredits();
+	refresh();
 }
 
 //Calculate how many credits are in each section. Called every time a course moves.
-function refreshCredits(){
+function refresh(){
     $(".box").each(function(index, element){
         var credits = 0;
         $(element).find(".courseHolder > *").each(function(i, e){
@@ -90,6 +83,7 @@ function refreshCredits(){
         });
         $(element).children("h3").text("Credits: "+credits);
     });
+	getCurrentCode();
 }
 
 //Move the courses based on a string with format 1,2,3;4,5,7;;10
@@ -114,7 +108,7 @@ function openCode(code){
         });
     });
     
-    refreshCredits();
+    refresh();
 }
 
 //Generate a string representing the locations of courses according to the format described above.
@@ -127,5 +121,9 @@ function getCurrentCode(){
             result += $(e).prop("id").substring(6);
         });
     });
-    return result;
+    /*return location.hostname + 
+		(location.port ? ":" + location.port : "") +
+		"/courseplanner/#" + 
+		result;*/
+	location.hash = result;
 }
