@@ -4,6 +4,11 @@
         <title>bensigal.com</title>
         <link rel="stylesheet" type="text/css" href="/home.css">
         <script src="/jquery.min.js"></script>
+		<script>
+			$("#resumeItem").click(function(){
+				location.href = "/resume.pdf";
+			}
+		</script>
     </head>
     <body>
 		<div id="logoHolder">
@@ -33,6 +38,16 @@
                     </p>
                 </div>
                 <img src="/images/frontpage.png" class="middlePicture">
+            </div>
+            <div class="item" id="resumeItem">
+                <img src="/images/resume.png" class="middlePicture">
+                <div class="itemDescription">
+                    <p class="itemHeader">
+                        Resume
+                    </p>
+                    <p class="itemFinerDescription">
+                    </p>
+                </div>
             </div>
         </div>
     </body>
