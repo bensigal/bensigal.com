@@ -28,6 +28,7 @@ var port = Number(process.argv[4]);
 if(!(port > 0)){
 	throw "Did not find valid port. Arguments should be:  <root folder> <logging mode> <port>";
 }
+
 //Get date and time in format yyyy-mm-dd at hhmm and ss seconds.
 //Uses PDT (that's where Ben lives) even though the server is elsewhere
 function formatDate(input){
@@ -74,14 +75,21 @@ function prepareLogs(req, res){
 	
 	//Create directory for logs, when ready respond to server
 	if(logging == 2){
+		
 		req.logLocation = root+"server/logs/"+startTime+"/"+req.serverOrder+"/";
+		
 		fs.mkdir(req.logLocation,function(err){
+			
 			if(err) throw err;
+			
 			//Create headers.log file with the headers recieved from the client
 			//if(processOptions.includes("headersLog"))
 			fs.writeFile(req.logLocation+"headers.log",benSpect(req.headers),function(err){
+				
 				if(err) throw err;
+				
 				req.logBody="";
+				
 				req.log=function(next,noNewLine){
 					next=next||"";
 					req.logBody+=next;
@@ -89,20 +97,26 @@ function prepareLogs(req, res){
 						req.logBody+="\r\n";
 					}
 				};
+				
 				req.err=function(next){
 					req.log(next);
 					console.error(req.serverOrder+":"+next);
 				};
+				
 				res.on('finish',function(){
 					if(logging)
 					fs.writeFile(req.logLocation+"main.log",req.logBody,function(err){
 						if(err) throw err;
 					});
 				});
+				
+				//Once the file has been created, ready to respond to request.
 				serverRespond(req,res);
+				
 			});
 		});
 	}
+	
 	//Direct request logs to console, then respond to server
 	else if(logging == 1){
 		req.log = function(output){
@@ -120,13 +134,16 @@ function prepareLogs(req, res){
 	    serverRespond(req, res);
 	}
 }
+
+//Get/generate the relevant files and send them back
 function serverRespond(req, res){
 	
-	
+	//Easier to manage URI
 	req.path=url.parse(req.url).pathname.toLowerCase();
 	
+	//lastPath stores the last name in the path. E.g. for "one/two/three/" it has value "three"
 	req.lastPath = req.path;
-	if(req.lastPath.endsWith("/"))req.lastPath = req.lastPath.substring(0, req.lastPath.length - 1);
+	while(req.lastPath.endsWith("/")) req.lastPath = req.lastPath.substring(0, req.lastPath.length - 1);
 	req.lastPath = req.lastPath.substring(req.lastPath.lastIndexOf("/")+1);
 	
 	if(req.path===""){
