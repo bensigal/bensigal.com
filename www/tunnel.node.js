@@ -5,7 +5,8 @@ module.exports = function(req, res, server, whereis){
 		meep: "includes/meep.html",
 		seconds: "includes/seconds.html",
 		games: "includes/games.html",
-		tools: "includes/tools.html"
+		tools: "includes/tools.html",
+		mail: "https://chi112.greengeeks.net:2096/"
 	}});
     
 }
