@@ -21,16 +21,17 @@ var options = [
     ["singleplayer", "multiplayer"],
     ["easy", "classic", "impossible", "back"]
 ];
-var onMenu = true;
 var optionSelected = 0;
 //How far in the options menu you are
 var depth = 0;
+//Earliest time the next tick should occur, initialized to current time and incremented by 16ms every tick
+var nextTick = new Date().getTime();
 
 //Called when the game begins
 function resetGame(){
     
     enemyBaseSpeed = 1;
-    switch(scene){
+    switch(gameType){
     case "singleplayer":
         originalPlayers = [new Player(0)];
         break;
@@ -56,14 +57,14 @@ function selectMenuOption(index){
     switch(depth){
     //If on the first page of options, set singleplayer/multiplayer and go to next page
     case 0:
-        scene=options[0][index];
+        gameType = options[0][index];
         depth++;
         break;
     //If on second page, set the difficulty according to which is selected and start game.
     case 1:
         difficulty = options[1][index];
         resetGame();
-        onMenu = false;
+        scene = "playing";
         break;
     }
 }
@@ -78,9 +79,6 @@ $(function(){
     
     //Object used to draw on canvas
     ctx = canvas.getContext("2d");
-    
-    //Call mainLoop at 60fps
-    mainLoopInterval = setInterval(mainLoop, 16);
     
     stopped=false;
     paused =false;
@@ -97,6 +95,8 @@ $(function(){
         mouse.x = e.pageX - canvas.offsetLeft;
         mouse.y = e.pageY - canvas.offsetTop;
     });
+    
+    mainLoop();
 });
 //Called while on menu
 function menuLoop(){
@@ -118,15 +118,66 @@ function menuLoop(){
 //Called each frame
 function mainLoop(){
     
-    if(paused)return;
-    //If on menu, draw menu instead
-    if(onMenu)return menuLoop();
-    
-    //If multiplayer and one person is dead, speed things up a bit
-    if(scene == "multiplayer" && players.length == 1 && enemyBaseSpeed < 2)enemyBaseSpeed+=0.001;
+    if(nextTick > new Date().getTime()){
+        window.requestAnimationFrame(mainLoop);
+        return;
+    }
     
     //Clear the canvas
     ctx.clearRect(0,0,800,600);
+    
+    try{
+        switch(scene){
+        case "playing":
+            draw();
+            tick();
+            break;
+        case "finished":
+        case "paused":
+            draw();
+            break;
+        case "menu":
+            menuLoop();
+            break;
+        }
+    }catch(e){
+        console.error(e.name + ": " + e.message + "\n" + e.stack);
+    }
+    nextTick += 16;
+    if(nextTick < new Date().getTime()){
+        mainLoop();
+    }else{
+        window.requestAnimationFrame(mainLoop);
+    }
+}
+
+function draw(){
+    
+    //Draw how many enemies have been killed in grey in the center of the screen
+    ctx.fillStyle = "#EFEFEF";
+    ctx.font = "400px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(killed, 400, 400);
+    
+    //Draw each enemy
+    enemies.forEach(function(element){
+        element.draw();
+    });
+    //For each player (whether or not dead) draw it
+    originalPlayers.forEach(function(player){
+        player.draw();
+    });
+    
+    //Draw instructions
+    ctx.font = "14px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("Arrow keys to move you (the large circle). Hold space to extend. P to pause. Avoid the lines, destroy them with your moon.", 400, 580);
+}
+
+function tick(){
+    
+    //If multiplayer and one person is dead, speed things up a bit
+    if(scene == "multiplayer" && players.length == 1 && enemyBaseSpeed < 2)enemyBaseSpeed+=0.001;
     
     //Update how fast enemies appear based on difficulty
     switch(difficulty){
@@ -151,37 +202,19 @@ function mainLoop(){
         nextEnemy = ticks + level;
     }
     
-    //Draw how many enemies have been killed in grey in the center of the screen
-    ctx.fillStyle = "#EFEFEF";
-    ctx.font = "400px Arial";
-    ctx.textAlign = "center";
-    ctx.fillText(killed, 400, 400);
-    
-    //Draw the level in the top right
-    ctx.fillStyle = "black";
-    ctx.font = "14px Arial";
-    ctx.textAlign = "start";
-    ctx.fillText(level, 40, 60);
-    
-    //Draw instructions
-    ctx.fillText("Arrow keys to move you (the large circle). Hold space to extend. P to pause. Avoid the lines, destroy them with your moon.", 20, 580);
-    
-    //For each player (whether or not dead) draw it
+    //For each player (whether or not dead) tick it
     originalPlayers.forEach(function(player){
         player.tick();
-        player.draw();
     });
     
-    //Draw each enemy
+    //Tick each enemy
     enemies.forEach(function(element){
         element.tick();
-        element.draw();
     });
     
-    //If there are no living players, reset the game (but don't clear the screen)
+    //If there are no living players, the game is over
     if(players.length === 0){
-        resetGame(gameType);
-        paused=true;
+        scene = "finished";
     }
     
     //Remove dead enemies from the array
@@ -193,7 +226,7 @@ function mainLoop(){
         }
     }
     //If a player died, remove them from the array and set the lines chasing them to chase someone.
-    if(players[0].dead){
+    if(players[0] && players[0].dead){
         players.splice(0,1);
         if(players[0]){
             enemies.forEach(function(enemy){
@@ -215,169 +248,4 @@ function mainLoop(){
     
     
     ticks++;
-}
-
-//Detect keypresses
-$(document).keydown(function(e){
-    e.preventDefault();
-    switch(e.keyCode){
-    case 37:
-        keyboard.left = true;
-        break;
-    case 38:
-        keyboard.up = true;
-        if(onMenu){
-            optionSelected = Math.max(0, optionSelected-1);
-        }
-        break;
-    case 39:
-        keyboard.right = true;
-        break;
-    case 40:
-        keyboard.down = true;
-        if(onMenu){
-            optionSelected = Math.min(options[depth].length-1, optionSelected+1);
-        }
-        break;
-    case 87:
-        keyboard.w=true;
-        break;
-    case 68:
-        keyboard.d=true;
-        break;
-    case 65:
-        keyboard.a=true;
-        break;
-    case 83:
-        keyboard.s=true
-        break;
-    case 32:
-        keyboard.space = true;
-    case 13:
-        //enter
-        if(stopped){
-            break;
-        }else if(paused){
-            paused = false;
-        }
-        if(onMenu){
-            selectMenuOption(optionSelected);
-        }
-        break;
-    case 80:
-        //p
-        if(stopped){
-            break;
-        }else if(paused){
-            paused = false;
-        }else if(!onMenu){
-            paused = true;
-        }
-        break;
-    }
-});
-$(document).keyup(function(e){
-    switch(e.keyCode){
-    case 37:
-        keyboard.left = false;
-        break;
-    case 38:
-        keyboard.up = false;
-        break;
-    case 39:
-        keyboard.right = false;
-        break;
-    case 40:
-        keyboard.down = false;
-        break;
-    case 87:
-        keyboard.w=false;
-        break;
-    case 68:
-        keyboard.d=false;
-        break;
-    case 65:
-        keyboard.a=false;
-        break;
-    case 83:
-        keyboard.s=false
-        break;
-    case 32:
-        keyboard.space = false;
-        break;
-    }
-})
-
-function rectangularCollisionTest(a,b){
-    
-    var al = a.x;
-    var ar = a.x+a.w;
-    var at = a.y;
-    var ab = a.y+a.h;
-    
-    var bl = b.x;
-    var br = b.x+b.w;
-    var bt = b.y;
-    var bb = b.y+b.h;
-    
-    return !(
-        al > br ||
-        ar < bl ||
-        at > bb ||
-        ab < bt
-    )
-}
-
-//Probably hugely inefficient, couldn't think of an easier way to do it
-function pointDistanceFromLine(px,py,lx1,ly1,lx2,ly2){
-    var lineSlope = (ly2-ly1)/(lx2-lx1);
-    
-    // y - y1 = m(x - x1)
-    // y = mx - mx1 + y1
-    //when x=0, y=-mx1+y1
-    
-    //Where the given line intersects the y axis
-    var lineYInt = -lineSlope * lx1 + ly1;
-    
-    //Slope of any line perpendicular to given
-    var perpendicularSlope = -1/lineSlope;
-    
-    //Where the y-intercepts are of the lines that go through the two given endpoints and are perpendicular to the given line.
-    var perpindicularYInt1 = -perpendicularSlope * lx1 + ly1
-    var perpindicularYInt2 = -perpendicularSlope * lx2 + ly2
-    
-    //Which is bigger and smaller
-    var maxPerpendicularYInt = Math.max(perpindicularYInt1, perpindicularYInt2);
-    var minPerpendicularYInt = Math.min(perpindicularYInt1, perpindicularYInt2);
-    
-    //The y-intercept of the line perpendicular to given, through point
-    var pointPerpendicularYInt = -perpendicularSlope * px + py;
-    
-    if(pointPerpendicularYInt > maxPerpendicularYInt || pointPerpendicularYInt < minPerpendicularYInt){
-        //the perpendicular through the given point does not go through the given line
-        return false;
-    }
-    //Intersection of point's 
-    //y= (mPerp)x+(pointPerpendicularYInt)
-    //y= (m)x+(lineYInt)
-    //(m)x + lineYInt = (mPerp)x + (pointPerpendicularYInt)
-    //mx-mPerpx = pointPerpendicularYInt - lineYInt
-    //x = (pointPerpendicularYInt-lineYInt)/((m)-(mPerp))
-    //y = (m)x + lineYInt
-    var intersectionX = (pointPerpendicularYInt-lineYInt)/(lineSlope - perpendicularSlope);
-    var intersectionY = lineSlope*intersectionX + lineYInt;
-    //By perpendicular bisector theorem or  something like that, intersection is closest point on line to given point
-    //console.log(distance(intersectionX, intersectionY, px, py))
-    return distance(intersectionX, intersectionY, px, py);
-}
-
-//Is point within tolerance of the line?
-function pointLineCollision(px,py,lx1,ly1,lx2,ly2,tolerance){
-    var result = pointDistanceFromLine(px,py,lx1,ly1,lx2,ly2);
-    if(result === false)return false;
-    return result < tolerance;
-}
-
-function distance(x1,y1,x2,y2){
-    return Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
 }

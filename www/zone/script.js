@@ -5,6 +5,8 @@ var player1, player2;
 var player1Handicap = 0;
 var player2Handicap = 0;
 
+var nextTick = new Date().getTime();
+
 var keyboard = {};
 var theme = {
     player1Color: "#A00",
@@ -29,31 +31,11 @@ var theme = {
     background: "#FAECFF"
 };
 var sprite = {};
-var stopped = false;
-var paused = false;
-var blocks, zones, zoneTexts, p1Points, p2Points
+var blocks, zones, zoneTexts, p1Points, p2Points;
 var p1wins = 0;
 var p2wins = 0;
-var loopMode = "selectStage"
-
-function win(isp1){
-    paused = true;
-    
-    if(isp1)p1wins++;
-    else p2wins++;
-    
-    $("#score").html(p1wins + " - " + p2wins);
-    
-    stopped = true;
-    ctx.font = "50px Ubuntu";
-    ctx.fillText((isp1?"Red":"Blue")+" Wins!", 400, 555);
-}
-function tie(){
-    paused = true;
-    stopped = true;
-    ctx.font = "30px Ubuntu";
-    ctx.fillText("That's odd... They're identical!!!", 400, 555);
-}
+var winner = "none";
+var loopMode = "selectStage";
 
 function init(){
     canvas = $("#canvas")[0];
@@ -63,14 +45,43 @@ function init(){
     
     ctx = canvas.getContext("2d");
     
-    mainLoopIntervalCode = setInterval(mainLoop, 16);
+    mainLoop();
+}
+
+function mainLoop(burnScreen){
+    
+    if(nextTick > new Date().getTime()){
+        window.requestAnimationFrame(mainLoop);
+        return;
+    }
+    
+    ctx.clearRect(0,0,800,600);
+    
+    switch(loopMode){
+    
+    case "playing":
+        drawMap();
+        tick();
+        break;
+    case "finished":
+    case "paused":
+        drawMap();
+        break;
+    case "selectStage":
+        selectStageDraw(burnScreen);
+        break;
+    }
+    
+    nextTick += 16;
+    if(nextTick < new Date().getTime()){
+        mainLoop();
+    }
+    else
+        window.requestAnimationFrame(mainLoop);
+    
 }
 
 function start(){
-    
-    loopMode = "playing";
-    
-    console.log("Starting game...");
     
     player1 = new Player(1);
     player2 = new Player(2);
@@ -97,9 +108,9 @@ function start(){
     
     ctx.textAlign = "center";
     
-    paused = true;
+    mainLoop();
     
-    mainLoop(true);
+    winner = "none";
 }
 $(init);
 
@@ -123,45 +134,22 @@ function selectStageDraw(){
     ctx.fillText("Maze", 160, 400);
     
     ctx.textAlign = "center";
+    
+    nextTick += 16;
+    if(nextTick < new Date().getTime())
+        mainLoop();
+    else
+        window.requestAnimationFrame(mainLoop);
 }
 
-function mainLoop(burnScreen){
-    
-    if(paused && !burnScreen)return;
-    
-    ctx.clearRect(0,0,800,600);
-    
-    if(loopMode != "playing"){
-        switch(loopMode){
-        
-        case "selectStage":
-            selectStageDraw();
-            break;
-        
-        }
-        return;
-    }
-    
-    ctx.font = "30px Ubuntu"
+function tick(){
     for(var zone of zones){
         zone.tick();
-    }
-    for(var i = zones.length; i--; i >=0){
-        zones[i].draw();
     }
     
     player1.tick();
     
     player2.tick();
-    
-    ctx.fillStyle = "#444";
-    ctx.fillRect(400,0,1,600);
-    for(var block of blocks){
-        block.draw();
-    }
-    
-    player1.draw();
-    player2.draw();
     
     p1points += player1Handicap/5
     p1points -= player2Handicap/5
@@ -172,31 +160,15 @@ function mainLoop(burnScreen){
     if(p1points > 800)
         p1points = 800;
     if(p1points < 0)
-        player1Poits = 0;
+        p1points = 0;
         
-    p2points = 800 - p1points;
-    
-    ctx.fillStyle = "#F44";
-    ctx.fillRect(0, 580, p1points, 20);
-    
-    ctx.fillStyle = "#33F";
-    ctx.fillRect(p1points, 580, p2points, 20);
-    
-    ctx.fillStyle = "white";
-    ctx.fillRect(399, 570, 3, 30);
     
     ticks--;
     
     player1.points = 0;
     player2.points = 0;
     
-    ctx.fillStyle = "white";
-    if(ticks < 300){
-        ctx.font = "80px Ubuntu"
-    }
-    ctx.fillText(Math.round(ticks/6)/10, ticks<300?400:50, ticks<300?510:550);
-    
-    if(ticks === 0){
+    if(ticks <= 0){
         if(p1points > p2points){
             win(true);
         }else if(p2points > p1points){
@@ -216,10 +188,7 @@ function mainLoop(burnScreen){
             player2.x +=20;
             ctx.font = "30px Ubuntu"
             ctx.fillText("Don't cross the beams!", 400, 500)
-            clearInterval(mainLoopIntervalCode);
-            setTimeout(function(){
-                mainLoopIntervalCode = setInterval(mainLoop, 16);
-            }, 1000);
+            nextTick += 1000;
         }else if(p1In){
             win(false);
         }else if(p2In){
@@ -237,6 +206,67 @@ function mainLoop(burnScreen){
         ctx.lineTo(800-x, 450);
         ctx.closePath();
         ctx.stroke();
+    }
+}
+
+function drawMap(){
+    
+    ctx.font = "30px Ubuntu";
+    for(var i = zones.length; i--; i >=0){
+        zones[i].draw();
+    }
+    
+    ctx.fillStyle = "#444";
+    ctx.fillRect(400,0,1,600);
+    for(var block of blocks){
+        block.draw();
+    }
+    
+    player1.draw();
+    player2.draw();
+    
+    p2points = 800 - p1points;
+    
+    ctx.fillStyle = "#F44";
+    ctx.fillRect(0, 580, p1points, 20);
+    
+    ctx.fillStyle = "#33F";
+    ctx.fillRect(p1points, 580, p2points, 20);
+    
+    ctx.fillStyle = "white";
+    ctx.fillRect(399, 570, 3, 30);
+    
+    ctx.font = "30px Ubuntu";
+    ctx.fillStyle = "white";
+    if(ticks < 300){
+        ctx.font = "80px Ubuntu";
+    }
+    ctx.fillText(Math.round(ticks/6)/10, ticks<300?400:50, ticks<300?510:550);
+    
+    if(loopMode == "paused"){
+        ctx.font = "30px Ubuntu"
+        ctx.fillText("Space to Unpause", 400, 520);
+        nextTick += 16;
+        if(nextTick < new Date().getTime()){
+            mainLoop();
+            console.log("Catchup")
+        }
+        else
+            window.requestAnimationFrame(mainLoop);
+        return;
+    }
+    
+    ctx.font = "50px Ubuntu";
+    switch(winner){
+    case "1":
+        ctx.fillText("Red Wins!", 400, 555);
+        break;
+    case "2":
+        ctx.fillText("Blue Wins!", 400, 555);
+        break;
+    case "tie":
+        ctx.fillText("It's a tie!", 400, 555);
+        break;
     }
     
 }
@@ -259,8 +289,9 @@ $(document).keydown(function(e){
     case 87:
         keyboard.w=true;
         if(loopMode == "selectStage"){
-            map = maps.original;
+            map = maps.modified;
             start();
+            loopMode = "paused";
         }
         break;
     case 81:
@@ -285,15 +316,17 @@ $(document).keydown(function(e){
     case 68:
         keyboard.d=true;
         if(loopMode == "selectStage"){
-            map = maps.maze;
+            map = maps.modified;
             start();
+            loopMode = "paused";
         }
         break;
     case 65:
         keyboard.a=true;
         if(loopMode == "selectStage"){
-            map = maps.bigMoney;
+            map = maps.modified;
             start();
+            loopMode = "paused";
         }
         break;
     case 83:
@@ -301,30 +334,24 @@ $(document).keydown(function(e){
         if(loopMode == "selectStage"){
             map = maps.modified;
             start();
+            loopMode = "paused";
         }
         break;
     case 32:
-        if(stopped){
+        if(loopMode == "finished"){
             start();
-            console.log("Starting game...")
-            paused=false;
-        }else if(paused && loopMode == "playing"){
-            console.log("Unpausing game...")
-            paused = false;
+            loopMode = "playing";
+        }else if(loopMode == "paused"){
+            loopMode = "playing";
         }else if(loopMode == "playing"){
-            console.log("Pausing game...")
-            ctx.font = "50px Ubuntu"
-            ctx.fillText("Paused", 400, 520);
-            paused = true;
+            loopMode = "paused";
         }
         break;
     case 77:
-        if(paused || stopped){
+        if(loopMode == "paused" || loopMode == "finished"){
             loopMode = "selectStage";
-            mainLoop(true);
         }else if(loopMode == "selectStage"){
-            loopMode = "playing";
-            mainLoop(true);
+            loopMode = "paused";
         }
         break;
     }
@@ -359,6 +386,22 @@ $(document).keyup(function(e){
         break;
     }
 });
+
+function win(isp1){
+    
+    winner = isp1?"1":"2";
+    
+    if(isp1)p1wins++;
+    else p2wins++;
+    
+    $("#score").html(p1wins + " - " + p2wins);
+    
+    loopMode = "finished";
+}
+function tie(){
+    winner = "tie";
+    loopMode = "finished";
+}
 
 function rectangularCollisionTest(a,b){
     

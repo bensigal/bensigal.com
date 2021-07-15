@@ -86,7 +86,6 @@ class Player{
         //Update the orbiting dot
         this.pointDestroyers.forEach(function(element, index){
             element.tick();
-            element.draw();
         });
     }
     
@@ -97,6 +96,11 @@ class Player{
         ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
         ctx.closePath();
         ctx.fill();
+        
+        //Update the orbiting dot
+        this.pointDestroyers.forEach(function(element, index){
+            element.draw();
+        });
     }
     
 }
@@ -216,9 +220,9 @@ class Enemy{
         //If this is an extra-fast arrow, draw the arrowhead
         if(this.fast){
             ctx.moveTo(this.x, this.y);
-            ctx.lineTo(this.x+Math.cos(this.angle + 3)*20, this.y+Math.sin(this.angle + 3)*20)
+            ctx.lineTo(this.x+Math.cos(this.angle + 3)*20, this.y+Math.sin(this.angle + 3)*20);
             ctx.moveTo(this.x, this.y);
-            ctx.lineTo(this.x+Math.cos(this.angle + 3.3)*20, this.y+Math.sin(this.angle + 3.3)*20)
+            ctx.lineTo(this.x+Math.cos(this.angle + 3.3)*20, this.y+Math.sin(this.angle + 3.3)*20);
         }
         ctx.stroke();
     }

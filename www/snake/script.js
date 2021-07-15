@@ -1,4 +1,4 @@
-var canvas, ctx, topLeft, mainLoopIntervalCode, head, snakeSquares, previousDirection, growing, food, stewart=false, paused=false;
+var canvas, ctx, topLeft, head, snakeSquares, previousDirection, growing, food, stewart=false, paused=false;
 var keyboard = {};
 var sprite = {};
 var enemies;
@@ -17,14 +17,15 @@ var themes = {
         outline:"black",
         stewart:"#00F"
     }
-}
+};
 var theme = themes.basic;
+var nextTick = 0;
 
 function start(){
     canvas = $("#canvas")[0];
     canvas.width = 800;
     canvas.height= 600;
-    canvas.style.background=theme.background
+    canvas.style.background=theme.background;
     
     growing=9;
     topLeft = {x:0,y:0};
@@ -40,19 +41,25 @@ function start(){
     for(var i = 0; i < 80; i++){
         var squareArray = [];
         for(var j = 0; j < 60; j++){
-            squareArray.push(new sprite.Square(i,j))
+            squareArray.push(new sprite.Square(i,j));
         }
         squares.push(squareArray);
     }
     
-    mainLoopIntervalCode = setInterval(mainLoop, 33);
+    nextTick = new Date().getTime();
     
     stopped=false;
+    
+    window.requestAnimationFrame(mainLoop);
 }
 $(start);
 function mainLoop(){
+    if(paused || stopped || nextTick > new Date().getTime()){
+        window.requestAnimationFrame(mainLoop);
+        return;
+    }
+    
     ctx.clearRect(0,0,800,600);
-    if(paused)return;
     
     for(var i = 0; i < 60; i++){
         squares[0][i].state = "wall";
@@ -81,30 +88,28 @@ function mainLoop(){
     }
     
     snakeSquares.unshift({x:toBeChecked.x,y:toBeChecked.y});
-    console.log(growing);
     if(!growing)snakeSquares.pop();
     snakeSquares.forEach(function(square, index){
         if(index === 1){
-            squares[square.x][square.y].state = "second"
+            squares[square.x][square.y].state = "second";
         }else if(index){
-            squares[square.x][square.y].state = "body"
+            squares[square.x][square.y].state = "body";
         }
-    })
+    });
     if(!toBeChecked || toBeChecked.state == "body" || toBeChecked.state=="wall"){
         stopped = true;
-        clearInterval(mainLoopIntervalCode);
         ctx.fillStyle = "red";
-        ctx.font="100px impact"
-        ctx.fillText("SNAKE!",220,200)
+        ctx.font="100px";
+        ctx.fillText("SNAKE!",220,200);
         setTimeout(function(){
-            ctx.font="100px impact";
+            ctx.font="100px";
             ctx.fillStyle = "red";
-            ctx.fillText("SNAKE!",220,300)
+            ctx.fillText("SNAKE!",220,300);
         },750);
         setTimeout(function(){
-            ctx.font="100px impact";
+            ctx.font="100px";
             ctx.fillStyle = "red";
-            ctx.fillText("SNAAAAAKE!",80,400)
+            ctx.fillText("SNAAAAAKE!",80,400);
         },1500);
     }
     else if(toBeChecked.state == "food"){
@@ -119,7 +124,7 @@ function mainLoop(){
         growing+=10;
         
     }
-    snakeSquares[0].state = "head"
+    snakeSquares[0].state = "head";
     ticks++;
     squares.forEach(function(squareArray){
         squareArray.forEach(function(square){
@@ -127,10 +132,16 @@ function mainLoop(){
         });
     });
     previousDirection = direction;
-    if(growing){growing--};
-    ctx.font="30px Georgia"
-    ctx.fillStyle="#0A0"
-    ctx.fillText(snakeSquares.length,700,30)
+    if(growing){growing--;}
+    ctx.font="30px Georgia";
+    ctx.fillStyle="#0A0";
+    ctx.fillText(snakeSquares.length,700,30);
+    
+    nextTick += 33;
+    if(nextTick < new Date().getTime())
+        mainLoop();
+    else
+        window.requestAnimationFrame(mainLoop);
 }
 $(document).keydown(function(e){
     e.preventDefault();
