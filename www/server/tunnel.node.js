@@ -229,7 +229,7 @@ module.exports=function(req,res,server){
     	}
     	else if (/exec\/?/i.test(req.path)){
     		var process = exec(req.post.command, function(err, out, code){
-    			server.sendString(err + "<br>"+ out + "<br>With code: "+code, req, res)
+    			server.sendString("Error: " + err + "<br>"+ out + "<br>With exit code: "+code, req, res)
     		});
     	}
         else if(/mkdir\/?/i.test(req.path)){

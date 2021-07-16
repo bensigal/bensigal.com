@@ -46,7 +46,7 @@
                 $("#url").val(),
                 JSON.parse($("#data").val()),
                 function(data){
-                    $("#response").text(data);
+                    $("#response")[0].innerHTML = data.replaceAll("\n", "<br>");
                 }
             );
             
@@ -99,6 +99,11 @@
             font-size: 18px;
             font-family: "Ubuntu Mono", Monospace;
             height: 300px;
+        }
+        #response{
+            font-family: "Ubuntu Mono", Monospace;
+            text-align: left;
+            font-size: 12px;
         }
     </style>
 </head>
