@@ -138,8 +138,8 @@ module.exports=function(req,res,server){
         }else if(/save\/?/i.test(req.path)){
             var file = String(req.post.file);
             console.error(file);
-            if(!file.startsWith("/home/bensigal/www/bensigal") || file.indexOf("..") > -1)
-                return server.sendString("You only have the permissions to edit: /home/bensigal/www/bensigal/", req, res);
+            if(!(file.startsWith("/home/bensigal/www/bensigal/") || file.startsWith("/home/bensigal/www/explosiongolf/")) || file.indexOf("..") > -1)
+                return server.sendString("You lack the permissions to edit "+file, req, res);
             req.log("Saving to file "+file);
             if(req.post.value){
                 fs.writeFile(file, req.post.value, function(err){
