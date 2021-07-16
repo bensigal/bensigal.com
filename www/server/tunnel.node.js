@@ -12,14 +12,14 @@ var openFunctions = [
 var authorizationRequired = [
     "logout",
     "sitemap",
+    "purgecache",
 ];
 var partialPermissions = [
     "save",
     "getfilecontents",
-]
+];
 var adminRequired = [
     "exit",
-    "purgecache",
     "delete",
     "ssh",
     "getfilecontents",
@@ -67,6 +67,11 @@ module.exports=function(req,res,server){
             req.log("Logging out.");
             req.session.on=false;
             return "false";
+        }
+        else if(/purgecache\/?/i.test(req.path)){
+            req.log("Deleting cached tunnel "+req.post.path);
+            server.purgeCache(req.post.path);
+            server.sendString(req.post.path+" uncached", req, res);
         }else if(/sitemap\/?/i.test(req.path)){
             if(!req.post || !req.post.dir)
             	server.sendString("No sitemap location sent.",req,res);
@@ -88,7 +93,7 @@ module.exports=function(req,res,server){
             		return;
             	}
             	if(items.length===0){
-            	    req.log("Empty.")
+            	    req.log("Empty.");
             	    server.sendString("\n",req,res);
             	    return;
             	}
@@ -117,7 +122,7 @@ module.exports=function(req,res,server){
             					req.log("COMPLETE "+dirs+files);
             					server.sendString(dirs.join(";")+"\n"+files.join(";"),req,res);
             				}
-            			}
+            			};
             		}(file));
             	});
             });
@@ -148,7 +153,7 @@ module.exports=function(req,res,server){
                     }else{
                         server.sendString("Success!", req, res);
                     }
-                })
+                });
             }else{
                 var is = fs.createReadStream(req.files.contents[0].path);
                 var os = fs.createWriteStream(file);
@@ -210,11 +215,6 @@ module.exports=function(req,res,server){
                 if(err)return server.showErrorPage(err.message, req, res);
                 server.sendString("Success!", req, res);
             });
-        }
-        else if(/purgecache\/?/i.test(req.path)){
-            req.log("Deleting cached tunnel "+req.post.path);
-            server.purgeCache(req.post.path);
-            server.sendString(req.post.path+" uncached", req, res);
         }else if (/delete\/?/i.test(req.path)){
     	    req.log("Deleting "+req.post.file);
     	    return "";
