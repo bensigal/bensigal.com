@@ -1,7 +1,7 @@
 class Velocity{
     constructor(amplitude, direction){
-        this._amplitude = amplitude;
-        this._direction = direction;
+        this.amplitude = amplitude;
+        this.direction = direction;
     }
     reduceAmplitude(value, minimum){
         this.amplitude *= value;
@@ -20,6 +20,10 @@ class Velocity{
         return this._direction;
     }
     set direction(value){
+        if(value < 0){
+            this.direction = value + Math.PI*2;
+            return this.direction;
+        }
         return (this._direction = value % (Math.PI * 2));
     }
     get y(){

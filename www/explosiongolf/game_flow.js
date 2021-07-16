@@ -7,7 +7,7 @@ ctx,
 //how many ticks have passed
 ticks, grenadeTicks,
 //Game objects
-ball, meter, grenade,
+ball, meter, grenade, hills,
 //Which part of the playing scene is taking place. String.
 step,
 //String corresponding to what should be displayed
@@ -41,24 +41,35 @@ function mainLoop(){
     ctx.clearRect(0,0,800,600);
     
     try{
+        
         switch(scene){
         case "game":
             draw();
             tick();
             break;
         }
+        
     }catch(e){
+        
         console.error(e.name + ": " + e.message + "\n" + e.stack);
-    }
-    nextTick += 16;
-    if(nextTick < new Date().getTime()){
-        mainLoop();
-    }else{
-        window.requestAnimationFrame(mainLoop);
+        
+    }finally{
+        
+        nextTick += 16;
+        if(nextTick < new Date().getTime()){
+            mainLoop();
+        }else{
+            window.requestAnimationFrame(mainLoop);
+        }
+        
     }
 }
 
 function draw(){
+    
+    hills.forEach(function(hill){
+        hill.draw();
+    });
     ball.draw();
     
     switch(step){
@@ -70,10 +81,10 @@ function draw(){
         grenade.draw();
         break;
     }
+    
 }
 
 function tick(){
-    ball.tick();
     
     switch(step){
     case "aiming":
@@ -81,8 +92,15 @@ function tick(){
         break;
     case "throwing":
         grenade.tick();
+        hills.forEach(function(hill){
+            hill.tick([grenade]);
+        });
         break;
     case "explosion":
+        ball.tick();
+        hills.forEach(function(hill){
+            hill.tick([ball]);
+        });
         break;
     }
 }
@@ -130,6 +148,7 @@ function initGame(){
     ball = new Ball();
     meter = new PowerMeter();
     grenade = new Grenade();
+    hills = map.hills;
     scene = "game";
     step = "aiming";
 }

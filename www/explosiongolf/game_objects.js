@@ -18,9 +18,11 @@ class Ball{
         
         this.velocity.amplitude *= 0.986;
         
-        if(this.velocity.amplitude === 0 && step == "explosion"){
+        if(this.velocity.amplitude === 0 && step == "explosion" && !this.isBeingPushed){
             ballStopped();
         }
+        
+        this.isBeingPushed = false;
     }
     
     draw(){
@@ -44,7 +46,7 @@ class Grenade{
         this.angle = 0;
         
         this.throwSpeed = 10;
-        this.power = 300;
+        this.power = 400;
         
         this.image = $("#grenade")[0];
     }
@@ -75,19 +77,77 @@ class Grenade{
         
         grenadeTicks++;
         
-        this.angle += this.velocity.amplitude * 0.02;
+        this.angle += this.velocity.amplitude * 0.03;
         
         this.x += this.velocity.x;
         this.y += this.velocity.y;
         
-        if(this.y > canvas.height - this.r) this.velocity.y *= -1;
-        if(this.y < this.r)                 this.velocity.y *= -1;
-        if(this.x > canvas.width  - this.r) this.velocity.x *= -1;
-        if(this.x < this.r)                 this.velocity.x *= -1;
+        if(this.y > canvas.height - this.r) {this.velocity.y *= -1; this.y += this.velocity.y;}
+        if(this.y < this.r)                 {this.velocity.y *= -1; this.y += this.velocity.y;}
+        if(this.x > canvas.width  - this.r) {this.velocity.x *= -1; this.x += this.velocity.y;}
+        if(this.x < this.r)                 {this.velocity.x *= -1; this.x += this.velocity.y;}
         
         this.velocity.amplitude *= 0.985;
         
         if(grenadeTicks > 240) grenadeExplodes();
+    }
+    
+}
+
+class Hill{
+    
+    constructor(x, y, w, h, dv){
+        
+        //Change in velocity every tick
+        this.dv = dv;
+        
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        
+    }
+    
+    draw(){
+        
+        ctx.fillStyle = "#DDD";
+        ctx.fillRect(this.x, this.y, this.w, this.h);
+        
+        for(var x = 50; x <= this.w - 50; x+= 50){
+            for(var y = 50; y <= this.h - 50; y += 50){
+                ctx.strokeStyle = "#A6A";
+                ctx.beginPath();
+                ctx.moveTo(this.x + x - 10*Math.cos(this.dv.direction), this.y + y - 10*Math.sin(this.dv.direction));
+                var arrowhead = {
+                    x: this.x + x + 10*Math.cos(this.dv.direction),
+                    y: this.y + y + 10*Math.sin(this.dv.direction)
+                };
+                ctx.lineTo(arrowhead.x, arrowhead.y);
+                ctx.lineTo(arrowhead.x + 4*Math.cos(this.dv.direction+Math.PI-0.5), arrowhead.y + 4*Math.sin(this.dv.direction+Math.PI-0.5));
+                ctx.moveTo(arrowhead.x, arrowhead.y);
+                ctx.lineTo(arrowhead.x + 4*Math.cos(this.dv.direction+Math.PI+0.5), arrowhead.y + 4*Math.sin(this.dv.direction+Math.PI+0.5));
+                ctx.closePath();
+                ctx.stroke();
+            }
+        }
+        
+    }
+    
+    tick(items){
+        
+        //items contains everything that might be affected by the hill
+        items.forEach(function(item){
+            if(item.x > this.x && item.x < this.x + this.w){
+                if(item.y > this.y && item.y < this.y + this.h){
+                    item.velocity.x += this.dv.x;
+                    item.velocity.y += this.dv.y;
+                    if(item instanceof Ball){
+                        item.isBeingPushed = true;
+                    }
+                }
+            }
+        }, this);
+        
     }
     
 }
