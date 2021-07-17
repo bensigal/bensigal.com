@@ -1,8 +1,8 @@
 class Ball{
     
-    constructor(){
+    constructor(pos){
         this.vel = new Vector(0, 0);
-        this.pos = Vector.xy(400, 300);
+        this.pos = pos || Vector.xy(400, 300);
         this.r = 12;
         this.friction = 0.08;
         this.collides = true;
@@ -13,16 +13,16 @@ class Ball{
         this.pos.x += this.vel.x;
         this.pos.y += this.vel.y;
         
-        if(this.pos.y > canvas.height - this.r) this.vel.y *= -1;
-        if(this.pos.y < this.r)                 this.vel.y *= -1;
-        if(this.pos.x > canvas.width  - this.r) this.vel.x *= -1;
-        if(this.pos.x < this.r)                 this.vel.x *= -1;
+        if(this.pos.y > canvas.height - this.r) {this.vel.y *= -1; this.pos.y = canvas.height-this.r}
+        if(this.pos.y < this.r)                 {this.vel.y *= -1; this.pos.y = this.r}
+        if(this.pos.x > canvas.width  - this.r) {this.vel.x *= -1; this.pos.x = canvas.width-this.r}
+        if(this.pos.x < this.r)                 {this.vel.x *= -1; this.pos.x = this.r}
         
         this.vel.amplitude -= this.friction;
         this.vel.amplitude *= 0.995;
         
         if(this.vel.amplitude === 0 && step == "explosion" && !this.isBeingPushed){
-            ballStopped();
+            stoppedBalls++;
         }
         
         this.isBeingPushed = false;
