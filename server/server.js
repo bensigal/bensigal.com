@@ -495,7 +495,7 @@ var Session = function(id){
 
 
 //Log folder, actually start server.
-if(logging){
+if(logging > 1){
 	fs.mkdir(root + "server/logs/"+startTime,function(err){
 		if(err) throw err;
 		httpServer.listen(port, function(){
