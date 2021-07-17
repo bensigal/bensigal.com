@@ -3,9 +3,10 @@ class Ball{
     constructor(){
         this.vel = new Vector(0, 0);
         this.pos = Vector.xy(400, 300);
-        this.r = 10;
+        this.r = 12;
         this.friction = 0.08;
         this.collides = true;
+        this.mass = 1;
     }
     
     tick(){
@@ -43,14 +44,15 @@ class Grenade{
         this.vel = new Vector(0, 0);
         this.pos = Vector.xy(20, 300);
         this.collides = true;
+        this.mass = 1;
         
         this.imageWidth = 25;
-        this.r = 10;
+        this.r = 12;
         this.angle = 0;
         this.friction = 0.08;
         
         this.throwSpeed = 10;
-        this.power = 400;
+        this.power = 800;
         
         this.image = $("#grenade")[0];
     }

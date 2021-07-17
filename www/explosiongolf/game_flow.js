@@ -91,10 +91,12 @@ function tick(){
         meter.tick();
         break;
     case "throwing":
+        ball.tick();
         grenade.tick();
         hills.forEach(function(hill){
             hill.tick([grenade]);
         });
+        checkForCollisions([ball, grenade]);
         break;
     case "explosion":
         ball.tick();
@@ -104,9 +106,6 @@ function tick(){
         break;
     }
     
-    if(ball.pos.distanceTo(grenade.pos) < ball.r + grenade.r){
-        collideBalls(ball, grenade);
-    }
 }
 
 function throwGrenade(){
