@@ -1,24 +1,26 @@
 class Ball{
     
     constructor(){
-        this.velocity = new Velocity(0, 0);
-        this.x = 400;
-        this.y = 300;
+        this.vel = new Vector(0, 0);
+        this.pos = Vector.xy(400, 300);
         this.r = 10;
+        this.friction = 0.08;
+        this.collides = true;
     }
     
     tick(){
-        this.x += this.velocity.x;
-        this.y += this.velocity.y;
+        this.pos.x += this.vel.x;
+        this.pos.y += this.vel.y;
         
-        if(this.y > canvas.height - this.r) this.velocity.y *= -1;
-        if(this.y < this.r)                 this.velocity.y *= -1;
-        if(this.x > canvas.width  - this.r) this.velocity.x *= -1;
-        if(this.x < this.r)                 this.velocity.x *= -1;
+        if(this.pos.y > canvas.height - this.r) this.vel.y *= -1;
+        if(this.pos.y < this.r)                 this.vel.y *= -1;
+        if(this.pos.x > canvas.width  - this.r) this.vel.x *= -1;
+        if(this.pos.x < this.r)                 this.vel.x *= -1;
         
-        this.velocity.amplitude *= 0.986;
+        this.vel.amplitude -= this.friction;
+        this.vel.amplitude *= 0.995;
         
-        if(this.velocity.amplitude === 0 && step == "explosion" && !this.isBeingPushed){
+        if(this.vel.amplitude === 0 && step == "explosion" && !this.isBeingPushed){
             ballStopped();
         }
         
@@ -28,7 +30,7 @@ class Ball{
     draw(){
         ctx.fillStyle = "black";
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+        ctx.arc(this.pos.x, this.pos.y, this.r, 0, Math.PI*2);
         ctx.closePath();
         ctx.fill();
     }
@@ -38,12 +40,14 @@ class Ball{
 class Grenade{
     
     constructor(){
-        this.velocity = new Velocity(0, 0);
-        this.x = 20;
-        this.y = 300;
+        this.vel = new Vector(0, 0);
+        this.pos = Vector.xy(20, 300);
+        this.collides = true;
+        
         this.imageWidth = 25;
         this.r = 10;
         this.angle = 0;
+        this.friction = 0.08;
         
         this.throwSpeed = 10;
         this.power = 400;
@@ -55,14 +59,14 @@ class Grenade{
         /*
         ctx.fillStyle = "#0B3";
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+        ctx.arc(this.pos.x, this.pos.y, this.r, 0, Math.PI*2);
         ctx.closePath();
         ctx.fill();
         */
         ctx.rotate(this.angle);
         
-        var normalCoordinatesX = this.x;
-        var normalCoordinatesY = this.y;
+        var normalCoordinatesX = this.pos.x;
+        var normalCoordinatesY = this.pos.y;
         
         //i hate trig
         var newX = normalCoordinatesX * Math.cos(this.angle) + normalCoordinatesY * Math.sin(this.angle);
@@ -77,17 +81,17 @@ class Grenade{
         
         grenadeTicks++;
         
-        this.angle += this.velocity.amplitude * 0.03;
+        this.angle += this.vel.amplitude * 0.03;
         
-        this.x += this.velocity.x;
-        this.y += this.velocity.y;
+        this.pos = this.pos.plus(this.vel);
         
-        if(this.y > canvas.height - this.r) {this.velocity.y *= -1; this.y += this.velocity.y;}
-        if(this.y < this.r)                 {this.velocity.y *= -1; this.y += this.velocity.y;}
-        if(this.x > canvas.width  - this.r) {this.velocity.x *= -1; this.x += this.velocity.y;}
-        if(this.x < this.r)                 {this.velocity.x *= -1; this.x += this.velocity.y;}
+        if(this.pos.y > canvas.height - this.r) {this.vel.y *= -1; this.pos.y += this.vel.y;}
+        if(this.pos.y < this.r)                 {this.vel.y *= -1; this.pos.y += this.vel.y;}
+        if(this.pos.x > canvas.width  - this.r) {this.vel.x *= -1; this.pos.x += this.vel.y;}
+        if(this.pos.x < this.r)                 {this.vel.x *= -1; this.pos.x += this.vel.y;}
         
-        this.velocity.amplitude *= 0.985;
+        this.vel.amplitude -= this.friction;
+        this.vel.amplitude *= 0.995;
         
         if(grenadeTicks > 240) grenadeExplodes();
     }
@@ -98,11 +102,10 @@ class Hill{
     
     constructor(x, y, w, h, dv){
         
-        //Change in velocity every tick
+        //Change in vel every tick
         this.dv = dv;
         
-        this.x = x;
-        this.y = y;
+        this.pos = Vector.xy(x, y);
         this.w = w;
         this.h = h;
         
@@ -111,16 +114,16 @@ class Hill{
     draw(){
         
         ctx.fillStyle = "#DDD";
-        ctx.fillRect(this.x, this.y, this.w, this.h);
+        ctx.fillRect(this.pos.x, this.pos.y, this.w, this.h);
         
         for(var x = 50; x <= this.w - 50; x+= 50){
             for(var y = 50; y <= this.h - 50; y += 50){
                 ctx.strokeStyle = "#A6A";
                 ctx.beginPath();
-                ctx.moveTo(this.x + x - 10*Math.cos(this.dv.direction), this.y + y - 10*Math.sin(this.dv.direction));
+                ctx.moveTo(this.pos.x + x - 10*Math.cos(this.dv.direction), this.pos.y + y - 10*Math.sin(this.dv.direction));
                 var arrowhead = {
-                    x: this.x + x + 10*Math.cos(this.dv.direction),
-                    y: this.y + y + 10*Math.sin(this.dv.direction)
+                    x: this.pos.x + x + 10*Math.cos(this.dv.direction),
+                    y: this.pos.y + y + 10*Math.sin(this.dv.direction)
                 };
                 ctx.lineTo(arrowhead.x, arrowhead.y);
                 ctx.lineTo(arrowhead.x + 4*Math.cos(this.dv.direction+Math.PI-0.5), arrowhead.y + 4*Math.sin(this.dv.direction+Math.PI-0.5));
@@ -137,10 +140,10 @@ class Hill{
         
         //items contains everything that might be affected by the hill
         items.forEach(function(item){
-            if(item.x > this.x && item.x < this.x + this.w){
-                if(item.y > this.y && item.y < this.y + this.h){
-                    item.velocity.x += this.dv.x;
-                    item.velocity.y += this.dv.y;
+            if(item.pos.x > this.pos.x && item.pos.x < this.pos.x + this.w){
+                if(item.pos.y > this.pos.y && item.pos.y < this.pos.y + this.h){
+                    item.vel.x += this.dv.x;
+                    item.vel.y += this.dv.y;
                     if(item instanceof Ball){
                         item.isBeingPushed = true;
                     }

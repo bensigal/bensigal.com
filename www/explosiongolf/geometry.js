@@ -1,15 +1,15 @@
 //Do the two rectangles intersect?
 function rectangularCollisionTest(a,b){
     
-    var al = a.x;
-    var ar = a.x+a.w;
-    var at = a.y;
-    var ab = a.y+a.h;
+    var al = a.pos.x;
+    var ar = a.pos.x+a.w;
+    var at = a.pos.y;
+    var ab = a.pos.y+a.h;
     
-    var bl = b.x;
-    var br = b.x+b.w;
-    var bt = b.y;
-    var bb = b.y+b.h;
+    var bl = b.pos.x;
+    var br = b.pos.x+b.w;
+    var bt = b.pos.y;
+    var bb = b.pos.y+b.h;
     
     return !(
         al > br ||
@@ -74,8 +74,5 @@ function angleFrom(item1, item2){
 }
 
 function distance(x1,y1,x2,y2){
-    if(x2 === undefined){
-        return Math.sqrt((x1.x-y1.x)*(x1.x-y1.x)+(x1.y-y1.y)*(x1.y-y1.y))
-    }
     return Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
 }

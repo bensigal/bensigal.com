@@ -103,17 +103,21 @@ function tick(){
         });
         break;
     }
+    
+    if(ball.pos.distanceTo(grenade.pos) < ball.r + grenade.r){
+        collideBalls(ball, grenade);
+    }
 }
 
 function throwGrenade(){
     step = "throwing";
-    grenade.velocity = new Velocity(meter.progress*grenade.throwSpeed, meter.angle);
+    grenade.vel = new Vector(meter.progress*grenade.throwSpeed, meter.angle);
     grenadeTicks = 0;
 }
 
 function grenadeExplodes(){
     step = "explosion";
-    ball.velocity = new Velocity(Math.pow(distance(ball, grenade), -1)*grenade.power, angleFrom(grenade, ball));
+    ball.vel = new Vector(grenade.power/grenade.pos.distanceTo(ball.pos), grenade.pos.angleTo(ball.pos));
 }
 
 function ballStopped(){
