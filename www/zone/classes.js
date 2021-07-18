@@ -53,6 +53,7 @@ class Player{
         
         this.playerNumber = playerNumber;
         
+		//Load starting position from map based on player number
         this.x = map.startingPositions[this.playerNumber-1][0];
         this.y = map.startingPositions[this.playerNumber-1][1];
         

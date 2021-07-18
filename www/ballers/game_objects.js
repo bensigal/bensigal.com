@@ -42,10 +42,71 @@ class Ball{
         this.pos.x += this.vel.x;
         this.pos.y += this.vel.y;
         
-        if(this.pos.y > canvas.height - this.r) {this.vel.y *= -1; this.pos.y = canvas.height-this.r}
-        if(this.pos.y < fieldTop + this.r)      {this.vel.y *= -1; this.pos.y = fieldTop + this.r}
-        if(this.pos.x > canvas.width  - this.r) {this.vel.x *= -1; this.pos.x = canvas.width-this.r}
-        if(this.pos.x < this.r)                 {this.vel.x *= -1; this.pos.x = this.r}
+        if(this.pos.y > canvas.height - this.r) {
+			this.vel.y *= -1; 
+			this.pos.y = canvas.height-this.r;
+		}
+        if(this.pos.y < fieldTop + this.r){    
+			this.vel.y *= -1; 
+			this.pos.y = fieldTop + this.r;
+		}
+        if(this.pos.x > canvas.width  - this.r) {
+			this.vel.x *= -1; 
+			this.pos.x = canvas.width-this.r;
+		}
+        if(this.pos.x < this.r){               
+			this.vel.x *= -1; 
+			this.pos.x = this.r;
+		}
+		
+        walls.forEach(function(wall){
+			//right side of ball is inside wall, bounce horizontally
+			var wallCorners = [
+				Vector.xy(wall.pos.x, wall.pos.y),
+				Vector.xy(wall.pos.x, wall.pos.y + wall.h),
+				Vector.xy(wall.pos.x + wall.w, wall.pos.y),
+				Vector.xy(wall.pos.x + wall.w, wall.pos.y + wall.h)
+			];
+            if((this.pos.x + this.r > wall.pos.x && this.pos.x < wall.pos.x + wall.w) && 
+			(this.pos.y > wall.pos.y && this.pos.y < wall.pos.y + wall.h)){
+				console.log("Wall side collision");
+				this.vel.x *= -1;
+				this.pos.x = wall.pos.x - this.r
+			}
+			//left side of ball is inside wall, bounce horizontally
+            else if((this.pos.x > wall.pos.x && this.pos.x - this.r < wall.pos.x + wall.w) && 
+			(this.pos.y > wall.pos.y && this.pos.y < wall.pos.y + wall.h)){
+				console.log("Wall side collision");
+				this.vel.x *= -1;
+				this.pos.x = wall.pos.x + wall.w + this.r;
+			}
+			//top side of ball is inside wall, bounce vertically
+            else if((this.pos.x > wall.pos.x && this.pos.x < wall.pos.x + wall.w) && 
+			(this.pos.y > wall.pos.y && this.pos.y - this.r < wall.pos.y + wall.h)){
+				console.log("Wall side collision");
+				this.vel.y *= -1;
+				this.pos.y = wall.pos.y + wall.h + this.r;
+			}
+			//bottom side of ball is inside wall, bounce vertically
+            else if((this.pos.x > wall.pos.x && this.pos.x < wall.pos.x + wall.w) && 
+			(this.pos.y + this.r > wall.pos.y && this.pos.y < wall.pos.y + wall.h)){
+				console.log("Wall side collision");
+				this.vel.y *= -1;
+				this.pos.y = wall.pos.y - this.r;
+			}
+			//Check each corner
+			else{
+				wallCorners.forEach(function(corner){
+					if(corner.distanceTo(this.pos) > this.r) return;
+					console.log("Corner collision");
+					var reflectionAngle = this.pos.angleTo(corner) + Math.PI/2;
+					var newAngle = 2*reflectionAngle - this.vel.angle;
+					this.vel.angle = newAngle;
+					this.pos = this.pos.plus(
+						new Vector(this.pos.distanceTo(corner), corner.angleTo(this.pos)));
+				}, this);
+			}
+        }, this);
         
         this.vel.amplitude -= this.friction;
         this.vel.amplitude *= 0.995;
@@ -133,15 +194,15 @@ class Hill{
             for(var y = 50; y <= this.h - 50; y += 50){
                 ctx.strokeStyle = "#A6A";
                 ctx.beginPath();
-                ctx.moveTo(this.pos.x + x - 10*Math.cos(this.dv.direction), this.pos.y + y - 10*Math.sin(this.dv.direction));
+                ctx.moveTo(this.pos.x + x - 10*Math.cos(this.dv.angle), this.pos.y + y - 10*Math.sin(this.dv.angle));
                 var arrowhead = {
-                    x: this.pos.x + x + 10*Math.cos(this.dv.direction),
-                    y: this.pos.y + y + 10*Math.sin(this.dv.direction)
+                    x: this.pos.x + x + 10*Math.cos(this.dv.angle),
+                    y: this.pos.y + y + 10*Math.sin(this.dv.angle)
                 };
                 ctx.lineTo(arrowhead.x, arrowhead.y);
-                ctx.lineTo(arrowhead.x + 4*Math.cos(this.dv.direction+Math.PI-0.5), arrowhead.y + 4*Math.sin(this.dv.direction+Math.PI-0.5));
+                ctx.lineTo(arrowhead.x + 4*Math.cos(this.dv.angle+Math.PI-0.5), arrowhead.y + 4*Math.sin(this.dv.angle+Math.PI-0.5));
                 ctx.moveTo(arrowhead.x, arrowhead.y);
-                ctx.lineTo(arrowhead.x + 4*Math.cos(this.dv.direction+Math.PI+0.5), arrowhead.y + 4*Math.sin(this.dv.direction+Math.PI+0.5));
+                ctx.lineTo(arrowhead.x + 4*Math.cos(this.dv.angle+Math.PI+0.5), arrowhead.y + 4*Math.sin(this.dv.angle+Math.PI+0.5));
                 ctx.closePath();
                 ctx.stroke();
             }

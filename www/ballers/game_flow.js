@@ -26,8 +26,8 @@ scene;
 
 //Menu options
 var options = [
-    ["local multiplayer", "online multiplayer", "tutorial"],
-    ["map option 1", "map option 2", "back"]
+    ["Local Multiplayer", "Online Multiplayer", "Tutorial"],
+    ["Empty Field", "Cage", "Ricochet", "Narrow", "Back"]
 ];
 //Height of dashboard above field of play
 var fieldTop = 130;
@@ -99,6 +99,15 @@ function draw(){
         hill.draw();
     });
     
+	walls.forEach(function(wall){
+		wall.draw();
+	});
+	
+    calculateScore();
+    balls.forEach(function(ball){
+        ball.draw();
+    });
+    
     switch(step){
     case "aiming":
         meter.draw();
@@ -110,14 +119,9 @@ function draw(){
         ctx.textAlign = "center";
         ctx.fillText("Player " + (calculateScore() > 0 ? 1 : 2) + 
             " wins " + Math.abs(calculateScore()) + 
-            " point"+ (Math.abs(calculateScore()) > 1 ? "s" : "") + "!", 400, 350);
+            " point"+ (Math.abs(calculateScore()) > 1 ? "s" : "") + "!", 400, 180);
         break;
     }
-    
-    calculateScore();
-    balls.forEach(function(ball){
-        ball.draw();
-    });
 
    
     drawTopBar();
@@ -130,11 +134,11 @@ function tick(){
     
     switch(step){
     case "aiming":
-        if (keyboard.down && nextBall.pos.y < canvas.height - 7 && !keyboard.space){
-            nextBall.pos.y += 3;
+        if (keyboard.down && nextBall.pos.y < canvas.height - 75 && !keyboard.space){
+            nextBall.pos.y += 2;
         }
         if (keyboard.up && nextBall.pos.y > fieldTop + 75 && !keyboard.space){
-            nextBall.pos.y -= 3;
+            nextBall.pos.y -= 2;
         }
         meter.tick();
         break;
@@ -148,9 +152,6 @@ function tick(){
         });
         checkForCollisions(balls);
         if(stoppedBalls == balls.length)ballsStopped();
-        break;
-    case "finished":
-
         break;
     }
     
@@ -258,9 +259,9 @@ function initCanvas(){
 }
 
 function initGame(){
-    targetBall = new Ball(Vector.xy(600, 300),"targetBall",0);
+    targetBall = new Ball(Vector.xy(600, 365),"targetBall",0);
     activePlayer = p1Score < p2Score ? 2 : 1;
-    nextBall = new Ball(Vector.xy(20, 300), "normalBall", activePlayer);
+    nextBall = new Ball(Vector.xy(20, 365), "normalBall", activePlayer);
     balls = [
         targetBall,
         nextBall
