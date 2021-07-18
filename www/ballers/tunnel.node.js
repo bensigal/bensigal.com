@@ -6,7 +6,7 @@ module.exports = function(req, res, server){
     //Switch based off whatever comes after /explosiongolf/, until the next slash
     switch(req.path.split("/")[2]){
     default:
-        server.defaultTunnel(req, res, "/explosiongolf/");
+        server.defaultTunnel(req, res, "/ballers/");
         break;
     }
     
