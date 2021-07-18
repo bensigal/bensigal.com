@@ -7,7 +7,7 @@ ctx,
 //how many ticks have passed
 ticks, grenadeTicks,
 //Game objects
-balls, meter, grenade, hills,
+ball, meter, grenade, hills,
 //Which part of the playing scene is taking place. String.
 step,
 //String corresponding to what should be displayed
@@ -70,6 +70,7 @@ function draw(){
     hills.forEach(function(hill){
         hill.draw();
     });
+    ball.draw();
     
     switch(step){
     case "aiming":
@@ -81,10 +82,6 @@ function draw(){
         break;
     }
     
-    balls.forEach(function(ball){
-        ball.draw();
-    });
-    
 }
 
 function tick(){
@@ -94,25 +91,18 @@ function tick(){
         meter.tick();
         break;
     case "throwing":
-        balls.forEach(function(ball){
-            ball.tick();
-        });
+        ball.tick();
         grenade.tick();
         hills.forEach(function(hill){
             hill.tick([grenade]);
         });
-        checkForCollisions([grenade].concat(balls));
+        checkForCollisions([ball, grenade]);
         break;
     case "explosion":
-        stoppedBalls = 0;
-        balls.forEach(function(ball){
-            ball.tick();
-        });
+        ball.tick();
         hills.forEach(function(hill){
-            hill.tick(balls);
+            hill.tick([ball]);
         });
-        checkForCollisions(balls);
-        if(stoppedBalls == balls.length)ballsStopped();
         break;
     }
     
@@ -126,12 +116,10 @@ function throwGrenade(){
 
 function grenadeExplodes(){
     step = "explosion";
-    balls.forEach(function(ball){
-        ball.vel = new Vector(grenade.power/grenade.pos.distanceTo(ball.pos), grenade.pos.angleTo(ball.pos));
-    });
+    ball.vel = new Vector(grenade.power/grenade.pos.distanceTo(ball.pos), grenade.pos.angleTo(ball.pos));
 }
 
-function ballsStopped(){
+function ballStopped(){
     step = "aiming";
     grenade = new Grenade();
     meter = new PowerMeter();
@@ -160,16 +148,7 @@ function initCanvas(){
 }
 
 function initGame(){
-    balls = [
-        new Ball(Vector.xy(100, 100)),
-        new Ball(Vector.xy(200, 100)),
-        new Ball(Vector.xy(150, 200)),
-        new Ball(Vector.xy(100, 300)),
-        new Ball(Vector.xy(200, 300)),
-        new Ball(Vector.xy(150, 400)),
-        new Ball(Vector.xy(100, 500)),
-        new Ball(Vector.xy(200, 500))
-    ];
+    ball = new Ball();
     meter = new PowerMeter();
     grenade = new Grenade();
     hills = map.hills;
