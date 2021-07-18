@@ -1,7 +1,7 @@
 class Vector{
-    constructor(amplitude, direction){
+    constructor(amplitude, angle){
         this.amplitude = amplitude;
-        this.direction = direction;
+        this.angle = angle;
     }
     get amplitude(){
         return this._amplitude;
@@ -16,24 +16,24 @@ class Vector{
         this._amplitude = value;
         return value;
     }
-    get direction(){
-        return this._direction;
+    get angle(){
+        return this._angle;
     }
-    set direction(value){
+    set angle(value){
         while(value < 0){
             value += Math.PI*2;
         }
         while(value >= Math.PI*2){
             value -= Math.PI*2;
         }
-        this._direction = value;
-        return this._direction;
+        this._angle = value;
+        return this._angle;
     }
     get y(){
-        return this.amplitude * Math.sin(this.direction);
+        return this.amplitude * Math.sin(this.angle);
     }
     get x(){
-        return this.amplitude * Math.cos(this.direction);
+        return this.amplitude * Math.cos(this.angle);
     }
     set x(postX){
         var preX = this.x;
@@ -48,7 +48,7 @@ class Vector{
         }
         
         this.amplitude = Math.sqrt(postX*postX + preY*preY);
-        this.direction = Math.atan2(preY,postX);
+        this.angle = Math.atan2(preY,postX);
     }
     set y(postY){
         var preX = this.x;
@@ -63,7 +63,7 @@ class Vector{
         }
         
         this.amplitude = Math.sqrt(preX*preX + postY*postY);
-        this.direction = Math.atan2(postY,preX);
+        this.angle = Math.atan2(postY,preX);
     }
     
     plus(other){
@@ -93,11 +93,11 @@ class Vector{
     }
     
     clone(){
-        return new Vector(this.amplitude, this.direction);
+        return new Vector(this.amplitude, this.angle);
     }
     
     angleTo(other){
-        return other.minus(this).direction;
+        return other.minus(this).angle;
     }
 }
 Vector.amplitudeTolerance = 0.1;
@@ -109,17 +109,19 @@ Vector.xy = function(x, y){
     return result;
 };
 
-function checkForCollisions(arr){
-    for(var i = 0; i < arr.length-1; i++){
-        for(var j = i+1; j < arr.length; j++){
-
-            if(arr[i].exploded || arr[j].exploded) continue;
-
-            if(arr[i].pos.distanceTo(arr[j].pos) <= arr[i].r + arr[j].r){
-                collideBalls(arr[i], arr[j]);
-                while(arr[i].pos.distanceTo(arr[j].pos) <= arr[i].r + arr[j].r){
-                    arr[i].pos.x += Math.cos(arr[j].pos.angleTo(arr[i].pos));
-                    arr[i].pos.y += Math.sin(arr[j].pos.angleTo(arr[i].pos));
+function checkForCollisions(){
+    //Ball to ball collisions
+    for(var i = 0; i < balls.length-1; i++){
+        for(var j = i+1; j < balls.length; j++){
+            //grenades that exploded do not actually exist
+            if(balls[i].exploded || balls[j].exploded) continue;
+            //Check if circles touch
+            if(balls[i].pos.distanceTo(balls[j].pos) <= balls[i].r + balls[j].r){
+                collideBalls(balls[i], balls[j]);
+                //can't be inside each other
+                while(balls[i].pos.distanceTo(balls[j].pos) <= balls[i].r + balls[j].r){
+                    balls[i].pos.x += Math.cos(balls[j].pos.angleTo(balls[i].pos));
+                    balls[i].pos.y += Math.sin(balls[j].pos.angleTo(balls[i].pos));
                 }
             }
         }
@@ -132,21 +134,21 @@ function collideBalls(ball1, ball2){
     //If balls are getting closer together...
     if (res.x*(ball2.pos.x - ball1.pos.x) + res.y* (ball2.pos.y - ball1.pos.y) >= 0 ) {
         
-        console.log("Applying collision");
+        console.log("Ball collision");
         
         var m1 = ball1.mass;
         var m2 = ball2.mass;
         var theta = -Math.atan2(ball2.pos.y - ball1.pos.y, ball2.pos.x - ball1.pos.x);
         
         var v1 = ball1.vel.clone();
-        v1.direction += theta;
+        v1.angle += theta;
         var v2 = ball2.vel.clone();
-        v2.direction += theta;
+        v2.angle += theta;
         
         ball1.vel = Vector.xy(v1.x * (m1 - m2)/(m1 + m2) + v2.x * 2 * m2/(m1 + m2), v1.y);
-        ball1.vel.direction -= theta;
+        ball1.vel.angle -= theta;
         ball2.vel = Vector.xy(v2.y * (m2 - m1)/(m1 + m2) + v1.x * 2 * m1/(m1 + m2), v2.y);
-        ball2.vel.direction -= theta;
+        ball2.vel.angle -= theta;
         
     }
 }

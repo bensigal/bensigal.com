@@ -1,5 +1,6 @@
 //Detect keypresses
 $(document).keydown(function(e){
+	if(e.ctrlKey)return;
     var preventDefault = true;
     switch(e.keyCode){
     case 37:
@@ -66,6 +67,11 @@ $(document).keydown(function(e){
         break;
     //esc
     case 27:
+		if(scene == "menu" && depth == 0){
+			if(balls && balls.length > 2){
+				scene = "game";
+			}
+		}
         scene = "menu";
         depth = 0;
         break;

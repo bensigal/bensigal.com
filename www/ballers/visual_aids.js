@@ -82,34 +82,34 @@ function drawMenu(){
         ctx.fillStyle = index == optionSelected ? "black" : "#BBB";
         ctx.textAlign = "center";
         ctx.font = "italic bold 24px Arial";
-        ctx.fillText(element, 400, 300 + 40 * (index-options.length/2));
+        ctx.fillText(element, 400, 300 + 40 * (index-options[depth].length/2));
     });
 }
 
 //Enter was pressed while on the menu
 function selectMenuOption(index){
     
+    optionSelected = 0;
     //If you were on back, go back
-    if(options[depth][index]=="back")return depth--;
+    if(options[depth][index]=="Back")return depth--;
     
     switch(depth){
     //If on the first page of options, go to next page
     case 0:
-        if(optionSelected == 2){
+        if(index == 2){
             scene = "tutorial";
             break;
         }
-        multiplayerMode = optionSelected ? "online" : "local";
+        multiplayerMode = index ? "online" : "local";
         depth++;
         break;
     //If on second page, start game.
     case 1:
-        map = maps[optionSelected];
+        map = maps[options[depth][index]];
         initGame();
         scene = "game";
         break;
     }
-    optionSelected = 0;
 }
 
 function drawRemainingBalls(p1BallsLeft,p2BallsLeft){
