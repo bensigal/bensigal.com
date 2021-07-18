@@ -1,4 +1,7 @@
-map = {
-    hills: [
-    ]
-};
+maps = [
+    //Empty
+    {
+        hills: [],
+        walls: []
+    }
+];

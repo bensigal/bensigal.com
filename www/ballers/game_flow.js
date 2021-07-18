@@ -12,24 +12,27 @@ hasStartedAiming,
 balls, meter, hills, targetBall, nextBall,
 //Which part of the playing scene is taking place. String.
 step,
-//Active whoever is playing
+//Active whoever is playing, 1 or 2
 activePlayer,
 //Status of each player
 p1BallsLeft, p2BallsLeft,
-//who won
+//"local" or "online"
+multiplayerMode,
+//who won, 1 or 2
 winner,
 //String corresponding to what should be displayed
 //Determines function(s) to call each tick
 scene;
 
-var fieldTop = 130;
-
+//Menu options
 var options = [
-    ["option 1", "option 2"],
-    ["inner option 1", "inner option 2", "back"]
-]
+    ["local multiplayer", "online multiplayer", "tutorial"],
+    ["map option 1", "map option 2", "back"]
+];
+//Height of dashboard above field of play
+var fieldTop = 130;
+//Menu status
 var depth = 0, optionSelected = 0;
-
 //Store status of mouse and which keys are down
 var keyboard = {};
 var mouse = {};
@@ -72,6 +75,7 @@ function mainLoop(){
             break;
         case "podium":
             drawPodium();
+            break;
         }
         
     }catch(e){
@@ -161,7 +165,7 @@ function calculateScore(){
     var p2MinDistance = Infinity;
     //Find the minimum distance to target for each player
     balls.forEach(function(ball){
-        var dist = ball.pos.distanceTo(targetBall.pos)
+        var dist = ball.pos.distanceTo(targetBall.pos);
         if(ball.player == 1){
             if(dist < p1MinDistance){
                 p1MinDistance = dist;
@@ -181,7 +185,7 @@ function calculateScore(){
     balls.forEach(function(ball){
         ball.winning = false;
         //If the other player but not the target ball
-        if(ball.player == winner && winner != 0){
+        if(ball.player == winner && winner !== 0){
             if(ball.pos.distanceTo(targetBall.pos) < loserMinDistance){
                 score++;
                 //Whether or not the green ring is shown
@@ -193,10 +197,6 @@ function calculateScore(){
 
     return score;
     
-}
-
-function displayScore(score){
-    ctx.fillText(calculateScore(), 50, 50);
 }
     
 

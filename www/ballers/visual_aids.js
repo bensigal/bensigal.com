@@ -74,8 +74,6 @@ class PowerMeter{
 
 //Called while on menu
 function drawMenu(){
-    ctx.clearRect(0,0,800,600);
-    
     ctx.fillStyle = "black";
     ctx.font = "12px Arial";
     
@@ -90,21 +88,28 @@ function drawMenu(){
 
 //Enter was pressed while on the menu
 function selectMenuOption(index){
-    optionSelected = 0;
+    
     //If you were on back, go back
     if(options[depth][index]=="back")return depth--;
     
     switch(depth){
     //If on the first page of options, go to next page
     case 0:
+        if(optionSelected == 2){
+            scene = "tutorial";
+            break;
+        }
+        multiplayerMode = optionSelected ? "online" : "local";
         depth++;
         break;
-    //If on second page, do nothing and start game.
+    //If on second page, start game.
     case 1:
+        map = maps[optionSelected];
         initGame();
         scene = "game";
         break;
     }
+    optionSelected = 0;
 }
 
 function drawRemainingBalls(p1BallsLeft,p2BallsLeft){
@@ -121,7 +126,7 @@ function drawRemainingBalls(p1BallsLeft,p2BallsLeft){
     }
 
     for (let i = 0; i < p2BallsLeft + (nextBall.player == 2 && step == "aiming"); i++) {
-        drawBall(453 +29*i ,105,"#009")
+        drawBall(453 +29*i ,105,"#009");
     }
 
 }
