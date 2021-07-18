@@ -9,7 +9,7 @@ ticks, grenadeTicks,
 //Space was pressed for aiming
 hasStartedAiming,
 //Game objects
-balls, meter, hills, targetBall, nextBall,
+balls, meter, hills, targetBall, nextBall, walls,
 //Which part of the playing scene is taking place. String.
 step,
 //Active whoever is playing, 1 or 2
@@ -85,6 +85,7 @@ function mainLoop(){
     }
         
     nextTick += 16;
+    if(nextTick + 500 < new Date().getTime())nextTick = new Date().getTime();
     if(nextTick < new Date().getTime()){
         mainLoop();
     }else{
@@ -258,7 +259,7 @@ function initCanvas(){
 
 function initGame(){
     targetBall = new Ball(Vector.xy(600, 300),"targetBall",0);
-    activePlayer = p1Score > p2Score ? 2 : 1;
+    activePlayer = p1Score < p2Score ? 2 : 1;
     nextBall = new Ball(Vector.xy(20, 300), "normalBall", activePlayer);
     balls = [
         targetBall,
@@ -271,6 +272,7 @@ function initGame(){
     ];
     meter = new PowerMeter();
     hills = map.hills;
+    walls = map.walls;
     scene = "game";
     step = "aiming";
     p1BallsLeft = activePlayer == 1 ? 3 : 4;

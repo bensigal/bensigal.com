@@ -109,21 +109,32 @@ Vector.xy = function(x, y){
     return result;
 };
 
-function checkForCollisions(arr){
-    for(var i = 0; i < arr.length-1; i++){
-        for(var j = i+1; j < arr.length; j++){
-
-            if(arr[i].exploded || arr[j].exploded) continue;
-
-            if(arr[i].pos.distanceTo(arr[j].pos) <= arr[i].r + arr[j].r){
-                collideBalls(arr[i], arr[j]);
-                while(arr[i].pos.distanceTo(arr[j].pos) <= arr[i].r + arr[j].r){
-                    arr[i].pos.x += Math.cos(arr[j].pos.angleTo(arr[i].pos));
-                    arr[i].pos.y += Math.sin(arr[j].pos.angleTo(arr[i].pos));
+function checkForCollisions(){
+    //Ball to ball collisions
+    for(var i = 0; i < balls.length-1; i++){
+        for(var j = i+1; j < balls.length; j++){
+            //grenades that exploded do not actually exist
+            if(balls[i].exploded || balls[j].exploded) continue;
+            //Check if circles touch
+            if(balls[i].pos.distanceTo(balls[j].pos) <= balls[i].r + balls[j].r){
+                collideBalls(balls[i], balls[j]);
+                //can't be inside each other
+                while(balls[i].pos.distanceTo(balls[j].pos) <= balls[i].r + balls[j].r){
+                    balls[i].pos.x += Math.cos(balls[j].pos.angleTo(balls[i].pos));
+                    balls[i].pos.y += Math.sin(balls[j].pos.angleTo(balls[i].pos));
                 }
             }
         }
     }
+    //balls to the walls
+    balls.forEach(function(ball){
+        walls.forEach(function(wall){
+            checkPointCollide(ball, Vector.xy(wall.pos.x        , wall.pos.y));
+            checkPointCollide(ball, Vector.xy(wall.pos.x+wall.w , wall.pos.y));
+            checkPointCollide(ball, Vector.xy(wall.pos.x        , wall.pos.y + wall.h));
+            checkPointCollide(ball, Vector.xy(wall.pos.x+wall.w , wall.pos.y + wall.h));
+        });
+    });
 }
 
 function collideBalls(ball1, ball2){

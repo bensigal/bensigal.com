@@ -96,6 +96,21 @@ class Ball{
     
 }
 
+class Wall{
+    
+    constructor(x, y, w, h){
+        this.pos = Vector.xy(x, y);
+        this.w = w;
+        this.h = h;
+    }
+    
+    draw(){
+        ctx.fillStyle = "black";
+        ctx.fillRect(this.pos.x, this.pos.y, this.w, this.h);
+    }
+    
+}
+
 class Hill{
     
     constructor(x, y, w, h, dv){
