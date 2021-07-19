@@ -7,12 +7,12 @@ module.exports = function(req, res, server){
     req.log("In ballers looking for: "+req.path.split("/")[2]);
     switch(req.path.split("/")[2]){
         case "creatematch":
+			req.log("Creating match...");
             activeMatches[req.post.id] = new GameInfo();
-            req.log(activeMatches);
-            return activeMatches[0];
+            return "yes";
         break;
         case "join":
-            id = req.path.split("/")[3];
+            id = req.path.split("/")[4];
             if(!id || !activeMatches[id]){
                 return "No match with id '"+id+"' found";
             }

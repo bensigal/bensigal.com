@@ -16,17 +16,18 @@ var sessionIds= [];
 //Objects. Associated array with sessionIds
 var sessions  = [];
 //Base directory of server, parent of /www and /server
-var root = process.argv[2];
+var root = __filename.replace(/\\/g, "/").split("/").slice(0, -2).join("/")+"/";
+console.log("Root directory: "+root);
 //Given to tunnels
 var serverInfo = {};
 //Time of start of execution
 var startTime = new Date().getTime();
 //0: no logging, 1: log to console, 2: log to files
-var logging = process.argv[3];
+var logging = process.argv[2];
 
-var port = Number(process.argv[4]);
+var port = Number(process.argv[3]);
 if(!(port > 0)){
-	throw "Did not find valid port. Arguments should be:  <root folder> <logging mode> <port>";
+	throw "Did not find valid port. Arguments should be:  node <pathtofile> <logging mode> <port>";
 }
 
 //Get date and time in format yyyy-mm-dd at hhmm and ss seconds.
@@ -219,7 +220,7 @@ function serverRespond(req, res){
 //What to do when encountering a folder without a "tunnel.node.js" file.
 function defaultTunnel(req, res, whereis, options){
 
-	req.log("At default tunnel at "+whereis+ " with options "+benSpect(options));
+	req.log("At default tunnel at "+whereis);
 	
 	options = options || {};
 	indexFile = options.indexFile||"index.html";
@@ -248,7 +249,7 @@ function defaultTunnel(req, res, whereis, options){
 			//The rest of the url until you hit a slash
 			nextDir = relativeUrl.substring(0,relativeUrl.indexOf("/")+1);
 			//Go through the next folder's tunnel.
-			req.log("Found another supposed folder ("+nextDir+"). Sending through tunnel.");
+			req.log("Found another supposed folder ("+nextDir+"). Attempting to send through tunnel.");
 			sendThroughTunnel(req, res, whereis+nextDir);
 			
 		//If this is the requested destination, send the index file
@@ -358,7 +359,7 @@ function showErrorPage(errorCode, req, res, showAsText){
 function getFile(path,req,res,options){
 	
 	options=options||{};
-	req.log("Sending "+path+" with options "+benSpect(options));
+	req.log("Sending "+path);
 	
 	if(!options.pathNotFromWww)
 		path=root+"www/"+path;
@@ -389,6 +390,7 @@ function getFile(path,req,res,options){
 				res.setHeader('Set-Cookie',options.cookieName+'='+options.cookie+";");
 			res.statusCode=options.statusCode||200;
 			res.end(data);
+			req.log("File sent.");
 		}
 	});
 }
@@ -514,7 +516,12 @@ function benSpect(obj){
 }
 
 function purgeCache(path){
-    delete require.cache[path];
+	try{
+		delete require.cache[require.resolve(root+path)];
+		return path+" uncached";
+	}catch(e){
+		return e.name+": "+e.message+"\n"+e.stack;
+	}
 }
 
 //Put these variables in serverInfo to be passed to tunnels

@@ -1,54 +1,13 @@
 //Game by Benjamin Sigal. Play as the large circle in the middle. A small dot orbits you. Use it to destroy the lines chasing you.
 
-//Reference to the HTML object.
-var canvas,
-//Reference to the object used to draw on the canvas
-ctx, 
-//how many ticks have passed
-ticks, grenadeTicks,
-//Space was pressed for aiming
-hasStartedAiming,
-//Game objects
-balls, meter, hills, targetBall, nextBall, walls,
-//Which part of the playing scene is taking place. String.
-step,
-//Active whoever is playing, 1 or 2
-activePlayer,
-//Status of each player
-p1BallsLeft, p2BallsLeft,
-//"local" or "online"
-multiplayerMode,
-//who won, 1 or 2
-winner,
-//String corresponding to what should be displayed
-//Determines function(s) to call each tick
-scene;
-
-//Menu options
-var options = [
-    ["Local Multiplayer", "Host Multiplayer", "Tutorial"],
-    ["Empty Field", "Cage", "Ricochet", "Narrow", "Back"]
-];
-//Height of dashboard above field of play
-var fieldTop = 130;
-//Menu status
-var depth = 0, optionSelected = 0;
-//Store status of mouse and which keys are down
-var keyboard = {};
-var mouse = {};
-
-var p1Score = 0;
-var p2Score = 0;
-
-//Earliest time the next tick should occur, initialized to current time and incremented by 16ms every tick
-var nextTick = new Date().getTime();
-
 //Called on document ready
 $(function(){
     
     initCanvas();
     mainLoop();
     scene = "menu";
+	
+	checkIfJoined();
     
 });
 
@@ -120,10 +79,16 @@ function draw(){
     case "finished":
         ctx.fillStyle = "green";
         ctx.textAlign = "center";
+		ctx.font = "24px Ubuntu";
         ctx.fillText("Player " + (calculateScore() > 0 ? 1 : 2) + 
             " wins " + Math.abs(calculateScore()) + 
             " point"+ (Math.abs(calculateScore()) > 1 ? "s" : "") + "!", 400, 180);
         break;
+	case "awaiting aim":
+		ctx.fillStyle = "green";
+		ctx.font = "20px Ubuntu";
+		ctx.textAlign = "center";
+		ctx.fillText("Waiting for other player to throw...", 400, 160);
     }
 
    
@@ -208,7 +173,7 @@ function calculateScore(){
 function throwBall(){
     step = "throwing";
     nextBall.vel = new Vector(meter.progress*nextBall.throwSpeed, meter.angle);
-    if(multiplayerMode == "online")
+    if(multiplayer)
         sendAimData();
 }
 
@@ -231,7 +196,7 @@ function ballsStopped(){
     balls.push(nextBall);
     meter = new PowerMeter();
     step = "aiming";
-    if(multiplayerMode == "online" && activePlayer != myPlayerNumber)
+    if(multiplayer && activePlayer != myPlayerNumber)
         waitForAim();
 }
 
@@ -272,11 +237,6 @@ function initGame(){
     balls = [
         targetBall,
         nextBall
-        /*new Ball(Vector.xy(100, 300)),
-        new Ball(Vector.xy(200, 300)),
-        new Ball(Vector.xy(150, 400)),
-        new Ball(Vector.xy(100, 500)),
-        new Ball(Vector.xy(200, 500)) */
     ];
     meter = new PowerMeter();
     hills = map.hills;

@@ -1,26 +1,29 @@
-var pingInterval;
-var matchId;
-var myPlayerNumber;
-
 function generateMatch(map){
-    console.log("playing multiplayer on " + map.id);
     matchId = Math.floor(Math.random()*900000 + 100000);
-    console.log(matchId);
-    drawLink("http://www.bensigal.com/ballers/join/" + matchId);
+    console.log("playing multiplayer on " + map.id + ", creating match with id " + matchId);
+    drawLink("http://www.bensigal.com/ballers/join/" + map.id + "/" + matchId);
+	
+	scene = "awaiting join";
 
     $.post("/ballers/creatematch", {"id":matchId, "map":map.id}, function(data){
-        console.log("match created!");
+        if(data == "yes"){
+			console.log("Match created!");
+		}else{
+			window.alert("Match creation failed!");
+			scene = "menu";
+			depth = 0;
+			optionSelected = 0;
+		}
     });
 
-    scene = "awaiting join";
     myPlayerNumber = 1;
 
-    pingInterval = setInterval(function(){
+    var pingInterval = setInterval(function(){
         $.post("isready", {"id": matchId}, function(data){
             if(data == "yes"){
                 console.log("Someone has joined, starting game")
                 scene = "game";
-                initGame();
+                initGame();	
                 clearInterval(pingInterval);
             }else{
                 console.log("No one has joined yet");
@@ -29,8 +32,18 @@ function generateMatch(map){
     }, 1000);
 }
 
-function sendAimData(){
+function checkIfJoined(){
+	if(location.href.includes("join")){
+		matchId = location.href.split("/").pop();
+		myPlayerNumber = 2;
+		initGame();
+		scene = "game";
+		step = "awaiting aim";
+	}
+}
 
+function sendAimData(){
+	
 }
 
 function waitForAim(){

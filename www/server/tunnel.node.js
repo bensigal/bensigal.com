@@ -70,9 +70,8 @@ module.exports=function(req,res,server){
             return "false";
         }
         else if(/purgecache\/?/i.test(req.path)){
-            req.log("Deleting cached tunnel "+req.post.path);
-            server.purgeCache(req.post.path);
-            server.sendString(req.post.path+" uncached", req, res);
+            req.log("Deleting cached tunnel "+root+req.post.path);
+			return server.purgeCache(req.post.path);
         }else if(/sitemap\/?/i.test(req.path)){
             if(!req.post || !req.post.dir)
             	server.sendString("No sitemap location sent.",req,res);

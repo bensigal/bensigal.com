@@ -108,12 +108,11 @@ function selectMenuOption(index){
     //If on second page, start game.
     case 1:
         map = maps[options[depth][index]];
-        initGame();
-        scene = "game";
         if (multiplayer){
-            console.log("multiplayer on");
             generateMatch(map);
-        }
+        }else{
+			initGame();
+		}			
         break;
     }
 }
@@ -168,5 +167,5 @@ function drawWaitRoom(){
 }
 
 function drawLink(link){
-    $("body")[0].innerHTML += "<p id='linkInstructions'>Copy this link:</p><p id='link'>"+link+"</p>";
+    $("body").append("<p id='linkInstructions'>Copy this link:</p><p id='link'>"+link+"</p>");
 }
