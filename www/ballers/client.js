@@ -34,7 +34,9 @@ function generateMatch(map){
 
 function checkIfJoined(){
 	if(location.href.includes("join")){
-		matchId = location.href.split("/").pop();
+		var urlSegments = location.href.split("/");
+		matchId = urlSegments.pop();
+		map = maps[urlSegments.pop()];
 		myPlayerNumber = 2;
 		initGame();
 		scene = "game";
