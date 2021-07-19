@@ -36,7 +36,12 @@ function checkIfJoined(){
 	if(location.href.includes("join")){
 		var urlSegments = location.href.split("/");
 		matchId = urlSegments.pop();
-		map = maps[urlSegments.pop()];
+		var mapId = urlSegments.pop();
+		console.log("Searching for map id: " + mapId);
+		map = maps[mapNames[mapId]];
+		if(!map){
+			window.alert("Failed to find map with id '"+mapId+"'!");
+		}
 		myPlayerNumber = 2;
 		initGame();
 		scene = "game";
@@ -50,4 +55,5 @@ function sendAimData(){
 
 function waitForAim(){
     step = "awaiting aim";
+	nextBall.pos = Vector.xy(-100, -100);
 }

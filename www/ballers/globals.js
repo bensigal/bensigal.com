@@ -7,7 +7,7 @@ ticks, grenadeTicks,
 //Space was pressed for aiming
 hasStartedAiming,
 //Game objects
-balls, meter, hills, targetBall, nextBall, walls,
+balls, meter, hills, targetBall, nextBall, walls, map,
 //Which part of the playing scene is taking place. String.
 step,
 //Active whoever is playing, 1 or 2

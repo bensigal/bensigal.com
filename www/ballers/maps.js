@@ -1,3 +1,10 @@
+var mapNames = [
+	"Empty Field",
+	"Cage",
+	"Ricochet",
+	"Narrow"
+];
+
 maps = {
     "Empty Field": {
         hills: [],
