@@ -17,3 +17,6 @@ body{
 img{
     display: none;
 }
+p{
+    text-align: center;
+}

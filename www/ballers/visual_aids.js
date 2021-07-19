@@ -96,11 +96,13 @@ function selectMenuOption(index){
     switch(depth){
     //If on the first page of options, go to next page
     case 0:
+        if (index == 1){
+            multiplayer = true;
+        }
         if(index == 2){
             scene = "tutorial";
             break;
         }
-        multiplayerMode = index ? "online" : "local";
         depth++;
         break;
     //If on second page, start game.
@@ -108,6 +110,10 @@ function selectMenuOption(index){
         map = maps[options[depth][index]];
         initGame();
         scene = "game";
+        if (multiplayer){
+            console.log("multiplayer on");
+            generateMatch(map);
+        }
         break;
     }
 }
@@ -154,4 +160,13 @@ function drawPodium(){
     drawTopBar();
     drawScore();
     ctx.drawImage($("#"+(winner == 1 ? "red" : "blue")+"Win")[0], 0, 130);
+}
+
+function drawWaitRoom(){
+    waitingRoom = document.getElementById('waitingroom');
+    ctx.drawImage(waitingRoom,0,0);
+}
+
+function drawLink(link){
+    $("body")[0].innerHTML += "<p id='linkInstructions'>Copy this link:</p><p id='link'>"+link+"</p>";
 }

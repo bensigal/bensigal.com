@@ -438,8 +438,8 @@ function sendThroughTunnel(req, res, path){
 		if(e.code=="MODULE_NOT_FOUND"){
 			req.log("Tunnel not found at "+root+"www"+path+"tunnel.node.js");
 		}else{
-			req.err("Error in tunnel initialization."); 
-			req.err(e.stack);
+			req.log("Error in tunnel initialization."); 
+			req.log(e.stack);
 			showErrorPage(500, req, res);
 			return;
 		}

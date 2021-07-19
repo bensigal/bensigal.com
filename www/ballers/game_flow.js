@@ -26,7 +26,7 @@ scene;
 
 //Menu options
 var options = [
-    ["Local Multiplayer", "Online Multiplayer", "Tutorial"],
+    ["Local Multiplayer", "Host Multiplayer", "Tutorial"],
     ["Empty Field", "Cage", "Ricochet", "Narrow", "Back"]
 ];
 //Height of dashboard above field of play
@@ -72,6 +72,9 @@ function mainLoop(){
             break;
         case "menu":
             drawMenu();
+            break;
+        case "awaiting join":
+            drawWaitRoom();
             break;
         case "podium":
             drawPodium();
@@ -205,6 +208,8 @@ function calculateScore(){
 function throwBall(){
     step = "throwing";
     nextBall.vel = new Vector(meter.progress*nextBall.throwSpeed, meter.angle);
+    if(multiplayerMode == "online")
+        sendAimData();
 }
 
 function grenadeExplodes(){
@@ -215,7 +220,6 @@ function grenadeExplodes(){
 }
 
 function ballsStopped(){
-    step = "aiming";
     activePlayer = calculateScore() > 0 ? 2 : 1;
     if(p1BallsLeft === 0) activePlayer = 2;
     if(p2BallsLeft === 0) activePlayer = 1;
@@ -226,6 +230,9 @@ function ballsStopped(){
     nextBall = new Ball(Vector.xy(20, 300), "normalBall", activePlayer);
     balls.push(nextBall);
     meter = new PowerMeter();
+    step = "aiming";
+    if(multiplayerMode == "online" && activePlayer != myPlayerNumber)
+        waitForAim();
 }
 
 function noBallsLeft(){

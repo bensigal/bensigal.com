@@ -62,6 +62,7 @@ module.exports=function(req,res,server){
                 statusCode: 401,
                 pathNotFromWww:true
             });
+            return;
         }
         if(/logout\/?/i.test(req.path)){
             req.log("Logging out.");
