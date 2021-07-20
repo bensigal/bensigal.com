@@ -1,4 +1,5 @@
 //Lib to access files
+const { time } = require('console');
 var fs = require('fs');
 
 //Called whenever a file is accessed
@@ -12,11 +13,6 @@ module.exports = function(req, res, server){
             return "yes";
         break;
         case "join":
-            id = req.path.split("/")[4];
-            if(!id || !activeMatches[id]){
-                return "No match with id '"+id+"' found";
-            }
-            activeMatches[id].gameFull = true;
             server.getFile("/ballers/index.html", req, res);
         break;
         case "isready":
@@ -33,6 +29,37 @@ module.exports = function(req, res, server){
     
 };
 
+module.exports.messageReceived = function(socket, data){
+    switch(data.action){
+    case "create match":
+        activeMatches[data.id] = new GameInfo(data.map, socket);
+        socket.emit("log","match created");
+        console.log("ballers"+data.id+": Created match");
+        break;
+    case "join":
+        console.log("ballers"+data.id+": Join attempt");
+        if (activeMatches[data.id] && !activeMatches[data.id.gameFull]){
+            console.log("ballers"+data.id+": Join successful");
+            activeMatches[data.id].gameFull = true;
+            activeMatches[data.id].joiner = socket;
+            activeMatches[data.id].host.emit("someone joined");
+        }
+    break;
+    case "aim data":
+        console.log("ballers"+data.id+": Aim data received from " + (data.isHost ? "host" : "joiner"));
+        dataToBeSent = {x: data.x, y: data.y, vx: data.vx, vy: data.vy};
+        if(data.isHost){
+            activeMatches[data.id].joiner.emit("aim data", dataToBeSent);
+        }else{
+            activeMatches[data.id].host.emit("aim data", dataToBeSent);
+        }
+        break;
+    default:
+        console.log("ballers:invalid socket event:"+data.action);
+    break;
+    }
+}
+
 //Called the first time the folder is opened
 module.exports.init = function(serverInfo){
     console.log("Starting ballers tunnel...");
@@ -42,9 +69,11 @@ module.exports.init = function(serverInfo){
 activeMatches = {}
 class GameInfo{
     
-    constructor(map){
+    constructor(map, host){
         this.gameFull = false;
         this.map = map;
+        this.host = host;
+        this.joiner = null;
     }
 
 }

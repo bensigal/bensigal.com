@@ -549,5 +549,20 @@ exportRefs(
 	"purgeCache", purgeCache
 );
 
+//Tunnels that need to be loaded before first use
+require(root+"www/trailblazer/tunnel.node.js").init(serverInfo);
+var ballersTunnel = require(root+"www/ballers/tunnel.node.js");
 
-require(root+"www/trailblazer/tunnel.node.js").init(serverInfo);//This tunnel should have a bit of time to load a couple files before called for the first time, so do it now 
+//Socket.io
+var io = require('socket.io')(httpServer);
+io.on('connection', function(socket){
+	socket.on('ballers', function(data){
+		try{
+			ballersTunnel.messageReceived(socket, data);
+		}catch(e){
+			console.error(e.name+": "+e.message+"\n"+e.stack);
+		}
+	});
+});
+
+serverInfo.io = io;

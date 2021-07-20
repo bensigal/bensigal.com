@@ -22,6 +22,8 @@ winner,
 matchId,
 //1 is always host player, 2 is joiner.
 myPlayerNumber,
+//Socket
+socket,
 //String corresponding to what should be displayed
 //Determines function(s) to call each tick
 scene;

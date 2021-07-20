@@ -3,11 +3,10 @@
 //Called on document ready
 $(function(){
     
-    initCanvas();
-    mainLoop();
     scene = "menu";
-	
-	checkIfJoined();
+    initCanvas();
+    initSocket();
+    mainLoop();
     
 });
 
@@ -246,4 +245,7 @@ function initGame(){
     p1BallsLeft = activePlayer == 1 ? 3 : 4;
     p2BallsLeft = activePlayer == 2 ? 3 : 4;
     hasStartedAiming = false;
+    
+    if(multiplayer && activePlayer != myPlayerNumber)
+        waitForAim();
 }
