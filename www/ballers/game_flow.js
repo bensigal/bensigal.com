@@ -172,6 +172,11 @@ function calculateScore(){
 function throwBall(){
     step = "throwing";
     nextBall.vel = new Vector(meter.progress*nextBall.throwSpeed, meter.angle);
+    if(activePlayer == 1){
+        p1BallsLeft--;
+    }else{
+        p2BallsLeft--;
+    }
     if(multiplayer)
         sendAimData();
 }
@@ -189,8 +194,6 @@ function ballsStopped(){
     if(p2BallsLeft === 0) activePlayer = 1;
     if(p1BallsLeft + p2BallsLeft === 0) return noBallsLeft();
 
-    if(activePlayer == 1) p1BallsLeft--;
-    if(activePlayer == 2) p2BallsLeft--;
     nextBall = new Ball(Vector.xy(20, 300), "normalBall", activePlayer);
     balls.push(nextBall);
     meter = new PowerMeter();
@@ -242,8 +245,8 @@ function initGame(){
     walls = map.walls;
     scene = "game";
     step = "aiming";
-    p1BallsLeft = activePlayer == 1 ? 3 : 4;
-    p2BallsLeft = activePlayer == 2 ? 3 : 4;
+    p1BallsLeft = 4;
+    p2BallsLeft = 4;
     hasStartedAiming = false;
     
     if(multiplayer && activePlayer != myPlayerNumber)

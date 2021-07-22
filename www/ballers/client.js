@@ -1,8 +1,7 @@
 function generateMatch(map){
     matchId = Math.floor(Math.random()*900000 + 100000);
     console.log("playing multiplayer on " + map.id + ", creating match with id " + matchId);
-    //drawLink("http://www.bensigal.com/ballers/join/" + map.id + "/" + matchId);
-	drawLink("http://localhost:8000/ballers/join/" + map.id + "/" + matchId);
+    drawLink("http://"+location.host+"/ballers/join/" + map.id + "/" + matchId);
 	
 	scene = "awaiting join";
 
@@ -15,10 +14,10 @@ function generateMatch(map){
     myPlayerNumber = 1;
 
 	socket.on('someone joined',function(data){
-		console.log("Someone has joined, starting game")
+		console.log("Someone has joined, starting game");
 		scene = "game";
 		initGame();	
-	})
+	});
 }
 
 function sendAimData(){
@@ -48,31 +47,50 @@ function initSocket(){
 	});
 
 	socket.on("aim data", function(data){
+		if(scene == "podium"){
+		    initGame();
+		    p1Score = 0;
+		    p2Score = 0;
+		    scene = "game";
+		}
+		if(step == "finished"){
+		    initGame();
+		}
+        if(activePlayer == 1){
+            p1BallsLeft--;
+        }else{
+            p2BallsLeft--;
+        }
 		nextBall.pos = Vector.xy(data.x, data.y);
 		nextBall.vel = Vector.xy(data.vx, data.vy);
 		step = "throwing";
 		console.log("Aim data received");
 	});
+	
+	socket.on("fatal error", function(data){
+	    alert(data);
+	    mainLoop = function(){};
+	});
 
 	if(location.href.includes("join")){
-
+        
 		var urlSegments = location.href.split("/");
 		matchId = urlSegments.pop();
 		var mapId = urlSegments.pop();
-
+        
 		console.log("Searching for map id: " + mapId);
 		map = maps[mapNames[mapId]];
 		if(!map){
 			window.alert("Failed to find map with id '"+mapId+"'!");
 		}
-
+        
 		socket.emit("ballers", {action: "join", id: matchId});
-
+        
 		initGame();
-
+        
 		scene = "game";
 		step = "awaiting aim";
-
+        
 		myPlayerNumber = 2;
 		multiplayer = true;
 	}

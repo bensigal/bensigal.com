@@ -556,6 +556,10 @@ var ballersTunnel = require(root+"www/ballers/tunnel.node.js");
 //Socket.io
 var io = require('socket.io')(httpServer);
 io.on('connection', function(socket){
+    socket.on('ping', function(data){
+        console.error("Received ping " + data);
+        socket.emit('ping');
+    })
 	socket.on('ballers', function(data){
 		try{
 			ballersTunnel.messageReceived(socket, data);
@@ -563,6 +567,7 @@ io.on('connection', function(socket){
 			console.error(e.name+": "+e.message+"\n"+e.stack);
 		}
 	});
+	socket.emit("log", "Connection created");
+	console.log("Socket created")
 });
-
 serverInfo.io = io;

@@ -7,20 +7,8 @@ module.exports = function(req, res, server){
     //Switch based off whatever comes after /ballers/, until the next slash
     req.log("In ballers looking for: "+req.path.split("/")[2]);
     switch(req.path.split("/")[2]){
-        case "creatematch":
-			req.log("Creating match...");
-            activeMatches[req.post.id] = new GameInfo();
-            return "yes";
-        break;
-        case "join":
-            server.getFile("/ballers/index.html", req, res);
-        break;
-        case "isready":
-            if (activeMatches[req.post.id] && activeMatches[req.post.id].gameFull){
-                req.log("host knows the game is full");
-                return "yes";
-            }
-            return "no";
+    case "join":
+        server.getFile("/ballers/index.html", req, res);
         break;
     default:
         server.defaultTunnel(req, res, "/ballers/");
@@ -38,7 +26,13 @@ module.exports.messageReceived = function(socket, data){
         break;
     case "join":
         console.log("ballers"+data.id+": Join attempt");
-        if (activeMatches[data.id] && !activeMatches[data.id.gameFull]){
+        if(!activeMatches[data.id]){
+            socket.emit("fatal error", "This link is invalid! Please ask the host for another.");
+        }
+        else if(activeMatches[data.id].gameFull){
+            socket.emit("fatal error", "This link has already been used by someone else!");
+        }
+        else{
             console.log("ballers"+data.id+": Join successful");
             activeMatches[data.id].gameFull = true;
             activeMatches[data.id].joiner = socket;
@@ -58,7 +52,7 @@ module.exports.messageReceived = function(socket, data){
         console.log("ballers:invalid socket event:"+data.action);
     break;
     }
-}
+};
 
 //Called the first time the folder is opened
 module.exports.init = function(serverInfo){
@@ -66,7 +60,7 @@ module.exports.init = function(serverInfo){
 };
 
 //server side variables
-activeMatches = {}
+activeMatches = {};
 class GameInfo{
     
     constructor(map, host){
