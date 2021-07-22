@@ -554,7 +554,9 @@ require(root+"www/trailblazer/tunnel.node.js").init(serverInfo);
 var ballersTunnel = require(root+"www/ballers/tunnel.node.js");
 
 //Socket.io
-var io = require('socket.io')(httpServer);
+var io = require('socket.io')(httpServer, {
+	cookie: false
+});
 io.on('connection', function(socket){
     socket.on('ping', function(data){
         console.error("Received ping " + data);
