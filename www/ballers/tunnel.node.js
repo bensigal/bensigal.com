@@ -41,11 +41,10 @@ module.exports.messageReceived = function(socket, data){
     break;
     case "aim data":
         console.log("ballers"+data.id+": Aim data received from " + (data.isHost ? "host" : "joiner"));
-        dataToBeSent = {x: data.x, y: data.y, vx: data.vx, vy: data.vy};
         if(data.isHost){
-            activeMatches[data.id].joiner.emit("aim data", dataToBeSent);
+            activeMatches[data.id].joiner.emit("aim data", data);
         }else{
-            activeMatches[data.id].host.emit("aim data", dataToBeSent);
+            activeMatches[data.id].host.emit("aim data", data);
         }
         break;
     default:

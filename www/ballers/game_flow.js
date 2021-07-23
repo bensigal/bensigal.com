@@ -12,7 +12,7 @@ $(function(){
 
 //Called each frame
 function mainLoop(){
-    
+    ticks ++;
     if(nextTick > new Date().getTime()){
         window.requestAnimationFrame(mainLoop);
         return;
@@ -21,6 +21,7 @@ function mainLoop(){
     //Clear the canvas
     ctx.clearRect(0,0,800,600);
     
+    //Determine functions to call based on current scene
     try{
         
         switch(scene){
@@ -44,7 +45,10 @@ function mainLoop(){
         console.error(e.name + ": " + e.message + "\n" + e.stack);
         
     }
-        
+    
+    //Ensure ~60 ticks per second, even if the window is not refreshing that fast
+    //If more than half a second behind (eg. because tabbed out) don't try to call frames
+    //for every single one that was missed
     nextTick += 16;
     if(nextTick + 500 < new Date().getTime())nextTick = new Date().getTime();
     if(nextTick < new Date().getTime()){
@@ -54,6 +58,7 @@ function mainLoop(){
     }
 }
 
+//Draw the game (not menu or podium or anything)
 function draw(){
     
     hills.forEach(function(hill){
@@ -68,6 +73,9 @@ function draw(){
     balls.forEach(function(ball){
         ball.draw();
     });
+
+    ctx.fillStyle = "white";
+    ctx.fillRect(0, 0, 800, 130);
     
     switch(step){
     case "aiming":
@@ -88,15 +96,16 @@ function draw(){
 		ctx.font = "20px Ubuntu";
 		ctx.textAlign = "center";
 		ctx.fillText("Waiting for other player to throw...", 400, 160);
+        break;
     }
 
-   
     drawTopBar();
     drawScore(calculateScore());
     drawRemainingBalls(p1BallsLeft,p2BallsLeft);
     
 }
 
+//Cause state changes in game
 function tick(){
     
     switch(step){
@@ -134,6 +143,7 @@ function calculateScore(){
     var p2MinDistance = Infinity;
     //Find the minimum distance to target for each player
     balls.forEach(function(ball){
+        if(ball.type == "grenade")return;
         var dist = ball.pos.distanceTo(targetBall.pos);
         if(ball.player == 1){
             if(dist < p1MinDistance){
@@ -167,8 +177,9 @@ function calculateScore(){
     return score;
     
 }
-    
 
+//Called when space is released while meter is active
+//NOT called when receiving a throw from the server
 function throwBall(){
     step = "throwing";
     nextBall.vel = new Vector(meter.progress*nextBall.throwSpeed, meter.angle);
@@ -182,9 +193,15 @@ function throwBall(){
 }
 
 function grenadeExplodes(){
-    step = "explosion";
     balls.forEach(function(ball){
-        ball.vel = new Vector(nextBall.power/nextBall.pos.distanceTo(ball.pos)/ball.mass, nextBall.pos.angleTo(ball.pos));
+        if(ball == nextBall)return;
+        //Velocity inversely proportional to distance to grenade, opposite direction
+        ball.vel = ball.vel.plus(new Vector(
+            nextBall.power/nextBall.pos.distanceTo(ball.pos)/ball.mass, 
+            nextBall.pos.angleTo(ball.pos)
+        ));
+        console.log([nextBall.power, nextBall.pos.distanceTo(ball.pos), ball.mass]);
+        console.log("explosion hit with pow " + nextBall.power/nextBall.pos.distanceTo(ball.pos)/ball.mass);
     });
 }
 
@@ -232,7 +249,9 @@ function initCanvas(){
     });
 }
 
+//Called when setting up a new 
 function initGame(){
+    ticks = 0;
     targetBall = new Ball(Vector.xy(600, 365),"targetBall",0);
     activePlayer = p1Score < p2Score ? 2 : 1;
     nextBall = new Ball(Vector.xy(20, 365), "normalBall", activePlayer);

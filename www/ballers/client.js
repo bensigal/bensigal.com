@@ -28,6 +28,9 @@ function sendAimData(){
 		y:nextBall.pos.y,
 		vx:nextBall.vel.x,
 		vy:nextBall.vel.y,
+		type: nextBall.type,
+		p1Score: p1Score,
+		p2Score: p2Score,
 		id:matchId, 
 		isHost:(myPlayerNumber == 1)
 	});
@@ -63,6 +66,9 @@ function initSocket(){
         }
 		nextBall.pos = Vector.xy(data.x, data.y);
 		nextBall.vel = Vector.xy(data.vx, data.vy);
+		nextBall.type = data.type;
+		p1Score = data.p1Score;
+		p2Score = data.p2Score;
 		step = "throwing";
 		console.log("Aim data received");
 	});

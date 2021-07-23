@@ -1,47 +1,81 @@
 class Ball{
     
-    constructor(pos,ballType,player){
+    constructor(pos,type,player){
+
+        //"targetBall", "normalBall", or "grenade"
+        this.type = type;
+
+        //1, 2 based on owner of ball, or 0 if the target
+        this.player = player;
         this.vel = new Vector(0, 0);
         this.pos = pos || Vector.xy(400, 300);
-        this.r = 12;
-        this.friction = 0.03;
-        this.collides = true;
-        this.mass = 100;
-        this.ballType = ballType;
-        this.player = player;
-        this.throwSpeed = 12;
-        this.exploded = false;
+
+        //Is closer to the target than any of the opponent's balls
         this.winning = false;
-
-        //Player 1 has green balls, player two has blue ball (lol XD)
-        if(player == 1){
-            this.color = "red";
-        }else{
-            this.color = "blue";
-        }
-
-        // This is for setting the properties of a ball based on the ballType. Defualt is a effectless ball that is not the target.
-        switch(ballType){
-            case "targetBall":
-                this.r = 8;
-                this.mass = 200;
-                this.color = "black";
-            break;
-            case "grenade":
-                this.power = 10000;
-                this.mass = 10;
-                break;
-            default:
-                this.r = 12;
-                this.mass = 100;
-        }
         
+        //Grenade properties
+        this.throwSpeed = 12;
+        this.power = 17000;
+        this.exploded = false;
+        this.frame = 46;
+
+    }
+
+    get image(){
+        switch(this.type){
+        case "grenade":
+            return $("#grenade")[0];
+        }
+    }
+
+    //Constant deceleration, in pixels per tick squared
+    get friction(){
+        return 0.03;
+    }
+
+    get mass(){
+        switch(this.type){
+        case "targetBall":
+            return 200;
+        case "grenade":
+            return 40;
+        default:
+            return 100;
+        }
+    }
+
+    get r(){
+        switch(this.type){
+        case "targetBall":
+            return 8;
+        default:
+            return 12;
+        }
+    }
+
+    get color(){
+        switch(this.player){
+        case 1:
+            return "red";
+        case 2:
+            return "blue";
+        default:
+            return "black";
+        }
     }
     
     tick(){
+        
+        if((this.vel.amplitude === 0 && !this.isBeingPushed && this.type != "grenade") || this.exploded){
+            stoppedBalls++;
+        }
+
+        if(this.exploded)return;
+
         this.pos.x += this.vel.x;
         this.pos.y += this.vel.y;
         
+        //Bounce at any of the play area edges
         if(this.pos.y > canvas.height - this.r) {
 			this.vel.y *= -1; 
 			this.pos.y = canvas.height-this.r;
@@ -59,14 +93,16 @@ class Ball{
 			this.pos.x = this.r;
 		}
 		
+        //Check with each wall object for collisions
         walls.forEach(function(wall){
-			//right side of ball is inside wall, bounce horizontally
+            //Position of each corner
 			var wallCorners = [
 				Vector.xy(wall.pos.x, wall.pos.y),
 				Vector.xy(wall.pos.x, wall.pos.y + wall.h),
 				Vector.xy(wall.pos.x + wall.w, wall.pos.y),
 				Vector.xy(wall.pos.x + wall.w, wall.pos.y + wall.h)
 			];
+			//right side of ball is inside wall, bounce horizontally
             if((this.pos.x + this.r > wall.pos.x && this.pos.x < wall.pos.x + wall.w) && 
 			(this.pos.y > wall.pos.y && this.pos.y < wall.pos.y + wall.h)){
 				console.log("Wall side collision");
@@ -108,16 +144,18 @@ class Ball{
 			}
         }, this);
         
+        //Constant deceleration
         this.vel.amplitude -= this.friction;
+        //Drag proportional to velocity
         this.vel.amplitude *= 0.995;
-        
-        if(this.vel.amplitude === 0 && !this.isBeingPushed && (this.ballType != "grenade" || this.exploded)){
-            stoppedBalls++;
-        }
 
-        if(this.ballType == "grenade"){
-            grenadeTicks++;
-            if(grenadeTicks > 240){
+        if(this.type == "grenade"){
+            this.angle = this.angle || 0;
+            this.angle += this.vel.amplitude*0.03;
+            this.grenadeTicks = this.grenadeTicks || 0;
+            this.grenadeTicks++;
+            if(this.grenadeTicks > 240){
+                this.exploded = true;
                 grenadeExplodes();
             }
         }
@@ -126,16 +164,25 @@ class Ball{
     }
     
     draw(){
-        switch(this.ballType){
+        switch(this.type){
         case "grenade":
-            if(this.exploded) return;
-            ctx.translate(this.pos.x, this.pos.y);
-            ctx.rotate(this.angle);
-            
-            ctx.drawImage(this.image,  -this.imageWidth/2, -this.imageWidth/2, this.imageWidth, this.imageWidth);
-            
-            ctx.rotate(-this.angle);
-            ctx.translate(-this.pos.x, -this.pos.y);
+            if(this.exploded){
+                this.initialTick = this.initialTick || ticks;
+                if(ticks - this.initialTick > 30) return;
+                ctx.strokeStyle = "rgba(0,0,0,"+(30 - ticks + this.initialTick)/30+")";
+                ctx.beginPath();
+                ctx.arc(this.pos.x, this.pos.y, 12*(ticks - this.initialTick), 0, Math.PI*2);
+                ctx.stroke();
+                ctx.closePath();
+            } else {
+                ctx.translate(this.pos.x, this.pos.y);
+                ctx.rotate(this.angle);
+                
+                ctx.drawImage($("#grenade")[0],  -12.5, -12.5, 25, 25);
+                
+                ctx.rotate(-this.angle);
+                ctx.translate(-this.pos.x, -this.pos.y);
+            }
             break;
         default:
             ctx.fillStyle = this.color;
@@ -145,6 +192,7 @@ class Ball{
             ctx.fill();
             break;
         }
+        //Green circle if ball is currently worth a point
         if(this.winning){
             ctx.strokeStyle = "#0D0";
             ctx.lineWidth = 2;
@@ -182,6 +230,8 @@ class Hill{
         this.pos = Vector.xy(x, y);
         this.w = w;
         this.h = h;
+
+        this.frame = 0;
         
     }
     
@@ -211,6 +261,8 @@ class Hill{
     }
     
     tick(items){
+
+        this.frame++;
         
         //items contains everything that might be affected by the hill
         items.forEach(function(item){

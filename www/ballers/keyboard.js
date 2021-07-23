@@ -3,6 +3,15 @@ $(document).keydown(function(e){
 	if(e.ctrlKey)return;
     var preventDefault = true;
     switch(e.keyCode){
+    //tab
+    case 9:
+        if(step == "aiming"){
+            if(nextBall.type == "grenade")
+                nextBall.type = "normalBall";
+            else
+                nextBall.type = "grenade";
+        }
+        break;
     case 37:
         keyboard.left = true;
         break;

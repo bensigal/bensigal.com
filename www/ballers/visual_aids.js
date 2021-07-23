@@ -126,15 +126,17 @@ function drawRemainingBalls(p1BallsLeft,p2BallsLeft){
         ctx.fill();
     }
 
-    for (let i = 0; i < p1BallsLeft + (nextBall.player == 1 && step == "aiming"); i++) {
+    for (let i = 0; i < p1BallsLeft; i++) {
         drawBall(253 +29*i ,105,"#900")
     }
 
-    for (let i = 0; i < p2BallsLeft + (nextBall.player == 2 && step == "aiming"); i++) {
-        drawBall(453 +29*i ,105,"#009");
+    for (let i = 0; i < p2BallsLeft; i++) {
+        drawBall(543 -29*i ,105,"#009");
     }
 
 }
+
+
 
 function drawScore(score){    
 
