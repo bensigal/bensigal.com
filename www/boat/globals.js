@@ -35,7 +35,7 @@ var depth = 0, optionSelected = 0;
 var keyboard = {};
 var mouse = {};
 
-var mineRadius = 10;
+var mineRadius = 8;
 
 //Earliest time the next tick should occur, initialized to current time and incremented by 16ms every tick
 var nextTick = new Date().getTime();

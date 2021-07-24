@@ -30,6 +30,10 @@ function mainLoop(){
     
     //Clear the canvas
     ctx.clearRect(0,0,800,600);
+
+    //Blue background
+    ctx.fillStyle = "#B5F0FF";
+    ctx.fillRect(0, 0, 800, 600);
     
     //Determine functions to call based on current scene
     draw()
@@ -61,6 +65,7 @@ function draw(){
     map.drawTopCoast();
     map.drawBottomCoast();
     
+    map.mines.forEach(mine => mine.draw());
 
 }
 

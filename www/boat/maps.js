@@ -22,11 +22,9 @@ function generateTopCoast(){
 		y = Math.floor(Math.random()*100);
 		if (result.length < 1){
 			result.push(Vector.xy(0, y + 50));
-			console.log("first point")
 		}else{
 			result.push(Vector.xy(x + result[i - 1].x + 100,y + 50));
 		}
-		console.log(result);
 		i++
 	}
 	result.push(Vector.xy(800,result.slice(-1)[0].y))
@@ -68,11 +66,9 @@ function generateBottomCoast(){
 		y = Math.floor(550 - Math.random()*100);
 		if (result.length < 1){
 			result.push(Vector.xy(0,y));
-			console.log("first point")
 		}else{
 			result.push(Vector.xy(x+result[i-1].x+100,y));
 		}
-		console.log(result);
 		i++
 	}
 	result.push(Vector.xy(800,result.slice(-1)[0].y))
@@ -123,7 +119,7 @@ class Map{
 		ctx.fill(); 
 	
 		ctx.strokeStyle = "#FF0000";
-		ctx.lineWidth = 5;
+		ctx.lineWidth = 2;
 		ctx.beginPath()
 		ctx.moveTo(this.bottomCoast[0].x, this.bottomCoast[0].y)
 		for (i = 1; i < this.bottomCoast.length; i++) {
@@ -145,7 +141,7 @@ class Map{
 		ctx.fill(); 
 	
 		ctx.strokeStyle = "#FF0000";
-		ctx.lineWidth = 5;
+		ctx.lineWidth = 2;
 		ctx.beginPath()
 		ctx.moveTo(this.topCoast[0].x,this.topCoast[0].y)
 		for (i = 1; i < this.topCoast.length; i++) {
@@ -156,8 +152,8 @@ class Map{
 	
 	generateMines(){
 		this.mines = [];
-		for(var i = 0; i < 10; i++){
-			var x = Math.floor(Math.random()*800);
+		while(this.mines.length < 20){
+			var x = 70+Math.random()*(730-mineRadius);
 
 			//Find the last map corner before the proposed point
 			var topPointIndex = 0;
@@ -182,12 +178,11 @@ class Map{
 			//10 pixels below the line between the two nearest points
 			var maximumY = (x - bottomPoint1.x) * Math.tan(parallelBottomUnit.angle) + bottomPoint1.y - mineRadius;
 
-			y = Math.floor(Math.random()*(maximumY - minimumY) + minimumY);
-			console.log("Y picked between "+minimumY+", "+maximumY);
+			y = Math.random()*(maximumY - minimumY) + minimumY;
 
 			var mine = new Mine(Vector.xy(x, y));
 
-			if(collidesWithMinesOrCoast(mine)) continue;
+			if(collidesWithMinesOrCoast(mine, 50)) continue;
 			
 			this.mines.push(mine);
 
