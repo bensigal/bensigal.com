@@ -1,13 +1,13 @@
 function generateMatch(map){
     matchId = Math.floor(Math.random()*900000 + 100000);
     console.log("playing multiplayer on " + map.id + ", creating match with id " + matchId);
-    drawLink("http://"+location.host+"/ballers/join/" + map.id + "/" + matchId);
+    drawLink("http://"+location.host+"/boat/join/" + matchId);
 	
 	scene = "awaiting join";
 
-	socket.emit("ballers", {
+	socket.emit("boat", {
 		action: "create match",
-		map: map.id,
+		map: map.objectify(),
 		id: matchId
 	});
 
@@ -90,12 +90,17 @@ function initSocket(){
 			window.alert("Failed to find map with id '"+mapId+"'!");
 		}
         
-		socket.emit("ballers", {action: "join", id: matchId});
+		socket.emit("boat", {action: "join", id: matchId});
         
 		initGame();
         
-		scene = "game";
-		step = "awaiting aim";
+		scene = "awaiting map";
+
+		socket.on("map", data => {
+			map = Map.from(data);
+			scene = "game";
+			step = "aim boat";
+		});
         
 		myPlayerNumber = 2;
 		multiplayer = true;

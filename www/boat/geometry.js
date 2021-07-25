@@ -41,6 +41,7 @@ function perpendicularDistance(point, endpoint1, endpoint2){
 
 }
 
+//does what is says bucko
 function collidesWithMinesOrCoast(obj, mineTolerance){
 
     mineTolerance = mineTolerance || 0;

@@ -12,28 +12,41 @@ class PowerMeter{
     
     tick(){
         
-        if(keyboard.right && this.angle < Math.PI/2)
+        if(keyboard.right)
             this.angle += 0.03;
-        if(keyboard.left && this.angle > -Math.PI/2)
+        if(keyboard.left)
             this.angle -= 0.03;
         
         
-        this.pos = nextBall.pos.clone();
+        this.pos = Vector.xy(boat.pos.x,boat.pos.y);
         this.pos.x += Math.cos(this.angle) * 15;
         this.pos.y += Math.sin(this.angle) * 15;
 
+        if(keyboard.up && this.progress < 1){
+            this.progress += 0.025;
+        }else if(keyboard.down && this.progress > 0){
+            this.progress -= 0.025;
+        }
+
         if(keyboard.space){
-            this.progress += this.progressIncreasing ? 0.025 : -0.025;
-            if(this.progress < 0.05){
+            this.ready = true;
+        }
+        /*
+        this.progress += this.progressIncreasing ? 0.025 : -0.025;
+        if(this.progress < 0.05){    
+            if (keyboard.up){
                 this.progress = 0.05;
                 this.progressIncreasing = true;
             }
-            if(this.progress > 1){
+        }
+        if(this.progress > 1){
+            if (keyboard.down){
                 this.progress = 1;
                 this.progressIncreasing = false;
             }
-        }
         
+        }
+        */
     }
     
     draw(){

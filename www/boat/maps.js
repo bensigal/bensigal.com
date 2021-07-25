@@ -189,8 +189,34 @@ class Map{
 		}
 	}
 
-	stringify(){
+	//Return an object easy to translate to JSON
+	objectify(){
+
+		var minesData = [];
+		mines.forEach(mine => {
+			minesData.push({
+				x: mine.x,
+				y: mine.y
+			})
+		});
+
+		return {
+			topCoast: this.topCoast,
+			bottomCoast: this.bottomCoast,
+			mines: minesData
+		};
 
 	}
+
+}
+
+//Create a map based on JSON from the server
+Map.from = function(data){
+
+	var map = new Map(data.topCoast, data.bottomCoast);
+	var mines = [];
+	data.mines.forEach(mine => {
+		mines.push(new Mine(Vector.xy(mine.x, mine.y)));
+	});
 
 }

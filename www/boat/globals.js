@@ -11,11 +11,13 @@ step,
 //Active whoever is playing, 1 or 2
 activePlayer,
 //Status of each player
-p1BallsLeft, p2BallsLeft,
+player1Ready, player2Ready,
 //boolean for game mode
 multiplayer,
 //id of online match
 matchId,
+//Physics stuff
+drift,
 //1 is always host player, 2 is joiner.
 myPlayerNumber,
 //Socket

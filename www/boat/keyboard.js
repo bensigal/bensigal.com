@@ -120,7 +120,7 @@ $(document).keyup(function(e){
         break;
     case 32:
         keyboard.space = false;
-        if(step == "aiming" && hasStartedAiming) throwBall();
+        if(step == "aiming" && hasStartedAiming) pilotBoat();
         break;
     }
 });

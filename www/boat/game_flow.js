@@ -3,7 +3,10 @@
 //Called on document ready
 $(function(){
     
-    scene = "menu";
+    ticks = 0;
+    timerStart = null;
+    scene = "game";
+    step = "planning";
     initCanvas();
     initGame();
     //initSocket();
@@ -12,11 +15,12 @@ $(function(){
 });
 
 function initGame(){
-    topCoastPoints =[] ;
-    bottomCoastPoints = [];
-    ticks = 0;
+    drift = 0;
+    meter = new PowerMeter();
+    meter.ready = false;
     map = new Map(generateTopCoast(), generateBottomCoast());
     map.generateMines();
+    boat = new Boat()
 
 }
 
@@ -36,7 +40,24 @@ function mainLoop(){
     ctx.fillRect(0, 0, 800, 600);
     
     //Determine functions to call based on current scene
-    draw()
+    switch(scene){
+    case "game":
+        draw();
+        tick();
+        break;
+    case "loss":
+        ctx.clearRect(0,0,800,600);
+        ctx.font = "30px Arial";
+        ctx.fillText("BIG LOOSER", 10, 50);
+        break;
+    case "win":
+        ctx.clearRect(0,0,800,600);
+        ctx.font = "30px Arial";
+        ctx.fillText("BIG WINNER", 10, 50);
+        break;
+    }
+   
+
     
     //Ensure ~60 ticks per second, even if the window is not refreshing that fast
     //If more than half a second behind (eg. because tabbed out) don't try to call frames
@@ -62,17 +83,52 @@ function draw(){
     ctx.closePath();
     ctx.fill();
     */
+
+    boat.draw()
+
     map.drawTopCoast();
     map.drawBottomCoast();
     
     map.mines.forEach(mine => mine.draw());
+    
+    
 
 }
 
 //Cause state changes in game
 function tick(){
-    
-    
+    ticks ++
+    switch(step){
+        case "planning":
+            drift = boat.vel;
+            if (!meter.ready){
+                meter.tick();
+            }
+            meter.draw()
+            if (meter.ready){
+                i = 10
+                step = "action";
+            }
+            break;
+        case "action":
+            timerStart = timerStart || ticks;
+            pilotBoat();
+            boat.tick();
+            //do we keep this and if so how can we make it actually work right.
+            /*if (ticks-timerStart < i){
+                if (boat.speed <= boat.maxSpeed){
+                    console.log(boat.speed)
+                    boat.speed +=boat.acceleration;
+                    i += 10;
+                }
+            }*/
+            if (ticks - timerStart > 180){
+                step = "planning";
+                meter.ready = false;
+                timerStart = null;
+            }
+            break;
+        }
 }
 
 //Number of balls closer to the target than the opponent's closest.
@@ -122,30 +178,10 @@ function calculateScore(){
 
 //Called when space is released while meter is active
 //NOT called when receiving a throw from the server
-function throwBall(){
-    step = "throwing";
-    nextBall.vel = new Vector(meter.progress*nextBall.throwSpeed, meter.angle);
-    if(activePlayer == 1){
-        p1BallsLeft--;
-    }else{
-        p2BallsLeft--;
-    }
-    if(multiplayer)
-        sendAimData();
+function pilotBoat(){
+    boat.vel = new Vector(meter.progress+boat.speed, meter.angle);
 }
 
-function grenadeExplodes(){
-    balls.forEach(function(ball){
-        if(ball == nextBall)return;
-        //Velocity inversely proportional to distance to grenade, opposite direction
-        ball.vel = ball.vel.plus(new Vector(
-            nextBall.power/nextBall.pos.distanceTo(ball.pos)/ball.mass, 
-            nextBall.pos.angleTo(ball.pos)
-        ));
-        console.log([nextBall.power, nextBall.pos.distanceTo(ball.pos), ball.mass]);
-        console.log("explosion hit with pow " + nextBall.power/nextBall.pos.distanceTo(ball.pos)/ball.mass);
-    });
-}
 
 function ballsStopped(){
     activePlayer = calculateScore() > 0 ? 2 : 1;
