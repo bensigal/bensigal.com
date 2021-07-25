@@ -115,10 +115,10 @@ function tick(){
             pilotBoat();
             boat.tick();
             //do we keep this and if so how can we make it actually work right.
-            /*if (ticks-timerStart < i){
+           /* if (ticks-timerStart < i){
                 if (boat.speed <= boat.maxSpeed){
                     console.log(boat.speed)
-                    boat.speed +=boat.acceleration;
+                    //boat.speed *= boat.acceleration * meter.progress;
                     i += 10;
                 }
             }*/
@@ -133,53 +133,15 @@ function tick(){
 
 //Number of balls closer to the target than the opponent's closest.
 //Positive for player 1, negative for player 2
-function calculateScore(){
 
-    if(!targetBall)return 0;
-
-    var p1MinDistance = Infinity;
-    var p2MinDistance = Infinity;
-    //Find the minimum distance to target for each player
-    balls.forEach(function(ball){
-        if(ball.type == "grenade")return;
-        var dist = ball.pos.distanceTo(targetBall.pos);
-        if(ball.player == 1){
-            if(dist < p1MinDistance){
-                p1MinDistance = dist;
-            }
-        }
-        else if(ball.player == 2){
-            if(dist < p2MinDistance){
-                p2MinDistance = dist;
-            }
-        }
-    });
-    
-    var loserMinDistance = p1MinDistance < p2MinDistance ? p2MinDistance : p1MinDistance;
-    var winner = p1MinDistance < p2MinDistance ? 1 : 2;
-    var score = 0;
-
-    balls.forEach(function(ball){
-        ball.winning = false;
-        //If the other player but not the target ball
-        if(ball.player == winner && winner !== 0){
-            if(ball.pos.distanceTo(targetBall.pos) < loserMinDistance){
-                score++;
-                //Whether or not the green ring is shown
-                if((ball != nextBall || step != "aiming") && balls.length > 2) ball.winning = true;
-            }
-        }
-    });
-    if(winner == 2) score *= -1;
-
-    return score;
-    
-}
 
 //Called when space is released while meter is active
 //NOT called when receiving a throw from the server
 function pilotBoat(){
-    boat.vel = new Vector(meter.progress+boat.speed, meter.angle);
+    console.log(boat.vel)
+    boat.vel = new Vector(meter.progress, meter.angle);
+    //boat.vel = new Vector(boat.speed, meter.angle);
+    console.log("after " + boat.vel)
 }
 
 

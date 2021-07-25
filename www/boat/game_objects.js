@@ -31,14 +31,17 @@ class Boat{
         this.vel = new Vector(0,0);
         this.speed = 1;
         this.maxSpeed = 5
-        this.acceleration = 0.05;
+        this.acceleration = 4;
         this.r = 12;
         
     }
 
     tick(){
-        this.pos.x += this.vel.x + (drift.x/3);
+        /*this.pos.x += this.vel.x + (drift.x/3);
         this.pos.y += this.vel.y + (drift.y/3);
+        */
+        this.pos.x += this.vel.x;
+        this.pos.y += this.vel.y;
 
         if (this.pos.x <= 0){
             scene = "loss";
