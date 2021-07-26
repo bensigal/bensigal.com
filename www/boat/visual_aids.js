@@ -1,12 +1,13 @@
 class PowerMeter{
     
-    constructor(){
+    constructor(parent){
         
         this.angle = 0;
         this.pos = Vector.xy(20, 300);
         this.length = 50;
         this.progress = 0.05;
         this.progressIncreasing = true;
+        this.parent = parent;
         
     }
     
@@ -18,7 +19,7 @@ class PowerMeter{
             this.angle -= 0.03;
         
         
-        this.pos = Vector.xy(boat.pos.x,boat.pos.y);
+        this.pos = Vector.xy(this.parent.pos.x,this.parent.pos.y);
         this.pos.x += Math.cos(this.angle) * 15;
         this.pos.y += Math.sin(this.angle) * 15;
 

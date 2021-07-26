@@ -67,3 +67,19 @@ class Boat{
     }
 
 }
+
+class Wind{
+
+    constructor(pos){
+        this.pos = Vector.xy(75,525);
+    }
+
+    draw(){
+        ctx.fillStyle = "red";
+        ctx.beginPath();
+        ctx.arc(this.pos.x, this.pos.y, 12, 0, Math.PI*2);
+        ctx.closePath();
+        ctx.fill();
+    }
+
+}

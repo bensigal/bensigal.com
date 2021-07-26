@@ -65,7 +65,9 @@ function generateBottomCoast(){
 		x = Math.floor(Math.random()*40);
 		y = Math.floor(550 - Math.random()*100);
 		if (result.length < 1){
-			result.push(Vector.xy(0,y));
+			result.push(Vector.xy(0,450));
+			result.push(Vector.xy(200,450));
+			result.push(Vector.xy(200,500));
 		}else{
 			result.push(Vector.xy(x+result[i-1].x+100,y));
 		}

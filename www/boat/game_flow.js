@@ -16,12 +16,15 @@ $(function(){
 
 function initGame(){
     drift = 0;
-    meter = new PowerMeter();
-    meter.ready = false;
+    wind = new Wind();
+    boat = new Boat();
+    windMeter = new PowerMeter(wind);
+    boatMeter = new PowerMeter(boat);
+    boatMeter.ready = false;
+
     map = new Map(generateTopCoast(), generateBottomCoast());
     map.generateMines();
-    boat = new Boat()
-
+    
 }
 
 //Called each frame
@@ -85,9 +88,12 @@ function draw(){
     */
 
     boat.draw()
+    
 
     map.drawTopCoast();
     map.drawBottomCoast();
+
+    wind.draw()
     
     map.mines.forEach(mine => mine.draw());
     
@@ -101,11 +107,15 @@ function tick(){
     switch(step){
         case "planning":
             drift = boat.vel;
-            if (!meter.ready){
-                meter.tick();
+            if (!boatMeter.ready){
+                boatMeter.tick();
             }
-            meter.draw()
-            if (meter.ready){
+            if (!windMeter.ready){
+                windMeter.tick();
+            }
+            windMeter.draw()
+            boatMeter.draw()
+            if (boatMeter.ready && windMeter.ready){
                 i = 10
                 step = "action";
             }
@@ -124,7 +134,7 @@ function tick(){
             }*/
             if (ticks - timerStart > 180){
                 step = "planning";
-                meter.ready = false;
+                boatMeter.ready = false;
                 timerStart = null;
             }
             break;
@@ -139,7 +149,7 @@ function tick(){
 //NOT called when receiving a throw from the server
 function pilotBoat(){
     console.log(boat.vel)
-    boat.vel = new Vector(meter.progress, meter.angle);
+    boat.vel = new Vector(boatMeter.progress, boatMeter.angle);
     //boat.vel = new Vector(boat.speed, meter.angle);
     console.log("after " + boat.vel)
 }
