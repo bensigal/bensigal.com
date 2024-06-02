@@ -3,7 +3,9 @@ var http 	= require('http');
 var fs   	= require('fs');
 var url  	= require('url');
 var qs 	 	= require('querystring');
-var mime 	= require('mime');
+
+var mime = require('mime');
+
 var multiparty 	= require('multiparty');
 var util      	= require('util');
 

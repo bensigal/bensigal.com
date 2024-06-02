@@ -1,0 +1,22 @@
+#canvas{
+    width: 800px;
+    height: 600px;
+    padding: 0;
+    margin: 0;
+}
+body{
+    margin: 0;
+}
+#canvasHolder{
+    margin: 20px auto;
+    padding: 0;
+    border: 1px solid black;
+    width: 800px;
+    height: 600px;
+}
+img{
+    display: none;
+}
+p{
+    text-align: center;
+}
