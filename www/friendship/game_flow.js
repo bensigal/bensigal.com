@@ -103,8 +103,10 @@ function initCanvas(){
 function initGame(){
     
     scene = "game";
+    step = "aiming";
+    playSpace = startPlaySpace();
+    ball = startBall(50,50);
 
-    initPhysics();
     
 
 }
