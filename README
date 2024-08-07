@@ -1,11 +1,4 @@
-Files for bensigal.com. Includes files to run server as well as
-resources. Server listens on port 8000 as an http server. Also create directory
-/server/logs, which is ignored by .gitignore. Another necessary
-but not included file is /passwords.js, which is not present
-for obvious reasons.
-
-To run the server, execute server/server.js with node. One argument is 
-required; the root. For example, if /www and /server are at /home/meep, 
-the correct execution would be:
-
-node /path/to/server.js /home/meep
+Run from the root folder of the repository
+Command is:
+node server/server.js 1 80
+where "80" can be replaced by the correct port
